@@ -1,835 +1,254 @@
-# Flight Pulse — Codex Operating Rules
+# Flight Pulse — AGENTS.md
 
-## 1. Project
+## Purpose
 
-Flight Pulse is a flight analytics system that combines:
+Flight Pulse is a portfolio data project.
 
-- flight data
-- MySQL
-- weather data
-- news/disruption analysis
-- SQL analytics
-- an interactive dashboard
-- an AI chatbot
-- evidence-grounded flight delay investigation
+Main flow:
 
-The project specification is:
+Flight data
+→ MySQL
+→ analysis
+→ weather/news context
+→ dashboard
+→ AI assistant
 
-`docs/SPEC.md`
-
-The implementation roadmap is:
-
-`docs/PLAN.md`
-
-The current project state is:
-
-`docs/STATUS.md`
+Follow Spec-Driven Development, but keep the process lightweight.
 
 ---
 
-# 2. Source of Truth
+## Source of Truth
 
-Use the following priority:
+Use this order:
 
-1. Explicit instructions from the user in the current conversation
+1. Current user instruction
 2. `docs/SPEC.md`
-3. `docs/PLAN.md`
-4. `docs/STATUS.md`
-5. Existing repository implementation
+3. `docs/ARCHITECTURE.md`
+4. `docs/PLAN.md`
+5. Current approved task
+6. `docs/STATUS.md`
+7. Existing code
 
-If documents conflict, stop and ask the user.
+For provider work also use:
 
-Do not resolve requirement conflicts independently.
+`docs/DATA_SOURCES.md`
 
----
-
-# 3. Mandatory Human Approval
-
-This project operates in STRICT MANUAL APPROVAL MODE.
-
-Codex MUST obtain explicit user approval BEFORE performing ANY action.
-
-This applies even to very small actions.
-
-Examples include, but are not limited to:
-
-- reading a file that has not already been examined
-- searching the repository
-- creating a file
-- editing a file
-- deleting a file
-- renaming a file
-- moving a file
-- creating a folder
-- running a shell command
-- running Python
-- running tests
-- running formatting
-- running linting
-- running type checking
-- installing a package
-- modifying dependencies
-- accessing the internet
-- calling an API
-- using MCP
-- using a skill
-- spawning a subagent
-- creating a hook
-- executing a hook
-- connecting to a database
-- creating a database
-- modifying a database
-- running SQL
-- scraping a website
-- creating a Git branch
-- switching Git branches
-- staging files
-- committing
-- pushing
-- creating a pull request
-- merging a pull request
-- deleting a branch
-- changing configuration
-- updating PLAN.md
-- updating STATUS.md
-- updating SPEC.md
-
-Do not assume approval from a previous action applies to a new action.
+If important sources conflict, stop and report the conflict.
 
 ---
 
-# 4. Approval Protocol
+## Work Style
 
-Before every action, Codex must explain:
+Once a task is approved, autonomously complete normal local and reversible work.
 
-1. What it wants to do
-2. Why it wants to do it
-3. What file, command, service, or resource will be affected
-4. What result is expected
-5. Any meaningful risk or side effect
+Do not repeatedly ask permission for routine development steps.
 
-Then STOP.
+Prefer the smallest implementation that satisfies the requirement.
 
-Wait for explicit user approval.
+Do not add features outside the active milestone.
 
-Example:
-
-Proposed action:
-
-Create `src/ingestion/flight_client.py`
-
-Purpose:
-Create the initial flight data ingestion module.
-
-Changes:
-- create one Python file
-- no dependencies installed
-- no external API call yet
-
-Expected result:
-Project will contain the initial ingestion interface.
-
-Risk:
-None beyond creating the file.
-
-Proceed?
-
-Codex must not perform the action until the user explicitly approves it.
+Do not overengineer.
 
 ---
 
-# 5. No Implicit Approval
+## No Approval Required
 
-The following do NOT count as approval:
+Within an approved task, you may:
 
-- silence
-- previous approval
-- an approved PLAN
-- an approved SPEC
-- an approved milestone
-- "continue later"
-- assumptions about user intent
+- read/search project files
+- edit/create project files
+- create directories
+- run Python commands
+- run tests and validation
+- use mocks/fixtures
+- inspect Git status/log/diff
+- update task-related documentation
+- update `docs/STATUS.md`
+- connect to the local `flight_pulse` MySQL database
+- create approved local tables
+- run non-destructive SQL
+- insert/update/query development data
+- create normal feature/fix/research branches
+- commit approved work
+- push non-main branches
+- fix routine implementation problems
 
-Approval must relate to the specific proposed action.
-
-If uncertain, ask.
-
----
-
-# 6. One Action at a Time
-
-Do not bundle unrelated actions into one approval request.
-
-Bad:
-
-"Can I create five files, install packages, initialize Git, create MySQL tables,
-run tests, and commit everything?"
-
-Good:
-
-"Can I create the initial project directories?"
-
-After completion, request approval for the next action.
+Continue until the task is complete or a real approval boundary is reached.
 
 ---
 
-# 7. Never Automatically Continue
+## Approval Required
 
-After completing an approved action:
+Ask before:
 
-1. report what happened
-2. report any relevant result
-3. propose the next action
-4. wait for approval
+### External
+- live API requests that consume quota
+- new web research outside an approved research batch
+- new MCP/external services
+- uploading project data externally
 
-Do not automatically proceed to the next PLAN.md task.
+### Cost
+- paid APIs
+- overages
+- purchases
+- cloud resources
+- paid deployment
 
----
+### Dependencies
+- adding/removing/upgrading dependencies
+- changing Python version
 
-# 8. Planning Rules
+### Security
+- creating/changing credentials
+- changing authentication
+- exposing or transmitting secrets
 
-For substantial work:
+### Destructive actions
+- dropping tables/databases
+- deleting important data/files
+- destructive migrations
+- force push
+- hard reset
 
-1. inspect the approved source material
-2. propose the implementation approach
-3. obtain approval
-4. perform only the approved action
+### Major decisions
+- changing SPEC requirements
+- changing major architecture
+- changing MySQL
+- changing the selected flight provider
+- adding major components outside the approved plan
 
-Do not change architecture independently.
+### Publishing
+- merging into `main`
+- public deployment
 
-Do not expand scope without user approval.
-
-Do not add features just because they seem useful.
-
----
-
-# 9. SPEC Rules
-
-`docs/SPEC.md` defines WHAT Flight Pulse should become.
-
-Do not modify SPEC.md unless the user explicitly approves the exact change.
-
-Do not reinterpret requirements to increase project scope.
-
-If implementation reveals a problem with the specification:
-
-STOP and explain the problem.
-
----
-
-# 10. PLAN Rules
-
-`docs/PLAN.md` defines HOW Flight Pulse will be built.
-
-Do not automatically implement the next phase.
-
-Each phase requires explicit user approval.
-
-Do not mark checklist items complete until the user approves updating PLAN.md.
+Group related approvals together. Do not ask one-by-one.
 
 ---
 
-# 11. STATUS Rules
+## Current Technical Decisions
 
-`docs/STATUS.md` records the current state of the repository.
+- Python 3.11
+- Conda environment: `flight-pulse`
+- MySQL for persistence
+- AeroDataBox via RapidAPI for MVP flight data
+- initial airport: YYZ
 
-It should contain:
+Approved dependencies:
 
-- current phase
-- completed work
-- current work
-- next proposed action
-- decisions
-- known issues
-- validation results
+- `mysql-connector-python`
+- `python-dotenv`
 
-Updating STATUS.md is itself an action and therefore requires approval.
+Secrets must stay in `.env`.
 
----
-
-# 12. Software Engineering Rules
-
-Prefer:
-
-- clear module boundaries
-- simple designs
-- small functions
-- type hints
-- reproducible data pipelines
-- testable components
-- explicit configuration
-- environment variables for secrets
-
-Avoid:
-
-- premature abstraction
-- unnecessary frameworks
-- unnecessary dependencies
-- duplicate logic
-- giant files
-- hidden side effects
+Never commit or print secrets.
 
 ---
 
-# 13. Data Rules
+## API Usage
 
-Never modify raw source data silently.
+RapidAPI quota is limited.
 
-Raw data should remain reproducible.
+Therefore:
 
-Validate:
+- use mocked API responses during development
+- do not use live API calls in unit tests
+- avoid unnecessary repeated requests
+- require approval before additional live request batches
+- never enable paid overages automatically
 
-- required columns
-- data types
-- missing values
-- duplicates
+---
+
+## Data Rules
+
+Keep AeroDataBox-specific parsing inside the ingestion layer.
+
+Normalize before persistence.
+
+Do not fabricate missing values.
+
+Delay should be calculated from actual minus scheduled time when both exist.
+
+If actual timing is unknown, keep delay null.
+
+Use consistent UTC-normalized timestamps internally where practical.
+
+---
+
+## Scope Discipline
+
+Work only on the active milestone.
+
+During Flight Data → MySQL, do not build:
+
+- weather
+- news
+- dashboard
+- chatbot
+- prediction models
+- deployment
+- unnecessary agents/plugins
+
+---
+
+## Git
+
+Do not develop major work directly on `main`.
+
+Use branches such as:
+
+- `feature/...`
+- `research/...`
+- `fix/...`
+- `docs/...`
+
+Normal commits and pushes on approved non-main branches are allowed.
+
+Do not merge to `main` or force push without approval.
+
+---
+
+## Testing
+
+Use mocks for external APIs.
+
+Tests must not consume RapidAPI quota.
+
+Test important logic such as:
+
+- normalization
 - timestamps
-- timezones
-- airline identifiers
-- airport identifiers
-- impossible values
+- delay calculation
+- missing fields
+- duplicate handling
+- repository behavior
 
-Do not discard invalid data without reporting it.
-
----
-
-# 14. Analytics Rules
-
-Always distinguish:
-
-- observed fact
-- statistical association
-- inference
-- confirmed cause
-
-Do not claim:
-
-"Weather caused this flight delay."
-
-unless a reliable source explicitly confirms it.
-
-Otherwise use language such as:
-
-- possible contributor
-- associated with
-- available evidence suggests
-- insufficient evidence
+Run relevant tests before completing a task.
 
 ---
 
-# 15. SQL Rules
+## Task Completion Report
 
-AI-generated SQL must eventually operate through read-only database credentials.
+At the end of every meaningful task, report:
 
-For AI analytical queries, allow:
+1. What was completed
+2. Files changed
+3. Tests/validation run
+4. Results
+5. Remaining limitations
+6. Next recommended task
+7. Anything requiring approval
 
-- SELECT
-- JOIN
-- GROUP BY
-- ORDER BY
-- CTE
-- aggregate functions
-- window functions
-
-Do not allow the AI analyst to execute:
-
-- DROP
-- DELETE
-- UPDATE
-- INSERT
-- ALTER
-- TRUNCATE
-
-Database schema modifications must always require explicit user approval.
+Do not make the user ask what was done.
 
 ---
 
-# 16. Secrets
-
-Never place secrets directly in source code.
-
-Never commit:
-
-- API keys
-- passwords
-- database passwords
-- tokens
-- credentials
-- `.env`
-
-Use environment variables.
-
-Do not print secrets into logs.
-
----
-
-# 17. Git Rules
-
-Never perform Git write actions without approval.
-
-This includes:
-
-- branch creation
-- checkout/switch
-- add
-- commit
-- push
-- pull
-- rebase
-- merge
-- reset
-- branch deletion
-- tag creation
-- pull request creation
-
-Before each Git action, show the exact intended command.
-
----
-
-# 18. Dependency Rules
-
-Do not install packages automatically.
-
-Before proposing installation:
-
-1. explain why the dependency is needed
-2. state the package name
-3. state whether an existing dependency can solve the problem
-4. wait for approval
-
-Never install packages globally unless specifically approved.
-
-Prefer the project's virtual environment.
-
----
-
-# 19. Internet and API Rules
-
-Do not access external websites, APIs, MCP servers, package registries, or
-other network resources without explicit approval.
-
-Before network access, explain:
-
-- destination
-- purpose
-- data being sent
-- expected result
-
----
-
-# 20. MCP Rules
-
-Do not add, configure, call, remove, or modify an MCP server without approval.
-
-When MCP is proposed, explain:
-
-- what server
-- why it is needed
-- what capabilities it exposes
-- whether it can write or only read
-
----
-
-# 21. Skills
-
-Do not create or invoke project skills without approval.
-
-Skills should represent stable reusable workflows.
-
-Do not create a skill merely to demonstrate that skills exist.
-
----
-
-# 22. Subagents
-
-Do not spawn subagents without explicit approval.
-
-Before proposing a subagent, explain:
-
-- task
-- why isolated context helps
-- what files/resources it may access
-- expected output
-
-Subagents must not independently modify shared files unless specifically approved.
-
----
-
-# 23. Hooks
-
-Do not create or execute hooks without explicit approval.
-
-Hooks should only automate deterministic lifecycle operations.
-
-Examples:
-
-- linting
-- testing
-- formatting
-- secret scanning
-
-Hook definitions must be reviewed by the user before being enabled.
-
----
-
-# 24. Plugin
-
-Do not create or package a plugin until the user explicitly starts the plugin phase.
-
-Plugin development is not part of the initial MVP.
-
----
-
-# 25. No Automatic Deployment
-
-Never deploy Flight Pulse without explicit approval.
-
-Do not:
-
-- provision cloud infrastructure
-- purchase services
-- create paid resources
-- expose ports publicly
-- configure production credentials
-- publish the application
-
-without permission.
-
----
-
-# 26. No Automatic Media Creation
-
-Do not create:
-
-- videos
-- demo recordings
-- promotional content
-- social media posts
-- marketing material
-
-unless explicitly requested.
-
-If PLAN.md mentions a demo video, treat it as:
-
-MANUAL USER TASK.
-
----
-
-# 27. Testing
-
-Tests must eventually be run before work is considered complete.
-
-However, under strict approval mode:
-
-Do not run tests automatically.
-
-Propose the exact test command and obtain approval first.
-
-Example:
-
-`pytest tests/test_delay_calculation.py -v`
-
-After execution, report the result.
-
----
-
-# 28. Failure Handling
-
-If an approved action fails:
-
-1. do not immediately attempt another fix
-2. explain the error
-3. identify the likely cause
-4. propose the next action
-5. wait for approval
-
-Do not enter autonomous trial-and-error loops.
-
----
-
-# 29. Session Recovery
-
-At the beginning of a new Codex session:
-
-1. do not modify anything
-2. request permission to inspect:
-   - AGENTS.md
-   - docs/SPEC.md
-   - docs/PLAN.md
-   - docs/STATUS.md
-3. inspect Git status only after approval
-4. summarize current state
-5. propose the next action
-6. wait for approval
-
-Do not rely on previous chat memory.
-
-Repository files and Git are the persistent source of project state.
-
----
-
-# 30. Definition of Correct Behavior
-
-Correct Codex behavior is:
-
-Propose
-→ Explain
-→ Ask
-→ Wait
-→ Execute only approved action
-→ Report result
-→ Propose next action
-→ Ask again
-
-Never:
-
-Propose
-→ Assume
-→ Execute multiple steps
-
-Human approval always remains the final authority.
-
-# Security, Privacy, Billing, and Deployment Rules
-
-## Zero Unapproved Spending
-
-Codex must never perform or authorize any action that can create a financial charge without explicit user approval.
-
-This includes:
-
-- purchasing cloud resources
-- enabling paid APIs
-- upgrading service plans
-- creating paid databases
-- purchasing domains
-- enabling paid GitHub features
-- increasing usage quotas
-- enabling paid model/API usage
-- starting billable deployments
-- creating paid storage
-- provisioning GPUs
-- purchasing subscriptions
-
-Before any potentially billable action, Codex must:
-
-1. identify the provider
-2. explain the expected cost model
-3. explain whether a free tier exists
-4. explain what could create charges
-5. wait for explicit user approval
-
-Never assume that "free tier" means zero financial risk.
-
----
-
-## Payment Information
-
-Never request, store, copy, display, log, or commit:
-
-- credit card numbers
-- banking information
-- billing credentials
-- payment tokens
-- CVV values
-- financial account credentials
-
-Payment information must never be placed in:
-
-- source code
-- .env files
-- GitHub
-- logs
-- prompts
-- documentation
-- databases
-
----
-
-## Secrets
-
-Never commit secrets.
-
-Secrets include:
-
-- API keys
-- database passwords
-- access tokens
-- private keys
-- OAuth secrets
-- cloud credentials
-- GitHub personal access tokens
-
-Use:
-
-- local environment variables
-- `.env` for local development
-- GitHub Secrets for CI
-- provider-managed secret stores for production
-
-`.env` must remain excluded through `.gitignore`.
-
-`.env.example` may contain variable names only, never real secret values.
-
----
-
-## Deployment
-
-Never deploy automatically.
-
-Deployment requires explicit user approval for:
-
-1. provider
-2. region
-3. pricing
-4. infrastructure
-5. environment variables
-6. network exposure
-7. public URL
-8. database configuration
-
-Do not deploy merely because PLAN.md contains a deployment phase.
-
----
-
-## Public Exposure
-
-Never make a service publicly accessible without approval.
-
-This includes:
-
-- opening firewall ports
-- creating public databases
-- exposing localhost through tunnels
-- enabling public buckets
-- creating public API endpoints
-- publishing dashboards
-- enabling anonymous database access
-
----
-
-## GitHub Actions Security
-
-GitHub Actions must use the minimum permissions necessary.
-
-Prefer:
-
-permissions:
-  contents: read
-
-Do not grant write permissions unless required and explicitly approved.
-
-Do not expose repository secrets to untrusted pull requests.
-
-Third-party GitHub Actions must be reviewed before use.
-
-Prefer trusted first-party actions or well-established actions.
-
----
-
-## Dependencies
-
-Before installing a new dependency:
-
-1. explain why it is needed
-2. state the package name
-3. verify that it is the intended package
-4. prefer maintained and reputable packages
-5. avoid unnecessary dependencies
-6. obtain user approval
-
-Do not execute arbitrary installation scripts from unknown sources.
-
----
-
-## External Services
-
-Before connecting any external service, explain:
-
-- what service is being used
-- what data will leave the computer
-- what permissions it receives
-- whether it can write or only read
-- whether it can incur charges
-- whether credentials are required
-
-Then wait for approval.
-
----
-
-## MCP Security
-
-MCP servers must be treated as external integrations.
-
-Before adding an MCP server:
-
-1. identify the provider
-2. explain its permissions
-3. explain its data access
-4. explain whether it can modify external systems
-5. explain whether it can incur costs
-6. obtain approval
-
----
-
-## Hooks
-
-Hooks must never silently:
-
-- install software
-- access payment systems
-- deploy infrastructure
-- make network calls
-- transmit source code
-- upload files
-- modify credentials
-
-without explicit approval.
-
----
-
-## Privacy
-
-Do not transmit project files or user data to external services unless necessary and explicitly approved.
-
-Do not include personal information in:
-
-- source code
-- sample datasets
-- logs
-- screenshots
-- GitHub issues
-- pull requests
-- public README files
-
-Use synthetic or sanitized examples whenever possible.
-
----
-
-## Destructive Operations
-
-Never perform destructive operations without explicit approval.
-
-Examples:
-
-- deleting databases
-- deleting cloud resources
-- deleting repositories
-- dropping tables
-- force-pushing Git history
-- resetting branches
-- deleting production data
-- rotating credentials
-
----
-
-## Security Default
-
-When uncertain:
-
-STOP.
-
-Explain the risk.
-
-Ask the user.
-
-Do not proceed.
+## Operating Principle
+
+Approved task
+→ implement autonomously
+→ test
+→ validate
+→ report
+
+Ask only for meaningful external, costly, destructive, security-sensitive,
+or major product decisions.
