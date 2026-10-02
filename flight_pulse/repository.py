@@ -9,7 +9,11 @@ from typing import Any
 import mysql.connector
 
 from flight_pulse.config import MySQLSettings
-from flight_pulse.models import NormalizedFlight, NormalizedWeatherObservation
+from flight_pulse.models import (
+    NormalizedFlight,
+    NormalizedNewsArticle,
+    NormalizedWeatherObservation,
+)
 
 
 UPSERT_FLIGHT_SQL = """
@@ -114,6 +118,28 @@ LEFT JOIN weather_observations AS weather
 """.strip()
 
 
+UPSERT_NEWS_SQL = """
+INSERT INTO news_articles (
+    article_id,
+    title,
+    source_domain,
+    url,
+    published_at,
+    language,
+    query_topic,
+    fetched_at
+) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+ON DUPLICATE KEY UPDATE
+    title = VALUES(title),
+    source_domain = VALUES(source_domain),
+    url = VALUES(url),
+    published_at = VALUES(published_at),
+    language = VALUES(language),
+    query_topic = VALUES(query_topic),
+    fetched_at = VALUES(fetched_at)
+""".strip()
+
+
 def connect_mysql(settings: MySQLSettings) -> Any:
     """Create a MySQL connection only when explicitly called."""
     return mysql.connector.connect(
@@ -164,6 +190,19 @@ def _weather_values(observation: NormalizedWeatherObservation) -> tuple[object, 
         observation.wind_gusts_kmh,
         observation.weather_code,
         _mysql_datetime(observation.fetched_at),
+    )
+
+
+def _news_values(article: NormalizedNewsArticle) -> tuple[object, ...]:
+    return (
+        article.article_id,
+        article.title,
+        article.source_domain,
+        article.url,
+        _mysql_datetime(article.published_at),
+        article.language,
+        article.query_topic,
+        _mysql_datetime(article.fetched_at),
     )
 
 
@@ -254,3 +293,29 @@ class WeatherRepository:
             return cursor.fetchone() or {}
         finally:
             cursor.close()
+
+
+class NewsRepository:
+    """Persist metadata-only news records with deterministic identities."""
+
+    def __init__(self, connection: Any) -> None:
+        self._connection = connection
+
+    def upsert_many(self, articles: Iterable[NormalizedNewsArticle]) -> int:
+        records = list(articles)
+        if not records:
+            return 0
+
+        cursor = self._connection.cursor()
+        try:
+            cursor.executemany(
+                UPSERT_NEWS_SQL,
+                [_news_values(article) for article in records],
+            )
+            self._connection.commit()
+        except Exception:
+            self._connection.rollback()
+            raise
+        finally:
+            cursor.close()
+        return len(records)

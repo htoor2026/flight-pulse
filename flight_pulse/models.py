@@ -83,3 +83,29 @@ class NormalizedWeatherObservation:
             raise ValueError("airport_iata must be a three-letter IATA code")
         _require_aware(self.observation_time, "observation_time")
         _require_aware(self.fetched_at, "fetched_at")
+
+
+@dataclass(frozen=True, slots=True)
+class NormalizedNewsArticle:
+    """Metadata-only news record, separate from causal flight analysis."""
+
+    article_id: str
+    title: str
+    source_domain: str | None
+    url: str
+    published_at: datetime | None
+    language: str | None
+    query_topic: str
+    fetched_at: datetime
+
+    def __post_init__(self) -> None:
+        if not self.article_id.strip():
+            raise ValueError("article_id must not be empty")
+        if not self.title.strip():
+            raise ValueError("title must not be empty")
+        if not self.url.strip():
+            raise ValueError("url must not be empty")
+        if not self.query_topic.strip():
+            raise ValueError("query_topic must not be empty")
+        _require_aware(self.published_at, "published_at")
+        _require_aware(self.fetched_at, "fetched_at")

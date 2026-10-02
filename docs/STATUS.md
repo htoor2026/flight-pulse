@@ -26,20 +26,25 @@ endpoint returned 48 hourly YYZ weather records, which were normalized to UTC,
 stored in MySQL, and matched to all 72 existing flights by scheduled YYZ event
 hour.
 
+Milestone 4 — News / Disruption Context is implemented locally. The GDELT DOC
+2.0 client, metadata normalization, deterministic URL identity, MySQL
+persistence, schema, and mocked tests are complete. The single permitted live
+validation request returned HTTP 429, so no live article metadata was stored.
+
 No additional AeroDataBox or RapidAPI request is authorized.
 
 ---
 
 # Current Phase
 
-Milestone 3 — Weather Integration
+Milestone 4 — News / Disruption Context
 
 Status:
 
-COMPLETE
+IMPLEMENTED — LIVE VALIDATION BLOCKED
 
-The reusable Open-Meteo client, normalization, MySQL persistence, and UTC
-flight-weather matching are complete and locally validated.
+The local implementation and mocked tests are complete. Live GDELT validation
+is unresolved because the one permitted request was rate-limited.
 
 ---
 
@@ -97,6 +102,18 @@ flight-weather matching are complete and locally validated.
 - [x] stored 48 hourly YYZ weather records
 - [x] matched 72 of 72 flights to their scheduled YYZ event hour
 - [x] added focused mocked HTTP and database tests
+
+## Milestone 4 — News / Disruption Context
+
+- [x] selected the GDELT DOC 2.0 API
+- [x] added a reusable `urllib.request` article-list client
+- [x] normalized metadata without storing copyrighted article body text
+- [x] generated deterministic SHA-256 identities from canonical article URLs
+- [x] added in-response and duplicate-safe MySQL handling
+- [x] added the `news_articles` table and supporting indexes
+- [x] added a focused YYZ operational-disruption query
+- [x] passed five focused mocked HTTP, normalization, repository, and pipeline tests
+- [ ] complete live validation; the single permitted request returned HTTP 429
 
 ## Project Planning
 
@@ -309,24 +326,26 @@ No external reviewer approval is required because this is currently a solo proje
 
 Branch:
 
-`feature/weather-integration`
+`feature/news-integration`
 
-The branch includes the completed flight ingestion and analysis foundation plus
-the Milestone 3 weather integration.
+The branch includes the completed flight, analysis, and weather foundation plus
+the local Milestone 4 news integration.
 
 ---
 
 # Current Work
 
-Milestone 3 is complete. One keyless Open-Meteo request was made; no
-AeroDataBox/RapidAPI request was made.
+Milestone 4 is locally implemented. The single permitted GDELT request returned
+HTTP 429; no article metadata was returned or stored. No AeroDataBox/RapidAPI
+request was made.
 
 ---
 
 # Next Proposed Action
 
-Review the completed feature branch. The next recommended milestone is news and
-disruption integration, following the approved roadmap.
+Review the completed feature branch. Resolve the GDELT live-validation blocker
+before starting the dashboard milestone; any retry requires new explicit
+approval because the one-request allowance is used.
 
 ---
 
@@ -347,6 +366,10 @@ disruption integration, following the approved roadmap.
   UTC hour; this is temporal association, not evidence that weather caused delay
 - the Open-Meteo free API is non-commercial, has no uptime guarantee, requires
   CC BY 4.0 attribution, and is subject to published request limits
+- the single GDELT validation request returned HTTP 429, so live response shape,
+  article relevance, and end-to-end storage remain unverified
+- GDELT search matches are supporting context only and cannot establish why a
+  flight was delayed
 
 ---
 
@@ -355,7 +378,7 @@ disruption integration, following the approved roadmap.
 - Conda environment: PASS
 - Python 3.11 requirement: PASS
 - approved dependency installation: PASS
-- unit tests: PASS (29 tests)
+- unit tests: PASS (34 tests)
 - `git diff --check`: PASS
 - local MySQL connection: PASS
 - provisional schema execution: PASS
@@ -379,6 +402,11 @@ disruption integration, following the approved roadmap.
 - flight/weather matches: 72 of 72
 - weather timestamps stored and matched as UTC: PASS
 - additional AeroDataBox/RapidAPI requests made during Milestone 3: 0
+- GDELT targeted mocked tests: PASS (5 tests)
+- GDELT live request: BLOCKED (HTTP 429)
+- GDELT live articles returned: 0
+- GDELT live articles stored: 0
+- additional AeroDataBox/RapidAPI requests made during Milestone 4: 0
 - credentials committed: NO
 - further live AeroDataBox/RapidAPI requests authorized: NO
 

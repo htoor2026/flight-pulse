@@ -5,12 +5,22 @@ from __future__ import annotations
 from datetime import datetime
 
 from flight_pulse.ingestion.aerodatabox import AeroDataBoxClient
+from flight_pulse.ingestion.gdelt import GDELTClient
 from flight_pulse.ingestion.open_meteo import (
     OpenMeteoClient,
     YYZ_LATITUDE,
     YYZ_LONGITUDE,
 )
-from flight_pulse.repository import FlightRepository, WeatherRepository
+from flight_pulse.repository import FlightRepository, NewsRepository, WeatherRepository
+
+
+YYZ_DISRUPTION_QUERY = (
+    '("Toronto Pearson" OR YYZ) '
+    '("flight delays" OR "flight cancellations" OR "airport disruption" OR '
+    'strike OR "air traffic control" OR "severe weather disruption" OR '
+    '"runway closure" OR "security incident")'
+)
+YYZ_NEWS_TOPIC = "YYZ operational disruption"
 
 
 def ingest_yyz_window(
@@ -38,3 +48,17 @@ def ingest_yyz_weather(
         end_date=window_end.date(),
     )
     return repository.upsert_many(observations)
+
+
+def ingest_yyz_news(
+    client: GDELTClient,
+    repository: NewsRepository,
+) -> int:
+    """Fetch and store recent YYZ disruption article metadata."""
+    articles = client.fetch_articles(
+        query=YYZ_DISRUPTION_QUERY,
+        query_topic=YYZ_NEWS_TOPIC,
+        timespan="7d",
+        max_records=75,
+    )
+    return repository.upsert_many(articles)

@@ -1,0 +1,28 @@
+{
+  "articles": [
+    {
+      "url": "https://example.com/aviation/yyz-delays",
+      "title": "Operational delays reported at Toronto Pearson",
+      "seendate": "20261002T091500Z",
+      "domain": "example.com",
+      "language": "English",
+      "sourcecountry": "Canada"
+    },
+    {
+      "url": "https://news.example.ca/airport/runway-update?section=travel",
+      "title": "Toronto Pearson issues runway operations update",
+      "seendate": "20261001T220000Z",
+      "domain": "news.example.ca",
+      "language": "English",
+      "sourcecountry": "Canada"
+    },
+    {
+      "url": "https://example.com/aviation/yyz-delays#latest",
+      "title": "Duplicate URL variant",
+      "seendate": "20261002T091500Z",
+      "domain": "example.com",
+      "language": "English",
+      "sourcecountry": "Canada"
+    }
+  ]
+}

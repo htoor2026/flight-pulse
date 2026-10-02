@@ -36,3 +36,17 @@ CREATE TABLE IF NOT EXISTS weather_observations (
     PRIMARY KEY (airport_iata, observation_time),
     INDEX idx_weather_observation_time (observation_time)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS news_articles (
+    article_id CHAR(64) NOT NULL,
+    title TEXT NOT NULL,
+    source_domain VARCHAR(255) NULL,
+    url TEXT NOT NULL,
+    published_at DATETIME(6) NULL,
+    language VARCHAR(64) NULL,
+    query_topic VARCHAR(255) NOT NULL,
+    fetched_at DATETIME(6) NOT NULL,
+    PRIMARY KEY (article_id),
+    INDEX idx_news_published_at (published_at),
+    INDEX idx_news_source_domain (source_domain)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
