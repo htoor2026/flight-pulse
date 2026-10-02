@@ -16,20 +16,25 @@ validation, and live YYZ end-to-end validation have completed successfully.
 The live request returned HTTP 200; 72 flights were returned, normalized, and
 upserted into MySQL.
 
+Milestone 2 — Flight Analysis is complete. A reusable read-only analysis layer
+now reports flight volume, status and delay metrics, airline/route/hour
+breakdowns, top delayed flights, and basic data-quality indicators from the
+existing 72-row MySQL dataset.
+
 No additional AeroDataBox or RapidAPI request is authorized.
 
 ---
 
 # Current Phase
 
-Milestone 1 — Flight Data → MySQL
+Milestone 2 — Flight Analysis
 
 Status:
 
 COMPLETE
 
-The development environment is corrected and ready for the smallest local
-implementation using mocked AeroDataBox data.
+The analysis layer and its focused tests are complete and validated against the
+current local MySQL data.
 
 ---
 
@@ -65,6 +70,16 @@ implementation using mocked AeroDataBox data.
 - [x] implemented parameterized, duplicate-safe MySQL persistence
 - [x] added synthetic AeroDataBox fixtures and mocked unit tests
 - [x] passed all 15 unit tests
+
+## Milestone 2 — Flight Analysis
+
+- [x] added reusable read-only analytics under `flight_pulse/analysis/`
+- [x] implemented overview and status counts
+- [x] implemented delay summaries by airline, route, and YYZ event hour
+- [x] implemented top-delayed-flight ranking
+- [x] implemented basic missing-data, duplicate, and extreme-delay checks
+- [x] validated the analytics against the existing 72 MySQL rows
+- [x] added focused mocked-database unit tests
 
 ## Project Planning
 
@@ -277,41 +292,23 @@ No external reviewer approval is required because this is currently a solo proje
 
 Branch:
 
-`feature/flight-ingestion`
+`feature/flight-analysis`
 
-Remote synchronization:
-
-NOT VERIFIED IN THIS SESSION
-
-Working tree:
-
-MODIFIED
-
-Latest verification:
-
-- modified: `.env.example`
-- modified: `AGENTS.md`
-- modified: `docs/DATA_SOURCES.md`
-- modified: `docs/STATUS.md`
-- modified: `requirements.txt`
-- untracked: `flight_pulse/`
-- untracked: `sql/`
-- untracked: `tests/`
-
-Existing changes in `AGENTS.md` and `docs/DATA_SOURCES.md` are treated as
-user-owned and must be preserved.
+The branch includes the completed Milestone 1 ingestion foundation and the
+Milestone 2 analysis work.
 
 ---
 
 # Current Work
 
-Milestone 1 is complete. No further live request is authorized.
+Milestone 2 is complete. No external API request was made during this milestone.
 
 ---
 
 # Next Proposed Action
 
-Review the completed feature branch before any pull request or merge.
+Review the completed feature branch. The next recommended milestone is weather
+integration, following the approved roadmap, before the dashboard phase.
 
 ---
 
@@ -322,6 +319,10 @@ Review the completed feature branch before any pull request or merge.
 - AeroDataBox FIDS responses omit the focal airport on some movements; the
   ingestion layer restores it from the requested airport and movement direction
 - another live API request requires separate explicit approval
+- actual departure data exists for only 3 of 72 rows and actual arrival data
+  exists for only 2, so average-delay results are not representative
+- one 1,060-minute departure-delay value materially skews the current average
+- the dataset is a single short YYZ snapshot rather than a longitudinal sample
 
 ---
 
@@ -330,7 +331,7 @@ Review the completed feature branch before any pull request or merge.
 - Conda environment: PASS
 - Python 3.11 requirement: PASS
 - approved dependency installation: PASS
-- unit tests: PASS (17 tests)
+- unit tests: PASS (22 tests)
 - `git diff --check`: PASS
 - local MySQL connection: PASS
 - provisional schema execution: PASS
@@ -341,6 +342,13 @@ Review the completed feature branch before any pull request or merge.
 - live flights upserted: 72
 - MySQL `flights` rows: 72
 - stored flights missing origin or destination: 0
+- analysis source: local MySQL `flight_pulse.flights`
+- analysis total flights: 72
+- analysis delayed flights: 8 (11.11%)
+- analysis cancelled flights: 1
+- analysis average departure delay: 366.33 minutes (3 populated rows)
+- analysis average arrival delay: -26.50 minutes (2 populated rows)
+- analysis duplicate provider identifiers: 0
 - credentials committed: NO
 - further live AeroDataBox/RapidAPI requests authorized: NO
 
