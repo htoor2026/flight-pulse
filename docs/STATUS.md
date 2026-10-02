@@ -11,9 +11,10 @@ as the primary provider for the MVP.
 
 Milestone 1 — Flight Data → MySQL is now in progress. The documented Conda
 environment and the local client, normalization, delay calculation, repository,
-schema definition, and mocked tests are complete. The local schema has been
-applied successfully. The single authorized live API request returned HTTP 403,
-so no flight rows were normalized or stored.
+schema definition, and mocked tests are complete. The local schema and a
+synthetic insert/query/delete validation have completed successfully. The
+latest authorized live API request returned HTTP 403 with the RapidAPI message
+`You are not subscribed to this API.`, so no flight rows were normalized or stored.
 
 No additional AeroDataBox or RapidAPI request is authorized.
 
@@ -48,7 +49,8 @@ implementation using mocked AeroDataBox data.
 - [x] installed `mysql-connector-python==26.7.0`
 - [x] installed `python-dotenv==1.2.4`
 - [x] removed the unintended Python 3.9 `.venv`
-- [x] made one authorized live request and recorded its HTTP 403 result
+- [x] recorded the authorized live-request HTTP 403 results
+- [x] validated a real MySQL insert, query, and cleanup with synthetic data
 
 ## Milestone 1 Local Implementation
 
@@ -318,7 +320,8 @@ Do not send another live request without separate explicit approval.
 
 - no fallback flight-data provider has been selected
 - AeroDataBox actual versus estimated timestamp semantics require careful normalization
-- the first live YYZ request returned HTTP 403 Forbidden
+- live YYZ requests returned HTTP 403 Forbidden
+- RapidAPI reported `You are not subscribed to this API.`
 - no response payload was available to normalize or persist
 - another live API request requires separate explicit approval
 
@@ -333,9 +336,10 @@ Do not send another live request without separate explicit approval.
 - `git diff --check`: PASS
 - local MySQL connection: PASS
 - provisional schema execution: PASS
+- synthetic MySQL insert/query/delete: PASS
 - MySQL `flights` rows after live-request failure: 0
 - credentials committed: NO
-- live AeroDataBox/RapidAPI requests: ONE (HTTP 403 Forbidden)
+- live AeroDataBox/RapidAPI requests: TWO total, each separately authorized (HTTP 403 Forbidden)
 
 ---
 
