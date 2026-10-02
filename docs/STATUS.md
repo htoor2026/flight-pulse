@@ -41,20 +41,27 @@ tools now expose grounded flight, airline, route, weather, news, and delay-
 investigation results from the existing MySQL data without unrestricted SQL or
 an external language model.
 
+Milestone 7 — AI Chat Interface is implemented. The Streamlit dashboard now
+uses Gemini structured function calling through an explicit whitelist and
+argument validator over the seven existing read-only analyst tools. The single
+approved live validation attempt returned HTTP 503 before tool selection, and
+no automatic retry was performed.
+
 No additional AeroDataBox or RapidAPI request is authorized.
 
 ---
 
 # Current Phase
 
-Milestone 6 — AI Analyst Foundation
+Milestone 7 — AI Chat Interface
 
 Status:
 
-COMPLETE
+IMPLEMENTED — LIVE VALIDATION BLOCKED
 
-The analytical tool implementation, mocked tests, real read-only MySQL
-validation, and complete local test suite are successful.
+The local integration, mocked tool-routing tests, and Streamlit component
+validation are successful. Live provider validation is blocked by one Gemini
+HTTP 503 UNAVAILABLE response.
 
 ---
 
@@ -149,6 +156,22 @@ validation, and complete local test suite are successful.
 - [x] handled missing flight, weather, and news data explicitly
 - [x] returned an insufficient-evidence conclusion without claiming causality
 - [x] validated the tools against the existing local MySQL dataset
+
+## Milestone 7 — AI Chat Interface
+
+- [x] added the official `google-genai==2.28.0` SDK
+- [x] configured `GEMINI_API_KEY` through the local environment
+- [x] selected stable `gemini-3.1-flash-lite`
+- [x] declared only the seven approved Flight Pulse analyst tools
+- [x] added explicit tool-name and argument validation before execution
+- [x] disabled automatic SDK function execution
+- [x] added a bounded manual function-call and function-response loop
+- [x] added Streamlit chat UI and session history
+- [x] enforced sample limitations and insufficient-evidence wording
+- [x] passed mocked Gemini and tool-routing validation
+- [x] rendered the dashboard chat section without an external request
+- [ ] complete live Gemini tool-call validation; the single approved attempt
+  returned HTTP 503 before tool selection and was not retried
 
 ## Project Planning
 
@@ -361,23 +384,23 @@ No external reviewer approval is required because this is currently a solo proje
 
 Branch:
 
-`feature/ai-analyst`
+`feature/ai-chat`
 
-The branch includes the completed Milestone 6 AI analyst foundation.
+The branch includes the implemented Milestone 7 AI chat interface.
 
 ---
 
 # Current Work
 
-Milestone 6 is complete. The analyst reads only from local MySQL through a
-fixed set of parameterized tools; no external API request was made.
+Milestone 7 implementation is complete. Local and mocked validation passes;
+live Gemini validation is blocked by a transient provider HTTP 503 response.
 
 ---
 
 # Next Proposed Action
 
-Review the completed AI analyst feature branch before connecting a real language
-model or adding a chat interface.
+Review the completed AI chat feature branch. Retry live provider validation only
+after receiving separate approval.
 
 ---
 
@@ -406,9 +429,12 @@ model or adding a chat interface.
   not available; Streamlit component validation rendered all required sections
 - dashboard results remain constrained by the 72-flight single-window sample and
   sparse actual departure/arrival timestamps
-- no language model or free-text question router is connected yet
 - delay investigations can surface stored context but cannot establish causality
 - stored news context remains empty because GDELT live validation was rate-limited
+- the single Gemini live validation attempt returned HTTP 503 UNAVAILABLE before
+  tool selection; no automatic retry was performed
+- Gemini free-tier prompts and tool results may be used by Google to improve its
+  products, so the integration sends only data needed for each question
 
 ---
 
@@ -417,7 +443,7 @@ model or adding a chat interface.
 - Conda environment: PASS
 - Python 3.11 requirement: PASS
 - approved dependency installation: PASS
-- unit tests: PASS (47 tests)
+- unit tests: PASS (58 tests)
 - `git diff --check`: PASS
 - local MySQL connection: PASS
 - provisional schema execution: PASS
@@ -457,6 +483,15 @@ model or adding a chat interface.
 - AI analyst example flight: AA 3606
 - AI analyst delay conclusion: Insufficient evidence to determine the delay cause.
 - AI analyst external API requests: 0
+- Gemini SDK: google-genai 2.28.0
+- Gemini model: gemini-3.1-flash-lite
+- Gemini mocked/tool-routing tests: PASS (21 focused analyst/chat tests)
+- Streamlit chat component: PASS (0 exceptions, 8 required sections)
+- Gemini live validation: BLOCKED (HTTP 503 UNAVAILABLE)
+- Gemini live validation conversations attempted: 1
+- Gemini API requests attempted during live validation: 1
+- Gemini live tool selected: NO (provider failed before tool selection)
+- Gemini automatic retries: 0
 - credentials committed: NO
 - further live AeroDataBox/RapidAPI requests authorized: NO
 
