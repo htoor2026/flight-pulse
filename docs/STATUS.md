@@ -47,21 +47,25 @@ argument validator over the seven existing read-only analyst tools. The single
 approved live validation attempt returned HTTP 503 before tool selection, and
 no automatic retry was performed.
 
+Final portfolio polish is complete. The repository now has a comprehensive
+README, an implementation-accurate architecture document, reproducible local
+setup instructions, documented results and limitations, and a verified
+dependency and secrets posture.
+
 No additional AeroDataBox or RapidAPI request is authorized.
 
 ---
 
 # Current Phase
 
-Milestone 7 — AI Chat Interface
+Final Portfolio Polish
 
 Status:
 
-IMPLEMENTED — LIVE VALIDATION BLOCKED
+COMPLETE
 
-The local integration, mocked tool-routing tests, and Streamlit component
-validation are successful. Live provider validation is blocked by one Gemini
-HTTP 503 UNAVAILABLE response.
+The existing MVP is documented and locally validated. Live GDELT and Gemini
+provider validation remain documented external blockers.
 
 ---
 
@@ -173,6 +177,19 @@ HTTP 503 UNAVAILABLE response.
 - [ ] complete live Gemini tool-call validation; the single approved attempt
   returned HTTP 503 before tool selection and was not retried
 
+## Final Portfolio Polish
+
+- [x] replaced the placeholder README with complete project documentation
+- [x] documented current architecture, data flow, and AI safety boundaries
+- [x] documented validated project results and known limitations
+- [x] added local environment, MySQL, testing, and run instructions
+- [x] added screenshot placeholders and a manual capture checklist
+- [x] removed the empty, unreferenced `pyproject.toml`
+- [x] pinned all direct dependencies to validated installed versions
+- [x] verified `.env` is ignored and not tracked
+- [x] verified `.env.example` contains no credentials
+- [x] scanned tracked files for common project secret patterns
+
 ## Project Planning
 
 - [x] Flight Pulse concept defined
@@ -202,7 +219,7 @@ Conda environment:
 ## Codex Governance
 
 - [x] Root `AGENTS.md` created
-- [x] strict human-approval rules defined
+- [x] autonomous routine local work rules defined
 - [x] security rules defined
 - [x] privacy rules defined
 - [x] billing/spending protections defined
@@ -214,15 +231,8 @@ Conda environment:
 - [x] subagent approval rules defined
 - [x] destructive-operation restrictions defined
 
-Codex must follow:
-
-Propose
-→ Explain
-→ Ask
-→ Wait
-→ Execute approved action
-→ Report
-→ Ask again
+External, costly, destructive, credential, major architectural, merge, and
+deployment actions continue to require explicit approval.
 
 ---
 
@@ -332,7 +342,9 @@ Security hardening includes:
 - workflow timeout
 - duplicate-run cancellation
 
-Current CI is intentionally minimal because application code has not yet been implemented.
+Current CI remains a foundation-level syntax check. The complete mocked test
+suite is run locally because the workflow does not provision project
+dependencies or MySQL.
 
 ---
 
@@ -384,23 +396,24 @@ No external reviewer approval is required because this is currently a solo proje
 
 Branch:
 
-`feature/ai-chat`
+`docs/final-polish`
 
-The branch includes the implemented Milestone 7 AI chat interface.
+The branch contains final portfolio documentation and repository cleanup on top
+of the merged Milestone 7 implementation.
 
 ---
 
 # Current Work
 
-Milestone 7 implementation is complete. Local and mocked validation passes;
-live Gemini validation is blocked by a transient provider HTTP 503 response.
+Final portfolio documentation and cleanup are complete. Local validation passes;
+the prior GDELT HTTP 429 and Gemini HTTP 503 results remain external blockers.
 
 ---
 
 # Next Proposed Action
 
-Review the completed AI chat feature branch. Retry live provider validation only
-after receiving separate approval.
+Capture the documented dashboard screenshots manually, review the final-polish
+branch, and open a pull request. Provider retries require separate approval.
 
 ---
 
@@ -474,7 +487,7 @@ after receiving separate approval.
 - additional AeroDataBox/RapidAPI requests made during Milestone 4: 0
 - Streamlit version: 1.64.0
 - dashboard MySQL snapshot: PASS (72 flights, 48 weather observations)
-- Streamlit component test: PASS (0 exceptions, 7 required sections)
+- Streamlit component test: PASS (0 exceptions, 8 required sections)
 - dashboard metrics rendered: 10
 - dashboard tables rendered: 6
 - dashboard external API requests: 0
@@ -492,6 +505,14 @@ after receiving separate approval.
 - Gemini API requests attempted during live validation: 1
 - Gemini live tool selected: NO (provider failed before tool selection)
 - Gemini automatic retries: 0
+- tracked secret-pattern scan: PASS
+- `.env` ignored and untracked: PASS
+- `.env.example` placeholders/defaults only: PASS
+- direct dependency consistency: PASS
+- `pip check`: PASS
+- final portfolio test suite: PASS (58 tests)
+- final Streamlit import/start validation: PASS (0 exceptions)
+- external provider requests during portfolio polish: 0
 - credentials committed: NO
 - further live AeroDataBox/RapidAPI requests authorized: NO
 
@@ -502,37 +523,10 @@ after receiving separate approval.
 Current high-level architecture:
 
 ```text
-Flight Data Source
-        |
-        v
-Flight Ingestion
-        |
-        v
-Cleaning + Validation
-        |
-        v
-      MySQL
-      /   \
-     /     \
-Weather   News
-Pipeline  Pipeline
-     \     /
-      \   /
-      MySQL
-        |
-        v
-SQL Analytics
-        |
-        v
-Dashboard
-        |
-        v
-AI Analyst
-        |
-        +--> SQL
-        +--> Flight lookup
-        +--> Weather
-        +--> News
-        |
-        v
-Evidence-Grounded Delay Explanation
+AeroDataBox --> ingestion / normalization --> MySQL
+Open-Meteo --> weather normalization --------> MySQL
+GDELT ------> news metadata normalization ----> MySQL
+
+MySQL --> read-only analytics --> Streamlit dashboard
+MySQL --> seven analyst tools --> validated Gemini dispatcher --> Streamlit chat
+```
