@@ -21,20 +21,25 @@ now reports flight volume, status and delay metrics, airline/route/hour
 breakdowns, top delayed flights, and basic data-quality indicators from the
 existing 72-row MySQL dataset.
 
+Milestone 3 — Weather Integration is complete. The keyless Open-Meteo forecast
+endpoint returned 48 hourly YYZ weather records, which were normalized to UTC,
+stored in MySQL, and matched to all 72 existing flights by scheduled YYZ event
+hour.
+
 No additional AeroDataBox or RapidAPI request is authorized.
 
 ---
 
 # Current Phase
 
-Milestone 2 — Flight Analysis
+Milestone 3 — Weather Integration
 
 Status:
 
 COMPLETE
 
-The analysis layer and its focused tests are complete and validated against the
-current local MySQL data.
+The reusable Open-Meteo client, normalization, MySQL persistence, and UTC
+flight-weather matching are complete and locally validated.
 
 ---
 
@@ -80,6 +85,18 @@ current local MySQL data.
 - [x] implemented basic missing-data, duplicate, and extreme-delay checks
 - [x] validated the analytics against the existing 72 MySQL rows
 - [x] added focused mocked-database unit tests
+
+## Milestone 3 — Weather Integration
+
+- [x] selected Open-Meteo's free non-commercial, keyless API
+- [x] configured YYZ coordinates at 43.6777, -79.6248
+- [x] retrieved temperature, precipitation, snowfall, visibility, wind speed,
+  wind gusts, and weather code
+- [x] normalized all weather timestamps to UTC
+- [x] added duplicate-safe MySQL weather persistence
+- [x] stored 48 hourly YYZ weather records
+- [x] matched 72 of 72 flights to their scheduled YYZ event hour
+- [x] added focused mocked HTTP and database tests
 
 ## Project Planning
 
@@ -292,23 +309,24 @@ No external reviewer approval is required because this is currently a solo proje
 
 Branch:
 
-`feature/flight-analysis`
+`feature/weather-integration`
 
-The branch includes the completed Milestone 1 ingestion foundation and the
-Milestone 2 analysis work.
+The branch includes the completed flight ingestion and analysis foundation plus
+the Milestone 3 weather integration.
 
 ---
 
 # Current Work
 
-Milestone 2 is complete. No external API request was made during this milestone.
+Milestone 3 is complete. One keyless Open-Meteo request was made; no
+AeroDataBox/RapidAPI request was made.
 
 ---
 
 # Next Proposed Action
 
-Review the completed feature branch. The next recommended milestone is weather
-integration, following the approved roadmap, before the dashboard phase.
+Review the completed feature branch. The next recommended milestone is news and
+disruption integration, following the approved roadmap.
 
 ---
 
@@ -323,6 +341,12 @@ integration, following the approved roadmap, before the dashboard phase.
   exists for only 2, so average-delay results are not representative
 - one 1,060-minute departure-delay value materially skews the current average
 - the dataset is a single short YYZ snapshot rather than a longitudinal sample
+- Open-Meteo forecast output is model data, not a direct YYZ weather-station or
+  METAR observation
+- matching uses the scheduled YYZ departure/arrival timestamp truncated to its
+  UTC hour; this is temporal association, not evidence that weather caused delay
+- the Open-Meteo free API is non-commercial, has no uptime guarantee, requires
+  CC BY 4.0 attribution, and is subject to published request limits
 
 ---
 
@@ -331,7 +355,7 @@ integration, following the approved roadmap, before the dashboard phase.
 - Conda environment: PASS
 - Python 3.11 requirement: PASS
 - approved dependency installation: PASS
-- unit tests: PASS (22 tests)
+- unit tests: PASS (29 tests)
 - `git diff --check`: PASS
 - local MySQL connection: PASS
 - provisional schema execution: PASS
@@ -349,6 +373,12 @@ integration, following the approved roadmap, before the dashboard phase.
 - analysis average departure delay: 366.33 minutes (3 populated rows)
 - analysis average arrival delay: -26.50 minutes (2 populated rows)
 - analysis duplicate provider identifiers: 0
+- Open-Meteo live request: PASS
+- Open-Meteo hourly records returned: 48
+- MySQL weather observations stored: 48
+- flight/weather matches: 72 of 72
+- weather timestamps stored and matched as UTC: PASS
+- additional AeroDataBox/RapidAPI requests made during Milestone 3: 0
 - credentials committed: NO
 - further live AeroDataBox/RapidAPI requests authorized: NO
 

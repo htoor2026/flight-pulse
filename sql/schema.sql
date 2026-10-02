@@ -1,4 +1,4 @@
--- Milestone 1 schema only. All DATETIME values are stored as UTC.
+-- Flight Pulse local schema. All DATETIME values are stored as UTC.
 
 CREATE TABLE IF NOT EXISTS flights (
     provider_flight_id VARCHAR(191) NOT NULL,
@@ -20,4 +20,19 @@ CREATE TABLE IF NOT EXISTS flights (
     INDEX idx_flights_destination_iata (destination_iata),
     INDEX idx_flights_scheduled_departure (scheduled_departure),
     INDEX idx_flights_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS weather_observations (
+    airport_iata CHAR(3) NOT NULL,
+    observation_time DATETIME(6) NOT NULL,
+    temperature_c DECIMAL(6, 2) NULL,
+    precipitation_mm DECIMAL(8, 2) NULL,
+    snowfall_cm DECIMAL(8, 2) NULL,
+    visibility_m DECIMAL(10, 2) NULL,
+    wind_speed_kmh DECIMAL(7, 2) NULL,
+    wind_gusts_kmh DECIMAL(7, 2) NULL,
+    weather_code SMALLINT NULL,
+    fetched_at DATETIME(6) NOT NULL,
+    PRIMARY KEY (airport_iata, observation_time),
+    INDEX idx_weather_observation_time (observation_time)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
