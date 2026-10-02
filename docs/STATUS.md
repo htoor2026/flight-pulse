@@ -9,12 +9,12 @@ Last updated: 2026-10-02
 The flight-data source investigation is complete, and AeroDataBox is approved
 as the primary provider for the MVP.
 
-Milestone 1 — Flight Data → MySQL is now in progress. The documented Conda
+Milestone 1 — Flight Data → MySQL is complete. The documented Conda
 environment and the local client, normalization, delay calculation, repository,
-schema definition, and mocked tests are complete. The local schema and a
-synthetic insert/query/delete validation have completed successfully. The
-latest authorized live API request returned HTTP 403 with the RapidAPI message
-`You are not subscribed to this API.`, so no flight rows were normalized or stored.
+schema definition, and tests are complete. The local schema, synthetic database
+validation, and live YYZ end-to-end validation have completed successfully.
+The live request returned HTTP 200; 72 flights were returned, normalized, and
+upserted into MySQL.
 
 No additional AeroDataBox or RapidAPI request is authorized.
 
@@ -26,7 +26,7 @@ Milestone 1 — Flight Data → MySQL
 
 Status:
 
-IN PROGRESS
+COMPLETE
 
 The development environment is corrected and ready for the smallest local
 implementation using mocked AeroDataBox data.
@@ -49,7 +49,8 @@ implementation using mocked AeroDataBox data.
 - [x] installed `mysql-connector-python==26.7.0`
 - [x] installed `python-dotenv==1.2.4`
 - [x] removed the unintended Python 3.9 `.venv`
-- [x] recorded the authorized live-request HTTP 403 results
+- [x] completed an authorized live YYZ request with HTTP 200
+- [x] normalized and upserted 72 live flight records
 - [x] validated a real MySQL insert, query, and cleanup with synthetic data
 
 ## Milestone 1 Local Implementation
@@ -304,15 +305,13 @@ user-owned and must be preserved.
 
 # Current Work
 
-Resolve the RapidAPI HTTP 403 authorization response before attempting another
-live YYZ request.
+Milestone 1 is complete. No further live request is authorized.
 
 ---
 
 # Next Proposed Action
 
-Confirm the AeroDataBox API subscription and endpoint entitlement in RapidAPI.
-Do not send another live request without separate explicit approval.
+Review the completed feature branch before any pull request or merge.
 
 ---
 
@@ -320,9 +319,8 @@ Do not send another live request without separate explicit approval.
 
 - no fallback flight-data provider has been selected
 - AeroDataBox actual versus estimated timestamp semantics require careful normalization
-- live YYZ requests returned HTTP 403 Forbidden
-- RapidAPI reported `You are not subscribed to this API.`
-- no response payload was available to normalize or persist
+- AeroDataBox FIDS responses omit the focal airport on some movements; the
+  ingestion layer restores it from the requested airport and movement direction
 - another live API request requires separate explicit approval
 
 ---
@@ -332,14 +330,19 @@ Do not send another live request without separate explicit approval.
 - Conda environment: PASS
 - Python 3.11 requirement: PASS
 - approved dependency installation: PASS
-- unit tests: PASS (15 tests)
+- unit tests: PASS (17 tests)
 - `git diff --check`: PASS
 - local MySQL connection: PASS
 - provisional schema execution: PASS
 - synthetic MySQL insert/query/delete: PASS
-- MySQL `flights` rows after live-request failure: 0
+- live YYZ request: PASS (HTTP 200)
+- live flights returned: 72
+- live flights normalized: 72
+- live flights upserted: 72
+- MySQL `flights` rows: 72
+- stored flights missing origin or destination: 0
 - credentials committed: NO
-- live AeroDataBox/RapidAPI requests: TWO total, each separately authorized (HTTP 403 Forbidden)
+- further live AeroDataBox/RapidAPI requests authorized: NO
 
 ---
 

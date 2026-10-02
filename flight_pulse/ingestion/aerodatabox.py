@@ -102,13 +102,15 @@ def _actual_time(
     raw_status_key: str,
     confirmed_statuses: set[str],
 ) -> datetime | None:
-    for key in ("actualTime", "runwayTime"):
-        timestamp = _parse_utc_timestamp(movement.get(key))
-        if timestamp is not None:
-            return timestamp
+    explicit_actual = _parse_utc_timestamp(movement.get("actualTime"))
+    if explicit_actual is not None:
+        return explicit_actual
 
     if raw_status_key in confirmed_statuses:
-        return _parse_utc_timestamp(movement.get("revisedTime"))
+        for key in ("runwayTime", "revisedTime"):
+            timestamp = _parse_utc_timestamp(movement.get(key))
+            if timestamp is not None:
+                return timestamp
     return None
 
 
@@ -208,11 +210,18 @@ def normalize_payload(
     payload: object,
     *,
     fetched_at: datetime | None = None,
+    airport_iata: str | None = None,
 ) -> list[NormalizedFlight]:
     """Normalize and de-duplicate an airport response."""
-    raw_flights: list[object]
+    focal_airport: str | None = None
+    if airport_iata is not None:
+        focal_airport = airport_iata.strip().upper()
+        if len(focal_airport) != 3 or not focal_airport.isalpha():
+            raise ValueError("airport_iata must be a three-letter IATA code")
+
+    raw_flights: list[tuple[object, str | None]]
     if isinstance(payload, list):
-        raw_flights = payload
+        raw_flights = [(flight, None) for flight in payload]
     elif isinstance(payload, Mapping):
         raw_flights = []
         for key in ("departures", "arrivals", "flights"):
@@ -220,16 +229,32 @@ def normalize_payload(
             if value is not None and not isinstance(value, list):
                 raise ValueError(f"AeroDataBox {key} must be a list")
             if isinstance(value, list):
-                raw_flights.extend(value)
+                focal_movement = {
+                    "departures": "departure",
+                    "arrivals": "arrival",
+                }.get(key)
+                raw_flights.extend((flight, focal_movement) for flight in value)
     else:
         raise ValueError("AeroDataBox response must be an object or list")
 
     normalized_by_id: dict[str, NormalizedFlight] = {}
     fetched_timestamp = fetched_at or datetime.now(UTC)
-    for raw_flight in raw_flights:
+    for raw_flight, focal_movement in raw_flights:
         if not isinstance(raw_flight, Mapping):
             raise ValueError("AeroDataBox flight entry must be an object")
-        flight = normalize_flight(raw_flight, fetched_at=fetched_timestamp)
+
+        flight_input = raw_flight
+        if focal_airport is not None and focal_movement is not None:
+            movement = dict(_movement(raw_flight, focal_movement))
+            airport_value = movement.get("airport")
+            airport = dict(airport_value) if isinstance(airport_value, Mapping) else {}
+            if not isinstance(airport.get("iata"), str) or not airport["iata"].strip():
+                airport["iata"] = focal_airport
+                movement["airport"] = airport
+                flight_input = dict(raw_flight)
+                flight_input[focal_movement] = movement
+
+        flight = normalize_flight(flight_input, fetched_at=fetched_timestamp)
         normalized_by_id.setdefault(flight.provider_flight_id, flight)
 
     return list(normalized_by_id.values())
@@ -298,4 +323,8 @@ class AeroDataBoxClient:
         request = self.build_airport_request(airport_iata, from_local, to_local)
         with self._opener(request, timeout=self._timeout_seconds) as response:
             payload = json.load(response)
-        return normalize_payload(payload, fetched_at=datetime.now(UTC))
+        return normalize_payload(
+            payload,
+            fetched_at=datetime.now(UTC),
+            airport_iata=airport_iata,
+        )

@@ -3,6 +3,7 @@ from __future__ import annotations
 import io
 import json
 import unittest
+from copy import deepcopy
 from datetime import UTC, datetime
 from pathlib import Path
 from unittest.mock import Mock
@@ -123,6 +124,34 @@ class AeroDataBoxNormalizationTests(unittest.TestCase):
         )
 
         self.assertEqual(len(flights), 1)
+
+    def test_supplies_focal_airport_when_fids_omits_it(self) -> None:
+        departure = deepcopy(self.payload["departures"][0])
+        arrival = deepcopy(self.payload["arrivals"][0])
+        departure["departure"].pop("airport")
+        arrival["arrival"].pop("airport")
+
+        flights = normalize_payload(
+            {"departures": [departure], "arrivals": [arrival]},
+            fetched_at=FETCHED_AT,
+            airport_iata="YYZ",
+        )
+        by_number = {flight.flight_number: flight for flight in flights}
+
+        self.assertEqual(by_number["AC101"].origin_iata, "YYZ")
+        self.assertEqual(by_number["PD404"].destination_iata, "YYZ")
+
+    def test_unconfirmed_runway_time_is_not_treated_as_actual(self) -> None:
+        delayed = deepcopy(self.payload["departures"][1])
+        delayed["departure"]["runwayTime"] = {"utc": "2026-10-02T15:35:00Z"}
+        delayed["arrival"]["runwayTime"] = {"utc": "2026-10-02T19:55:00Z"}
+
+        flight = normalize_flight(delayed, fetched_at=FETCHED_AT)
+
+        self.assertIsNone(flight.actual_departure)
+        self.assertIsNone(flight.actual_arrival)
+        self.assertIsNone(flight.departure_delay_minutes)
+        self.assertIsNone(flight.arrival_delay_minutes)
 
 
 class AeroDataBoxClientTests(unittest.TestCase):
