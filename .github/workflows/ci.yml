@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Verify Python
+        run: python --version
+
+      - name: Check Python syntax
+        run: python -m compileall -q .
+
+      - name: Test placeholder
+        run: |
+          if [ -d tests ]; then
+            echo "Tests directory detected."
+            echo "Automated test execution will be enabled after test dependencies are approved."
+          else
+            echo "No tests directory yet."
+          fi
