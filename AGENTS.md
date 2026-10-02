@@ -588,3 +588,248 @@ Propose
 → Execute multiple steps
 
 Human approval always remains the final authority.
+
+# Security, Privacy, Billing, and Deployment Rules
+
+## Zero Unapproved Spending
+
+Codex must never perform or authorize any action that can create a financial charge without explicit user approval.
+
+This includes:
+
+- purchasing cloud resources
+- enabling paid APIs
+- upgrading service plans
+- creating paid databases
+- purchasing domains
+- enabling paid GitHub features
+- increasing usage quotas
+- enabling paid model/API usage
+- starting billable deployments
+- creating paid storage
+- provisioning GPUs
+- purchasing subscriptions
+
+Before any potentially billable action, Codex must:
+
+1. identify the provider
+2. explain the expected cost model
+3. explain whether a free tier exists
+4. explain what could create charges
+5. wait for explicit user approval
+
+Never assume that "free tier" means zero financial risk.
+
+---
+
+## Payment Information
+
+Never request, store, copy, display, log, or commit:
+
+- credit card numbers
+- banking information
+- billing credentials
+- payment tokens
+- CVV values
+- financial account credentials
+
+Payment information must never be placed in:
+
+- source code
+- .env files
+- GitHub
+- logs
+- prompts
+- documentation
+- databases
+
+---
+
+## Secrets
+
+Never commit secrets.
+
+Secrets include:
+
+- API keys
+- database passwords
+- access tokens
+- private keys
+- OAuth secrets
+- cloud credentials
+- GitHub personal access tokens
+
+Use:
+
+- local environment variables
+- `.env` for local development
+- GitHub Secrets for CI
+- provider-managed secret stores for production
+
+`.env` must remain excluded through `.gitignore`.
+
+`.env.example` may contain variable names only, never real secret values.
+
+---
+
+## Deployment
+
+Never deploy automatically.
+
+Deployment requires explicit user approval for:
+
+1. provider
+2. region
+3. pricing
+4. infrastructure
+5. environment variables
+6. network exposure
+7. public URL
+8. database configuration
+
+Do not deploy merely because PLAN.md contains a deployment phase.
+
+---
+
+## Public Exposure
+
+Never make a service publicly accessible without approval.
+
+This includes:
+
+- opening firewall ports
+- creating public databases
+- exposing localhost through tunnels
+- enabling public buckets
+- creating public API endpoints
+- publishing dashboards
+- enabling anonymous database access
+
+---
+
+## GitHub Actions Security
+
+GitHub Actions must use the minimum permissions necessary.
+
+Prefer:
+
+permissions:
+  contents: read
+
+Do not grant write permissions unless required and explicitly approved.
+
+Do not expose repository secrets to untrusted pull requests.
+
+Third-party GitHub Actions must be reviewed before use.
+
+Prefer trusted first-party actions or well-established actions.
+
+---
+
+## Dependencies
+
+Before installing a new dependency:
+
+1. explain why it is needed
+2. state the package name
+3. verify that it is the intended package
+4. prefer maintained and reputable packages
+5. avoid unnecessary dependencies
+6. obtain user approval
+
+Do not execute arbitrary installation scripts from unknown sources.
+
+---
+
+## External Services
+
+Before connecting any external service, explain:
+
+- what service is being used
+- what data will leave the computer
+- what permissions it receives
+- whether it can write or only read
+- whether it can incur charges
+- whether credentials are required
+
+Then wait for approval.
+
+---
+
+## MCP Security
+
+MCP servers must be treated as external integrations.
+
+Before adding an MCP server:
+
+1. identify the provider
+2. explain its permissions
+3. explain its data access
+4. explain whether it can modify external systems
+5. explain whether it can incur costs
+6. obtain approval
+
+---
+
+## Hooks
+
+Hooks must never silently:
+
+- install software
+- access payment systems
+- deploy infrastructure
+- make network calls
+- transmit source code
+- upload files
+- modify credentials
+
+without explicit approval.
+
+---
+
+## Privacy
+
+Do not transmit project files or user data to external services unless necessary and explicitly approved.
+
+Do not include personal information in:
+
+- source code
+- sample datasets
+- logs
+- screenshots
+- GitHub issues
+- pull requests
+- public README files
+
+Use synthetic or sanitized examples whenever possible.
+
+---
+
+## Destructive Operations
+
+Never perform destructive operations without explicit approval.
+
+Examples:
+
+- deleting databases
+- deleting cloud resources
+- deleting repositories
+- dropping tables
+- force-pushing Git history
+- resetting branches
+- deleting production data
+- rotating credentials
+
+---
+
+## Security Default
+
+When uncertain:
+
+STOP.
+
+Explain the risk.
+
+Ask the user.
+
+Do not proceed.
