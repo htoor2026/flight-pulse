@@ -179,6 +179,31 @@ class FlightAnalystTests(unittest.TestCase):
         self.assertEqual(result["conclusion"], INSUFFICIENT_EVIDENCE)
         self.assertIsNone(result["weather_context"])
         self.assertEqual(result["news_context"], [])
+        self.assertTrue(result["news_context_available"])
+
+    def test_delay_investigation_continues_when_news_context_is_unavailable(
+        self,
+    ) -> None:
+        self.analyst.find_flight = Mock(
+            return_value={"flight_number": "AC 154", "status": "arrived"}
+        )
+        self.analyst.get_weather_context = Mock(
+            return_value={"temperature_c": 4.2}
+        )
+        self.analyst.get_news_context = Mock(
+            side_effect=RuntimeError("synthetic missing news table")
+        )
+
+        result = self.analyst.investigate_delay("AC 154")
+
+        self.assertEqual(result["conclusion"], INSUFFICIENT_EVIDENCE)
+        self.assertEqual(result["weather_context"], {"temperature_c": 4.2})
+        self.assertEqual(result["news_context"], [])
+        self.assertFalse(result["news_context_available"])
+        self.assertIn(
+            "No stored news context is currently available for this flight.",
+            result["limitations"],
+        )
 
     def test_missing_flight_investigation_does_not_query_context(self) -> None:
         self.analyst.find_flight = Mock(return_value=None)

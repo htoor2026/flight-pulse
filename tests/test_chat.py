@@ -207,6 +207,14 @@ class GeminiAnalystChatTests(unittest.TestCase):
     def test_investigation_enforces_exact_insufficient_evidence_wording(self) -> None:
         self.analyst.investigate_delay.return_value = {
             "flight_number": "AA3606",
+            "flight": {
+                "flight_number": "AA 3606",
+                "airline": "American Airlines",
+                "origin_iata": "YYZ",
+                "destination_iata": "ORD",
+                "status": "delayed",
+                "departure_delay_minutes": 969,
+            },
             "weather_context": {"wind_gusts_kmh": 46.8},
             "news_context": [],
             "conclusion": INSUFFICIENT_EVIDENCE,
@@ -221,8 +229,18 @@ class GeminiAnalystChatTests(unittest.TestCase):
 
         reply = self.chat.answer("Why was AA 3606 delayed?")
 
+        self.assertIn("### Confirmed flight facts", reply.text)
+        self.assertIn("### Weather context", reply.text)
+        self.assertIn("### News/disruption context", reply.text)
+        self.assertIn("### Conclusion", reply.text)
+        self.assertIn("The stored Flight Pulse record indicates", reply.text)
+        self.assertIn(
+            "No stored news context is currently available for this flight.",
+            reply.text,
+        )
         self.assertIn(INSUFFICIENT_EVIDENCE, reply.text)
         self.assertIn(SAMPLE_LIMITATION, reply.text)
+        self.assertEqual(reply.text.count(SAMPLE_LIMITATION), 1)
 
     def test_previous_streamlit_history_is_sent_as_conversation_context(self) -> None:
         self.client.models.generate_content.return_value = _text_response(
