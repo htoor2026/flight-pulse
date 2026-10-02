@@ -74,6 +74,26 @@ class FlightAnalysisTests(unittest.TestCase):
 
         self.connection.cursor.assert_not_called()
 
+    def test_disrupted_flights_limit_is_parameterized(self) -> None:
+        self.cursor.fetchall.return_value = []
+
+        result = self.analysis.disrupted_flights(limit=25)
+
+        self.assertEqual(result, [])
+        sql, params = self.cursor.execute.call_args.args
+        self.assertIn("status = 'cancelled'", sql)
+        self.assertEqual(params, (25,))
+
+    def test_weather_context_uses_parameterized_airport(self) -> None:
+        self.cursor.fetchall.return_value = []
+
+        result = self.analysis.weather_context(airport_iata="yyz")
+
+        self.assertEqual(result, [])
+        sql, params = self.cursor.execute.call_args.args
+        self.assertIn("weather_observations", sql)
+        self.assertEqual(params, ("YYZ",) * 4)
+
 
 if __name__ == "__main__":
     unittest.main()

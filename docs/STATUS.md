@@ -31,20 +31,25 @@ Milestone 4 — News / Disruption Context is implemented locally. The GDELT DOC
 persistence, schema, and mocked tests are complete. The single permitted live
 validation request returned HTTP 429, so no live article metadata was stored.
 
+Milestone 5 — Dashboard MVP is complete. A Streamlit dashboard now reads the
+existing MySQL flight and weather data through the reusable analytics layer and
+presents overview, status, airline, route, time, weather, and data-quality
+sections for the current 72-flight sample.
+
 No additional AeroDataBox or RapidAPI request is authorized.
 
 ---
 
 # Current Phase
 
-Milestone 4 — News / Disruption Context
+Milestone 5 — Dashboard MVP
 
 Status:
 
-IMPLEMENTED — LIVE VALIDATION BLOCKED
+COMPLETE
 
-The local implementation and mocked tests are complete. Live GDELT validation
-is unresolved because the one permitted request was rate-limited.
+The dashboard implementation, real MySQL snapshot validation, Streamlit
+component test, and complete local test suite are successful.
 
 ---
 
@@ -114,6 +119,19 @@ is unresolved because the one permitted request was rate-limited.
 - [x] added a focused YYZ operational-disruption query
 - [x] passed five focused mocked HTTP, normalization, repository, and pipeline tests
 - [ ] complete live validation; the single permitted request returned HTTP 429
+
+## Milestone 5 — Dashboard MVP
+
+- [x] added `streamlit==1.64.0` as the only new direct dependency
+- [x] added overview, flight-status, airline, route, time, weather, and
+  data-quality sections
+- [x] reused the MySQL-backed `FlightAnalysis` layer
+- [x] added delayed/cancelled flight and hourly weather-context queries
+- [x] labeled the current 72-flight sample and sparse actual-time coverage
+- [x] limited airline average-delay display to groups with meaningful samples
+- [x] included explicit weather association and non-causality language
+- [x] validated all dashboard sections against the local MySQL data
+- [x] passed Streamlit component validation without exceptions
 
 ## Project Planning
 
@@ -326,26 +344,23 @@ No external reviewer approval is required because this is currently a solo proje
 
 Branch:
 
-`feature/news-integration`
+`feature/dashboard`
 
-The branch includes the completed flight, analysis, and weather foundation plus
-the local Milestone 4 news integration.
+The branch includes Milestones 1–4 plus the Milestone 5 dashboard implementation.
 
 ---
 
 # Current Work
 
-Milestone 4 is locally implemented. The single permitted GDELT request returned
-HTTP 429; no article metadata was returned or stored. No AeroDataBox/RapidAPI
-request was made.
+Milestone 5 is complete. The dashboard reads only from local MySQL; no
+AeroDataBox, Open-Meteo, or GDELT request was made during development.
 
 ---
 
 # Next Proposed Action
 
-Review the completed feature branch. Resolve the GDELT live-validation blocker
-before starting the dashboard milestone; any retry requires new explicit
-approval because the one-request allowance is used.
+Review the completed dashboard feature branch. Resolve the GDELT live-validation
+blocker before starting the AI SQL Analyst milestone.
 
 ---
 
@@ -370,6 +385,10 @@ approval because the one-request allowance is used.
   article relevance, and end-to-end storage remain unverified
 - GDELT search matches are supporting context only and cannot establish why a
   flight was delayed
+- browser-based visual QA was unavailable because browser-control permission was
+  not available; Streamlit component validation rendered all required sections
+- dashboard results remain constrained by the 72-flight single-window sample and
+  sparse actual departure/arrival timestamps
 
 ---
 
@@ -378,7 +397,7 @@ approval because the one-request allowance is used.
 - Conda environment: PASS
 - Python 3.11 requirement: PASS
 - approved dependency installation: PASS
-- unit tests: PASS (34 tests)
+- unit tests: PASS (36 tests)
 - `git diff --check`: PASS
 - local MySQL connection: PASS
 - provisional schema execution: PASS
@@ -407,6 +426,12 @@ approval because the one-request allowance is used.
 - GDELT live articles returned: 0
 - GDELT live articles stored: 0
 - additional AeroDataBox/RapidAPI requests made during Milestone 4: 0
+- Streamlit version: 1.64.0
+- dashboard MySQL snapshot: PASS (72 flights, 48 weather observations)
+- Streamlit component test: PASS (0 exceptions, 7 required sections)
+- dashboard metrics rendered: 10
+- dashboard tables rendered: 6
+- dashboard external API requests: 0
 - credentials committed: NO
 - further live AeroDataBox/RapidAPI requests authorized: NO
 
