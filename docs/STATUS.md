@@ -36,20 +36,25 @@ existing MySQL flight and weather data through the reusable analytics layer and
 presents overview, status, airline, route, time, weather, and data-quality
 sections for the current 72-flight sample.
 
+Milestone 6 — AI Analyst Foundation is complete. Seven structured, read-only
+tools now expose grounded flight, airline, route, weather, news, and delay-
+investigation results from the existing MySQL data without unrestricted SQL or
+an external language model.
+
 No additional AeroDataBox or RapidAPI request is authorized.
 
 ---
 
 # Current Phase
 
-Milestone 5 — Dashboard MVP
+Milestone 6 — AI Analyst Foundation
 
 Status:
 
 COMPLETE
 
-The dashboard implementation, real MySQL snapshot validation, Streamlit
-component test, and complete local test suite are successful.
+The analytical tool implementation, mocked tests, real read-only MySQL
+validation, and complete local test suite are successful.
 
 ---
 
@@ -132,6 +137,18 @@ component test, and complete local test suite are successful.
 - [x] included explicit weather association and non-causality language
 - [x] validated all dashboard sections against the local MySQL data
 - [x] passed Streamlit component validation without exceptions
+
+## Milestone 6 — AI Analyst Foundation
+
+- [x] added structured `get_flight_overview` and `find_flight` tools
+- [x] added parameterized airline and route analysis tools
+- [x] added stored YYZ weather and news context tools
+- [x] added evidence-grounded delay investigation
+- [x] restricted the analyst to fixed read-only queries with no arbitrary SQL
+- [x] returned JSON-safe values suitable for future model tool calls
+- [x] handled missing flight, weather, and news data explicitly
+- [x] returned an insufficient-evidence conclusion without claiming causality
+- [x] validated the tools against the existing local MySQL dataset
 
 ## Project Planning
 
@@ -344,23 +361,23 @@ No external reviewer approval is required because this is currently a solo proje
 
 Branch:
 
-`feature/dashboard`
+`feature/ai-analyst`
 
-The branch includes Milestones 1–4 plus the Milestone 5 dashboard implementation.
+The branch includes the completed Milestone 6 AI analyst foundation.
 
 ---
 
 # Current Work
 
-Milestone 5 is complete. The dashboard reads only from local MySQL; no
-AeroDataBox, Open-Meteo, or GDELT request was made during development.
+Milestone 6 is complete. The analyst reads only from local MySQL through a
+fixed set of parameterized tools; no external API request was made.
 
 ---
 
 # Next Proposed Action
 
-Review the completed dashboard feature branch. Resolve the GDELT live-validation
-blocker before starting the AI SQL Analyst milestone.
+Review the completed AI analyst feature branch before connecting a real language
+model or adding a chat interface.
 
 ---
 
@@ -389,6 +406,9 @@ blocker before starting the AI SQL Analyst milestone.
   not available; Streamlit component validation rendered all required sections
 - dashboard results remain constrained by the 72-flight single-window sample and
   sparse actual departure/arrival timestamps
+- no language model or free-text question router is connected yet
+- delay investigations can surface stored context but cannot establish causality
+- stored news context remains empty because GDELT live validation was rate-limited
 
 ---
 
@@ -397,7 +417,7 @@ blocker before starting the AI SQL Analyst milestone.
 - Conda environment: PASS
 - Python 3.11 requirement: PASS
 - approved dependency installation: PASS
-- unit tests: PASS (36 tests)
+- unit tests: PASS (47 tests)
 - `git diff --check`: PASS
 - local MySQL connection: PASS
 - provisional schema execution: PASS
@@ -432,6 +452,11 @@ blocker before starting the AI SQL Analyst milestone.
 - dashboard metrics rendered: 10
 - dashboard tables rendered: 6
 - dashboard external API requests: 0
+- AI analyst read-only MySQL validation: PASS
+- AI analyst tools implemented: 7
+- AI analyst example flight: AA 3606
+- AI analyst delay conclusion: Insufficient evidence to determine the delay cause.
+- AI analyst external API requests: 0
 - credentials committed: NO
 - further live AeroDataBox/RapidAPI requests authorized: NO
 
