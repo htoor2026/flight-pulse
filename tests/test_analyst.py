@@ -39,7 +39,6 @@ class FlightAnalystTests(unittest.TestCase):
             "delay_rate_percent": Decimal("11.11"),
             "average_departure_delay_minutes": Decimal("366.33"),
         }
-
         result = self.analyst.get_flight_overview()
 
         self.assertEqual(
@@ -52,6 +51,37 @@ class FlightAnalystTests(unittest.TestCase):
             },
         )
         self.analysis.overview.assert_called_once_with()
+
+    def test_overview_includes_existing_breakdowns_only_when_requested(self) -> None:
+        self.analysis.overview.return_value = {
+            "total_flights": 72,
+            "delayed_flights": 8,
+            "cancelled_flights": 1,
+            "delay_rate_percent": Decimal("11.11"),
+        }
+        self.analysis.status_counts.return_value = [
+            {"status": "scheduled", "flight_count": 63}
+        ]
+        self.analysis.disrupted_flights.return_value = [
+            {"flight_number": "AA 3606", "status": "departed"}
+        ]
+        self.analysis.delays_by_airline.return_value = [
+            {"airline": "American", "delayed_flights": 1}
+        ]
+        self.analysis.delays_by_route.return_value = [
+            {"origin_iata": "YYZ", "destination_iata": "ORD"}
+        ]
+
+        result = self.analyst.get_flight_overview(include_breakdowns=True)
+
+        self.assertIn("status_counts", result)
+        self.assertIn("disrupted_flights", result)
+        self.assertIn("delays_by_airline", result)
+        self.assertIn("delays_by_route", result)
+        self.analysis.status_counts.assert_called_once_with()
+        self.analysis.disrupted_flights.assert_called_once_with()
+        self.analysis.delays_by_airline.assert_called_once_with(minimum_flights=1)
+        self.analysis.delays_by_route.assert_called_once_with(minimum_flights=1)
 
     def test_find_flight_normalizes_input_and_serializes_database_values(self) -> None:
         self.cursor.fetchone.return_value = {

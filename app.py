@@ -9,7 +9,9 @@ import pandas as pd
 import streamlit as st
 
 from flight_pulse.analysis import FlightAnalysis
-from flight_pulse.config import MySQLSettings
+from flight_pulse.analyst import FlightAnalyst
+from flight_pulse.chat import GeminiAnalystChat
+from flight_pulse.config import GeminiSettings, MySQLSettings
 from flight_pulse.repository import connect_mysql
 
 
@@ -68,6 +70,22 @@ def load_dashboard_data() -> dict[str, Any]:
     connection = connect_mysql(MySQLSettings.from_env())
     try:
         return FlightAnalysis(connection).report(minimum_flights=1, top_limit=10)
+    finally:
+        connection.close()
+
+
+def ask_flight_pulse(
+    question: str,
+    history: list[dict[str, str]],
+) -> str:
+    """Answer one question, closing the read-only database connection afterward."""
+    connection = connect_mysql(MySQLSettings.from_env())
+    try:
+        chat = GeminiAnalystChat(
+            FlightAnalyst(connection),
+            GeminiSettings.from_env(),
+        )
+        return chat.answer(question, history=history).text
     finally:
         connection.close()
 
@@ -377,3 +395,49 @@ st.warning(
     "results should not be generalized. Weather is supporting context only and "
     "does not prove causation."
 )
+
+
+st.header("Ask Flight Pulse")
+st.caption(
+    "Ask about the current flight sample, a flight number, airline, route, "
+    "weather context, or a possible delay explanation. The assistant can use "
+    "only the approved read-only analytical tools."
+)
+
+if "flight_pulse_chat_messages" not in st.session_state:
+    st.session_state.flight_pulse_chat_messages = [
+        {
+            "role": "assistant",
+            "content": (
+                "Ask me about the current YYZ sample—for example, "
+                "“Why was AA 3606 delayed?”"
+            ),
+        }
+    ]
+
+for message in st.session_state.flight_pulse_chat_messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+if question := st.chat_input("Ask Flight Pulse about the current sample"):
+    previous_messages = list(st.session_state.flight_pulse_chat_messages)
+    st.session_state.flight_pulse_chat_messages.append(
+        {"role": "user", "content": question}
+    )
+    with st.chat_message("user"):
+        st.markdown(question)
+
+    with st.chat_message("assistant"):
+        with st.spinner("Analyzing the current Flight Pulse sample…"):
+            try:
+                answer = ask_flight_pulse(question, previous_messages)
+            except Exception:
+                answer = (
+                    "The AI analyst is unavailable. Verify the local MySQL "
+                    "connection and GEMINI_API_KEY configuration, then try again."
+                )
+        st.markdown(answer)
+
+    st.session_state.flight_pulse_chat_messages.append(
+        {"role": "assistant", "content": answer}
+    )

@@ -57,3 +57,17 @@ class MySQLSettings:
             user=_required("MYSQL_USER"),
             password=_required("MYSQL_PASSWORD"),
         )
+
+
+@dataclass(frozen=True, slots=True)
+class GeminiSettings:
+    api_key: str
+    model: str
+
+    @classmethod
+    def from_env(cls) -> "GeminiSettings":
+        load_dotenv()
+        return cls(
+            api_key=_required("GEMINI_API_KEY"),
+            model=os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite"),
+        )

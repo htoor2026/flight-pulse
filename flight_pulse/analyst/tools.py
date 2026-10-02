@@ -213,8 +213,23 @@ READ_ONLY_SQL = (
 TOOL_DEFINITIONS: tuple[dict[str, Any], ...] = (
     {
         "name": "get_flight_overview",
-        "description": "Return current flight volume and delay metrics.",
-        "parameters": {"type": "object", "properties": {}, "additionalProperties": False},
+        "description": (
+            "Return current sample metrics plus status, disrupted-flight, airline, "
+            "and route breakdowns when include_breakdowns is true. Use false for "
+            "totals and true for cancelled-flight lists or airline/route rankings."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "include_breakdowns": {
+                    "type": "boolean",
+                    "description": (
+                        "Include status, disrupted-flight, airline, and route details."
+                    ),
+                }
+            },
+            "additionalProperties": False,
+        },
     },
     {
         "name": "find_flight",
@@ -346,7 +361,12 @@ class FlightAnalyst:
         finally:
             cursor.close()
 
-    def get_flight_overview(self) -> dict[str, Any]:
+    def get_flight_overview(
+        self,
+        include_breakdowns: bool = False,
+    ) -> dict[str, Any]:
+        if not isinstance(include_breakdowns, bool):
+            raise ValueError("include_breakdowns must be a boolean")
         overview = self._analysis.overview()
         selected = {
             key: overview.get(key)
@@ -357,6 +377,19 @@ class FlightAnalyst:
                 "delay_rate_percent",
             )
         }
+        if include_breakdowns:
+            selected.update(
+                {
+                    "status_counts": self._analysis.status_counts(),
+                    "disrupted_flights": self._analysis.disrupted_flights(),
+                    "delays_by_airline": self._analysis.delays_by_airline(
+                        minimum_flights=1,
+                    ),
+                    "delays_by_route": self._analysis.delays_by_route(
+                        minimum_flights=1,
+                    ),
+                }
+            )
         return _json_safe(selected)
 
     def find_flight(self, flight_number: str) -> dict[str, Any] | None:
