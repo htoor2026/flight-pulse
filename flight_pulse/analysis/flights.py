@@ -26,7 +26,9 @@ SELECT
         2
     ) AS delay_rate_percent,
     ROUND(AVG(departure_delay_minutes), 2) AS average_departure_delay_minutes,
-    ROUND(AVG(arrival_delay_minutes), 2) AS average_arrival_delay_minutes
+    ROUND(AVG(arrival_delay_minutes), 2) AS average_arrival_delay_minutes,
+    COUNT(departure_delay_minutes) AS departure_delay_samples,
+    COUNT(arrival_delay_minutes) AS arrival_delay_samples
 FROM flights
 """.strip()
 
@@ -51,7 +53,9 @@ SELECT
         2
     ) AS delay_rate_percent,
     ROUND(AVG(departure_delay_minutes), 2) AS average_departure_delay_minutes,
-    ROUND(AVG(arrival_delay_minutes), 2) AS average_arrival_delay_minutes
+    ROUND(AVG(arrival_delay_minutes), 2) AS average_arrival_delay_minutes,
+    COUNT(departure_delay_minutes) AS departure_delay_samples,
+    COUNT(arrival_delay_minutes) AS arrival_delay_samples
 FROM flights
 GROUP BY COALESCE(NULLIF(airline, ''), 'Unknown')
 HAVING COUNT(*) >= %s
@@ -70,7 +74,9 @@ SELECT
         2
     ) AS delay_rate_percent,
     ROUND(AVG(departure_delay_minutes), 2) AS average_departure_delay_minutes,
-    ROUND(AVG(arrival_delay_minutes), 2) AS average_arrival_delay_minutes
+    ROUND(AVG(arrival_delay_minutes), 2) AS average_arrival_delay_minutes,
+    COUNT(departure_delay_minutes) AS departure_delay_samples,
+    COUNT(arrival_delay_minutes) AS arrival_delay_samples
 FROM flights
 GROUP BY COALESCE(origin_iata, 'Unknown'), COALESCE(destination_iata, 'Unknown')
 HAVING COUNT(*) >= %s
@@ -142,6 +148,72 @@ FROM flights
 """.strip()
 
 
+DISRUPTED_FLIGHTS_SQL = f"""
+SELECT
+    flight_number,
+    airline,
+    origin_iata,
+    destination_iata,
+    scheduled_departure,
+    scheduled_arrival,
+    status,
+    departure_delay_minutes,
+    arrival_delay_minutes
+FROM flights
+WHERE status = 'cancelled' OR {DELAYED_PREDICATE}
+ORDER BY
+    CASE WHEN status = 'cancelled' THEN 0 ELSE 1 END,
+    COALESCE(scheduled_departure, scheduled_arrival),
+    flight_number
+LIMIT %s
+""".strip()
+
+
+WEATHER_CONTEXT_SQL = f"""
+WITH airport_flights AS (
+    SELECT
+        provider_flight_id,
+        CASE
+            WHEN origin_iata = %s THEN scheduled_departure
+            ELSE scheduled_arrival
+        END AS airport_event_time,
+        CASE WHEN {DELAYED_PREDICATE} THEN 1 ELSE 0 END AS is_delayed,
+        CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END AS is_cancelled
+    FROM flights
+    WHERE origin_iata = %s OR destination_iata = %s
+)
+SELECT
+    weather.observation_time,
+    weather.temperature_c,
+    weather.precipitation_mm,
+    weather.snowfall_cm,
+    weather.visibility_m,
+    weather.wind_speed_kmh,
+    weather.wind_gusts_kmh,
+    weather.weather_code,
+    COUNT(flight.provider_flight_id) AS total_flights,
+    COALESCE(SUM(flight.is_delayed), 0) AS delayed_flights,
+    COALESCE(SUM(flight.is_cancelled), 0) AS cancelled_flights
+FROM weather_observations AS weather
+LEFT JOIN airport_flights AS flight
+    ON weather.observation_time = DATE_FORMAT(
+        flight.airport_event_time,
+        '%Y-%m-%d %H:00:00'
+    )
+WHERE weather.airport_iata = %s
+GROUP BY
+    weather.observation_time,
+    weather.temperature_c,
+    weather.precipitation_mm,
+    weather.snowfall_cm,
+    weather.visibility_m,
+    weather.wind_speed_kmh,
+    weather.wind_gusts_kmh,
+    weather.weather_code
+ORDER BY weather.observation_time
+""".strip()
+
+
 class FlightAnalysis:
     """Execute read-only flight analytics using an existing MySQL connection."""
 
@@ -202,6 +274,24 @@ class FlightAnalysis:
     def data_quality(self) -> dict[str, Any]:
         return self._fetch_one(DATA_QUALITY_SQL)
 
+    def disrupted_flights(self, *, limit: int = 100) -> list[dict[str, Any]]:
+        if not 1 <= limit <= 500:
+            raise ValueError("limit must be between 1 and 500")
+        return self._fetch_all(DISRUPTED_FLIGHTS_SQL, (limit,))
+
+    def weather_context(
+        self,
+        *,
+        airport_iata: str = "YYZ",
+    ) -> list[dict[str, Any]]:
+        airport = airport_iata.strip().upper()
+        if len(airport) != 3 or not airport.isalpha():
+            raise ValueError("airport_iata must be a three-letter IATA code")
+        return self._fetch_all(
+            WEATHER_CONTEXT_SQL,
+            (airport, airport, airport, airport),
+        )
+
     def report(
         self,
         *,
@@ -220,4 +310,6 @@ class FlightAnalysis:
             "delays_by_hour": self.delays_by_hour(),
             "top_delayed_flights": self.top_delayed_flights(limit=top_limit),
             "data_quality": self.data_quality(),
+            "disrupted_flights": self.disrupted_flights(),
+            "weather_context": self.weather_context(),
         }
