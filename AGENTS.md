@@ -72,8 +72,10 @@ Within an approved task, you may:
 - commit approved work
 - push non-main branches
 - fix routine implementation problems
+- run `git fetch` and refresh remote-tracking references
 
 Continue until the task is complete or a real approval boundary is reached.
+
 
 ---
 
