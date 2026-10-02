@@ -1,0 +1,76 @@
+{
+  "departures": [
+    {
+      "number": "AC101",
+      "status": "Arrived",
+      "airline": {
+        "name": "Air Canada",
+        "iata": "AC"
+      },
+      "departure": {
+        "airport": {"iata": "YYZ"},
+        "scheduledTime": {"utc": "2026-10-02T14:00:00Z"},
+        "actualTime": {"utc": "2026-10-02T14:15:00Z"}
+      },
+      "arrival": {
+        "airport": {"iata": "YVR"},
+        "scheduledTime": {"utc": "2026-10-02T19:00:00Z"},
+        "actualTime": {"utc": "2026-10-02T19:10:00Z"}
+      }
+    },
+    {
+      "number": "WS202",
+      "status": "Delayed",
+      "airline": {
+        "name": "WestJet",
+        "iata": "WS"
+      },
+      "departure": {
+        "airport": {"iata": "YYZ"},
+        "scheduledTime": {"utc": "2026-10-02T15:00:00Z"},
+        "revisedTime": {"utc": "2026-10-02T15:30:00Z"}
+      },
+      "arrival": {
+        "airport": {"iata": "YYC"},
+        "scheduledTime": {"utc": "2026-10-02T19:15:00Z"},
+        "revisedTime": {"utc": "2026-10-02T19:50:00Z"}
+      }
+    },
+    {
+      "number": "AC303",
+      "status": "Departed",
+      "airline": {
+        "name": "Air Canada",
+        "iata": "AC"
+      },
+      "departure": {
+        "airport": {"iata": "YYZ"},
+        "scheduledTime": {"utc": "2026-10-02T16:00:00Z"},
+        "revisedTime": {"utc": "2026-10-02T16:08:00Z"}
+      },
+      "arrival": {
+        "airport": {"iata": "YUL"},
+        "scheduledTime": {"utc": "2026-10-02T17:15:00Z"},
+        "revisedTime": {"utc": "2026-10-02T17:23:00Z"}
+      }
+    }
+  ],
+  "arrivals": [
+    {
+      "number": "PD404",
+      "status": "Canceled",
+      "airline": {
+        "name": "Porter Airlines",
+        "iata": "PD"
+      },
+      "departure": {
+        "airport": {"iata": "YHZ"},
+        "scheduledTime": {"utc": "2026-10-02T18:00:00Z"}
+      },
+      "arrival": {
+        "airport": {"iata": "YYZ"},
+        "scheduledTime": {"utc": "2026-10-02T20:20:00Z"}
+      }
+    }
+  ]
+}

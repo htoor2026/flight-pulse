@@ -1,286 +1,453 @@
 # Flight Pulse — Project Status
 
-Last updated: 2026-10-01
+Last updated: 2026-10-02
 
 ---
 
 # Current State
 
-Project planning and Codex governance setup.
+The flight-data source investigation is complete, and AeroDataBox is approved
+as the primary provider for the MVP.
 
-No Flight Pulse application implementation has started yet.
+Milestone 1 — Flight Data → MySQL is complete. The documented Conda
+environment and the local client, normalization, delay calculation, repository,
+schema definition, and tests are complete. The local schema, synthetic database
+validation, and live YYZ end-to-end validation have completed successfully.
+The live request returned HTTP 200; 72 flights were returned, normalized, and
+upserted into MySQL.
+
+Milestone 2 — Flight Analysis is complete. A reusable read-only analysis layer
+now reports flight volume, status and delay metrics, airline/route/hour
+breakdowns, top delayed flights, and basic data-quality indicators from the
+existing 72-row MySQL dataset.
+
+Milestone 3 — Weather Integration is complete. The keyless Open-Meteo forecast
+endpoint returned 48 hourly YYZ weather records, which were normalized to UTC,
+stored in MySQL, and matched to all 72 existing flights by scheduled YYZ event
+hour.
+
+Milestone 4 — News / Disruption Context is implemented locally. The GDELT DOC
+2.0 client, metadata normalization, deterministic URL identity, MySQL
+persistence, schema, and mocked tests are complete. The single permitted live
+validation request returned HTTP 429, so no live article metadata was stored.
+
+No additional AeroDataBox or RapidAPI request is authorized.
 
 ---
 
 # Current Phase
 
-Phase 0 — Project Foundation
+Milestone 4 — News / Disruption Context
 
 Status:
 
-NOT STARTED
+IMPLEMENTED — LIVE VALIDATION BLOCKED
+
+The local implementation and mocked tests are complete. Live GDELT validation
+is unresolved because the one permitted request was rate-limited.
 
 ---
 
-# Completed Planning
+# Completed
 
-- [x] Flight Pulse project concept defined
-- [x] Core product scope discussed
-- [x] MySQL selected as primary database
-- [x] Flight data ingestion included
-- [x] Weather integration included
-- [x] News/disruption analysis included
-- [x] Dashboard included
-- [x] AI SQL chatbot included
-- [x] Flight-delay investigation included
-- [x] Evidence-grounded explanations included
-- [x] SPEC.md drafted
-- [x] PLAN.md drafted
-- [x] Strict human-approval workflow chosen
-- [x] AGENTS.md drafted
-- [x] Codex permissions strategy defined
+## Flight Data Source Investigation
+
+- [x] evaluated AeroDataBox, Aviationstack, FlightAware AeroAPI, Cirium, and OpenSky
+- [x] selected AeroDataBox as the primary MVP provider
+- [x] recorded the approved decision in `docs/DATA_SOURCES.md`
+- [x] limited the initial geographic scope to Toronto Pearson (YYZ)
+
+## Milestone 1 Environment
+
+- [x] confirmed Conda environment `flight-pulse`
+- [x] confirmed Python 3.11.17
+- [x] installed `mysql-connector-python==26.7.0`
+- [x] installed `python-dotenv==1.2.4`
+- [x] removed the unintended Python 3.9 `.venv`
+- [x] completed an authorized live YYZ request with HTTP 200
+- [x] normalized and upserted 72 live flight records
+- [x] validated a real MySQL insert, query, and cleanup with synthetic data
+
+## Milestone 1 Local Implementation
+
+- [x] added environment-backed RapidAPI and MySQL configuration
+- [x] built the AeroDataBox request constructor and injectable HTTP client
+- [x] isolated AeroDataBox JSON handling in the ingestion layer
+- [x] normalized flight records and UTC-aware timestamps
+- [x] calculated delays only when scheduled and actual timestamps exist
+- [x] added deterministic provider flight identifiers and duplicate handling
+- [x] defined the provisional one-table MySQL schema without executing it
+- [x] implemented parameterized, duplicate-safe MySQL persistence
+- [x] added synthetic AeroDataBox fixtures and mocked unit tests
+- [x] passed all 15 unit tests
+
+## Milestone 2 — Flight Analysis
+
+- [x] added reusable read-only analytics under `flight_pulse/analysis/`
+- [x] implemented overview and status counts
+- [x] implemented delay summaries by airline, route, and YYZ event hour
+- [x] implemented top-delayed-flight ranking
+- [x] implemented basic missing-data, duplicate, and extreme-delay checks
+- [x] validated the analytics against the existing 72 MySQL rows
+- [x] added focused mocked-database unit tests
+
+## Milestone 3 — Weather Integration
+
+- [x] selected Open-Meteo's free non-commercial, keyless API
+- [x] configured YYZ coordinates at 43.6777, -79.6248
+- [x] retrieved temperature, precipitation, snowfall, visibility, wind speed,
+  wind gusts, and weather code
+- [x] normalized all weather timestamps to UTC
+- [x] added duplicate-safe MySQL weather persistence
+- [x] stored 48 hourly YYZ weather records
+- [x] matched 72 of 72 flights to their scheduled YYZ event hour
+- [x] added focused mocked HTTP and database tests
+
+## Milestone 4 — News / Disruption Context
+
+- [x] selected the GDELT DOC 2.0 API
+- [x] added a reusable `urllib.request` article-list client
+- [x] normalized metadata without storing copyrighted article body text
+- [x] generated deterministic SHA-256 identities from canonical article URLs
+- [x] added in-response and duplicate-safe MySQL handling
+- [x] added the `news_articles` table and supporting indexes
+- [x] added a focused YYZ operational-disruption query
+- [x] passed five focused mocked HTTP, normalization, repository, and pipeline tests
+- [ ] complete live validation; the single permitted request returned HTTP 429
+
+## Project Planning
+
+- [x] Flight Pulse concept defined
+- [x] Product scope defined
+- [x] `SPEC.md` created
+- [x] `PLAN.md` created
+- [x] `ARCHITECTURE.md` created
+- [x] `DEVELOPMENT_LIFECYCLE.md` created
+- [x] `STATUS.md` created
 
 ---
 
-# Not Yet Implemented
+## Development Environment
 
-No production implementation has been started.
+- [x] Conda environment created
+- [x] Python 3.11 selected
+- [x] `.env.example` created
+- [x] `.gitignore` configured
+- [x] project repository initialized
 
-The following have NOT yet been created or configured unless explicitly
-done by the user:
+Conda environment:
 
-- Python environment
-- project source structure
-- Git workflow
-- GitHub repository lifecycle
-- MySQL database
-- database schema
-- flight-data source
-- flight scraper/API
-- ingestion pipeline
-- data-quality pipeline
-- weather API
-- news ingestion
-- analytics layer
-- dashboard
-- AI chatbot
-- delay investigation engine
-- tests
-- CI pipeline
-- GitHub Actions
-- hooks
-- skills
-- subagents
-- additional MCP servers
-- plugin
+`flight-pulse`
 
 ---
 
-# Current Governance Mode
+## Codex Governance
 
-STRICT MANUAL APPROVAL
+- [x] Root `AGENTS.md` created
+- [x] strict human-approval rules defined
+- [x] security rules defined
+- [x] privacy rules defined
+- [x] billing/spending protections defined
+- [x] deployment restrictions defined
+- [x] secrets policy defined
+- [x] external-service approval rules defined
+- [x] MCP approval rules defined
+- [x] hooks approval rules defined
+- [x] subagent approval rules defined
+- [x] destructive-operation restrictions defined
 
-Codex must:
+Codex must follow:
 
 Propose
 → Explain
 → Ask
 → Wait
-→ Execute
+→ Execute approved action
 → Report
 → Ask again
 
-No autonomous continuation is allowed.
+---
+
+# Git / GitHub Setup
+
+Repository:
+
+`htoor2026/flight-pulse`
+
+Primary branch:
+
+`main`
+
+Remote:
+
+`origin`
+
+GitHub repository is connected to the local VS Code project.
 
 ---
 
-# Approved Architecture Direction
+# GitHub Development Lifecycle
 
-High-level target architecture:
-
-Flight Data
-→ Ingestion
-→ Cleaning
-→ MySQL
-
-Weather API
-→ Weather Pipeline
-→ MySQL
-
-News
-→ News Pipeline
-→ MySQL
-
-MySQL
-→ SQL Analytics
-→ Dashboard
-
-Dashboard
-→ AI Chatbot
-→ SQL / Weather / News Investigation
-→ Evidence-Grounded Explanation
-
----
-
-# Database Decision
-
-Selected:
-
-MySQL
-
-Reason:
-
-Flight Pulse contains strongly relational analytical data and the AI analyst
-will need SQL query capabilities.
-
-MongoDB is not planned for the first version.
-
----
-
-# AI Safety / Analysis Decision
-
-Flight Pulse must not automatically claim causal explanations.
-
-Possible explanation labels:
-
-- Confirmed
-- Strongly Supported
-- Possible Contributor
-- Unknown
-
----
-
-# Development Lifecycle
-
-The detailed development lifecycle has NOT yet been implemented.
-
-Planned next design step:
-
-Define the Flight Pulse software development lifecycle including:
-
-- requirements/specification
-- planning/design
-- task creation
-- feature branches
-- implementation
-- local validation
-- testing
-- self-code review
-- commits
-- GitHub push
-- pull requests
-- GitHub Actions
-- security checks
-- review
-- merge
-- branch cleanup
-
-This lifecycle must be approved before implementation.
-
----
-
-# Git Status
-
-Not yet recorded.
-
-Codex must obtain permission before inspecting or changing Git state.
-
----
-
-# Validation Status
-
-No validation has been run.
-
-Tests:
-
-NOT RUN
-
-Lint:
-
-NOT RUN
-
-Type checking:
-
-NOT RUN
-
-Security scan:
-
-NOT RUN
-
-Data-quality checks:
-
-NOT RUN
-
----
-
-# Known Issues
-
-None yet.
-
----
-
-# Open Decisions
-
-These must be decided during future approved steps:
-
-1. exact flight-data source
-2. exact weather API
-3. exact news source
-4. dashboard framework
-5. backend framework
-6. MySQL schema
-7. flight delay threshold
-8. LLM/API strategy
-9. GitHub CI checks
-10. deployment strategy
-
----
-
-# Next Proposed Milestone
-
-Design the software development lifecycle before implementing Flight Pulse.
-
-The lifecycle should cover:
+The following lifecycle has now been established:
 
 SPEC
-→ PLAN / DESIGN
+→ DESIGN
 → TASK
-→ BRANCH
-→ BUILD
-→ VALIDATE
+→ FEATURE BRANCH
+→ IMPLEMENT
+→ LOCAL VALIDATION
 → SELF REVIEW
 → COMMIT
 → PUSH
-→ PR
+→ PULL REQUEST
 → CI
 → REVIEW
 → MERGE
 → CLEANUP
 
-No implementation should begin until this lifecycle is agreed upon.
+---
+
+# GitHub Lifecycle Components
+
+## Pull Request Template
+
+Created:
+
+`.github/pull_request_template.md`
+
+Purpose:
+
+Standardize:
+
+- change description
+- validation
+- database impact
+- security review
+- risks
+- documentation review
+- reviewer checklist
 
 ---
 
-# Manual Tasks
+## Feature Request Template
 
-The following remain human-controlled unless explicitly delegated:
+Created:
 
-- approval of every Codex action
-- important architecture decisions
-- GitHub merge decisions
-- production credentials
-- paid service decisions
-- final portfolio demo recording
-- final portfolio publishing
+`.github/ISSUE_TEMPLATE/feature_request.md`
+
+Purpose:
+
+Standardize future Flight Pulse implementation tasks.
+
+Each feature should define:
+
+- specification reference
+- PLAN phase
+- problem
+- proposed solution
+- acceptance criteria
+- testing requirements
+- architecture impact
+- risks
+- definition of done
 
 ---
 
-# Next Action
+## Continuous Integration
 
-WAITING FOR USER.
+Created:
 
-The next action should be:
+`.github/workflows/ci.yml`
 
-Design and approve the Flight Pulse development lifecycle.
+Current CI validates:
 
-Do not begin implementation automatically.
+- repository checkout
+- Python 3.11 environment
+- Python availability
+- Python syntax
+- test-directory presence
+
+Security hardening includes:
+
+- read-only repository permissions
+- non-persistent checkout credentials
+- workflow timeout
+- duplicate-run cancellation
+
+Current CI is intentionally minimal because application code has not yet been implemented.
+
+---
+
+# First Lifecycle Validation
+
+The Git/GitHub lifecycle has been exercised successfully.
+
+Completed workflow:
+
+1. created `feature/project-foundation`
+2. implemented project lifecycle configuration
+3. committed changes
+4. pushed feature branch
+5. created GitHub Pull Request
+6. GitHub Actions executed
+7. `CI / validate` passed
+8. main-branch protection/ruleset configured
+9. Pull Request merged
+10. returned to local `main`
+11. synchronized local `main`
+12. deleted local feature branch
+
+Result:
+
+PASS
+
+---
+
+# GitHub Main Protection
+
+The default branch is protected through a GitHub ruleset.
+
+Target:
+
+`Default branch`
+
+Current intended protections include:
+
+- Pull Request required before merge
+- required CI status check
+- force pushes blocked
+- branch deletion restricted
+
+No external reviewer approval is required because this is currently a solo project.
+
+---
+
+# Current Git State
+
+Branch:
+
+`feature/news-integration`
+
+The branch includes the completed flight, analysis, and weather foundation plus
+the local Milestone 4 news integration.
+
+---
+
+# Current Work
+
+Milestone 4 is locally implemented. The single permitted GDELT request returned
+HTTP 429; no article metadata was returned or stored. No AeroDataBox/RapidAPI
+request was made.
+
+---
+
+# Next Proposed Action
+
+Review the completed feature branch. Resolve the GDELT live-validation blocker
+before starting the dashboard milestone; any retry requires new explicit
+approval because the one-request allowance is used.
+
+---
+
+# Known Issues
+
+- no fallback flight-data provider has been selected
+- AeroDataBox actual versus estimated timestamp semantics require careful normalization
+- AeroDataBox FIDS responses omit the focal airport on some movements; the
+  ingestion layer restores it from the requested airport and movement direction
+- another live API request requires separate explicit approval
+- actual departure data exists for only 3 of 72 rows and actual arrival data
+  exists for only 2, so average-delay results are not representative
+- one 1,060-minute departure-delay value materially skews the current average
+- the dataset is a single short YYZ snapshot rather than a longitudinal sample
+- Open-Meteo forecast output is model data, not a direct YYZ weather-station or
+  METAR observation
+- matching uses the scheduled YYZ departure/arrival timestamp truncated to its
+  UTC hour; this is temporal association, not evidence that weather caused delay
+- the Open-Meteo free API is non-commercial, has no uptime guarantee, requires
+  CC BY 4.0 attribution, and is subject to published request limits
+- the single GDELT validation request returned HTTP 429, so live response shape,
+  article relevance, and end-to-end storage remain unverified
+- GDELT search matches are supporting context only and cannot establish why a
+  flight was delayed
+
+---
+
+# Validation Results
+
+- Conda environment: PASS
+- Python 3.11 requirement: PASS
+- approved dependency installation: PASS
+- unit tests: PASS (34 tests)
+- `git diff --check`: PASS
+- local MySQL connection: PASS
+- provisional schema execution: PASS
+- synthetic MySQL insert/query/delete: PASS
+- live YYZ request: PASS (HTTP 200)
+- live flights returned: 72
+- live flights normalized: 72
+- live flights upserted: 72
+- MySQL `flights` rows: 72
+- stored flights missing origin or destination: 0
+- analysis source: local MySQL `flight_pulse.flights`
+- analysis total flights: 72
+- analysis delayed flights: 8 (11.11%)
+- analysis cancelled flights: 1
+- analysis average departure delay: 366.33 minutes (3 populated rows)
+- analysis average arrival delay: -26.50 minutes (2 populated rows)
+- analysis duplicate provider identifiers: 0
+- Open-Meteo live request: PASS
+- Open-Meteo hourly records returned: 48
+- MySQL weather observations stored: 48
+- flight/weather matches: 72 of 72
+- weather timestamps stored and matched as UTC: PASS
+- additional AeroDataBox/RapidAPI requests made during Milestone 3: 0
+- GDELT targeted mocked tests: PASS (5 tests)
+- GDELT live request: BLOCKED (HTTP 429)
+- GDELT live articles returned: 0
+- GDELT live articles stored: 0
+- additional AeroDataBox/RapidAPI requests made during Milestone 4: 0
+- credentials committed: NO
+- further live AeroDataBox/RapidAPI requests authorized: NO
+
+---
+
+# Architecture Direction
+
+Current high-level architecture:
+
+```text
+Flight Data Source
+        |
+        v
+Flight Ingestion
+        |
+        v
+Cleaning + Validation
+        |
+        v
+      MySQL
+      /   \
+     /     \
+Weather   News
+Pipeline  Pipeline
+     \     /
+      \   /
+      MySQL
+        |
+        v
+SQL Analytics
+        |
+        v
+Dashboard
+        |
+        v
+AI Analyst
+        |
+        +--> SQL
+        +--> Flight lookup
+        +--> Weather
+        +--> News
+        |
+        v
+Evidence-Grounded Delay Explanation
