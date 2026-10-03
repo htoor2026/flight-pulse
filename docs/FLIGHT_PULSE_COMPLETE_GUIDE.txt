@@ -1,0 +1,1389 @@
+FLIGHT PULSE COMPLETE STUDY GUIDE
+=================================
+
+Purpose of this guide
+---------------------
+This is an implementation-first study guide for explaining Flight Pulse in an
+interview. It describes the current working-tree code, not an idealized future
+version. The README, SPEC, PLAN, ARCHITECTURE, STATUS, and lifecycle documents
+provide intent and history, but the Python and SQL implementation wins whenever
+documentation and code differ.
+
+Important implementation-versus-documentation notes:
+- The current working tree has three top-level Streamlit tabs and 59 passing
+  tests. README.md and docs/STATUS.md still say 58 because they predate the
+  latest presentation and answer-formatting work.
+- The SPEC and PLAN discuss possible model-generated SQL, additional tables,
+  filters, and pages. The implemented MVP deliberately uses seven fixed,
+  read-only tools and three MySQL tables instead.
+- The GitHub CI workflow checks Python syntax and detects the tests directory;
+  it does not install dependencies or run the 59-test suite.
+- The dashboard reads existing MySQL data. Starting or refreshing it does not
+  call AeroDataBox, Open-Meteo, or GDELT.
+
+
+1. PROJECT OVERVIEW
+===================
+
+What Flight Pulse does
+----------------------
+Flight Pulse is a local-first flight analytics application centered on Toronto
+Pearson International Airport (YYZ). It combines normalized operational flight
+records, hourly weather, disruption-news metadata, SQL analytics, a Streamlit
+dashboard, and a constrained Gemini chat interface.
+
+Its central question is: What does the available evidence tell us about a
+flight delay?
+
+Problem it solves
+-----------------
+Operational flight facts, weather conditions, and disruption reports normally
+live in separate systems. That fragmentation makes it difficult to review a
+flight, compare patterns, and distinguish known facts from possible context.
+Flight Pulse creates one repeatable evidence path from provider responses to a
+grounded user-facing explanation.
+
+Business purpose
+----------------
+- Summarize flight volume, status, and delay patterns for a selected window.
+- Compare airlines, routes, and scheduled YYZ hours within the stored sample.
+- Bring flight, weather, and news context into one review experience.
+- Help a non-technical user ask plain-language questions about stored data.
+- Communicate uncertainty instead of inventing a delay cause.
+
+Technical purpose
+-----------------
+- Demonstrate API ingestion with provider-specific adapters.
+- Normalize external JSON into provider-independent dataclasses.
+- Persist duplicate-safe, UTC-consistent records in MySQL.
+- Build reusable parameterized SQL analytics outside the UI.
+- Expose a small, validated, read-only tool surface to an LLM.
+- Demonstrate testing with fixtures and dependency injection instead of live
+  quota consumption.
+
+
+2. COMPLETE ARCHITECTURE
+========================
+
+Flight flow:
+
+  AeroDataBox via RapidAPI
+      -> AeroDataBoxClient request construction
+      -> provider-specific JSON parsing
+      -> NormalizedFlight objects and delay calculation
+      -> FlightRepository transactional upsert
+      -> MySQL flights table
+      -> FlightAnalysis SQL
+      -> Streamlit Flight Analytics tab
+
+Weather flow:
+
+  Open-Meteo forecast endpoint
+      -> keyless GMT request for YYZ coordinates
+      -> NormalizedWeatherObservation objects
+      -> WeatherRepository transactional upsert
+      -> MySQL weather_observations table
+      -> scheduled YYZ-hour matching
+      -> dashboard and analyst weather context
+
+News flow:
+
+  GDELT DOC 2.0
+      -> focused YYZ disruption query
+      -> metadata-only normalization
+      -> canonical URL and SHA-256 identity
+      -> NewsRepository transactional upsert
+      -> MySQL news_articles table
+      -> plus/minus 24-hour analyst lookup
+
+AI flow:
+
+  User question in Streamlit
+      -> GeminiAnalystChat
+      -> seven Gemini function declarations
+      -> Gemini proposes a structured tool call
+      -> local whitelist and argument validation
+      -> FlightAnalyst fixed SELECT queries / FlightAnalysis methods
+      -> MySQL result converted to JSON-safe values
+      -> function result returned to Gemini
+      -> grounded final response
+      -> Streamlit session history
+
+The trust boundary is important: Gemini has no database credentials, generic
+SQL function, Python execution function, ingestion function, or write tool.
+
+
+3. END-TO-END DATA FLOW
+=======================
+
+Flight ingestion to dashboard
+-----------------------------
+1. A caller creates AeroDataBoxSettings from environment variables and builds
+   an AeroDataBoxClient.
+2. ingest_yyz_window supplies a naive local start/end window for YYZ.
+3. build_airport_request validates the IATA code and time window, constructs a
+   RapidAPI FIDS URL, and attaches RapidAPI headers.
+4. fetch_airport_flights performs the explicitly invoked HTTP GET and parses
+   JSON. No application import or dashboard refresh invokes this automatically.
+5. normalize_payload examines departures, arrivals, or flights arrays. For
+   airport FIDS responses that omit YYZ on the focal movement, it restores YYZ
+   based on whether the item came from departures or arrivals.
+6. normalize_flight maps status, airports, airline, scheduled times, carefully
+   accepted actual times, deterministic identity, and fetched_at into a
+   NormalizedFlight.
+7. calculate_delay_minutes returns signed actual-minus-scheduled whole minutes
+   only if both timezone-aware timestamps exist. Otherwise it returns None.
+8. normalize_payload removes obvious duplicates by provider_flight_id.
+9. FlightRepository converts aware UTC timestamps to naive UTC DATETIME values
+   for MySQL and performs a parameterized batch upsert in a transaction.
+10. FlightAnalysis runs fixed SELECT queries over stored rows.
+11. app.py caches one report for 300 seconds and converts numeric result columns
+   into pandas-compatible values for charts and tables.
+12. Streamlit renders the report. It never fetches fresh provider data.
+
+Weather and news enrichment
+---------------------------
+1. WeatherRepository derives the stored YYZ scheduled time range from flights.
+2. ingest_yyz_weather requests Open-Meteo dates covering that range.
+3. Hourly arrays are length-validated, normalized to UTC, and upserted by
+   airport plus observation hour.
+4. Analytics associates a flight with the weather row at the scheduled YYZ
+   event hour truncated to HH:00:00.
+5. ingest_yyz_news asks GDELT for the last seven days of focused disruption
+   metadata, up to 75 records.
+6. News normalization strips URL fragments, creates SHA-256 IDs, removes
+   duplicates, and stores metadata without article body text.
+
+Natural-language question to answer
+-----------------------------------
+1. Streamlit receives the user message and copies prior session history.
+2. ask_flight_pulse opens a new MySQL connection and creates FlightAnalyst and
+   GeminiAnalystChat.
+3. The last ten valid user/assistant messages plus the new question are sent to
+   Gemini with seven function declarations and the system instruction.
+4. Gemini may request a function; Flight Pulse validates its name, required and
+   optional arguments, extra arguments, and types.
+5. The selected local analyst method executes fixed parameterized SELECT SQL.
+6. Datetimes become ISO UTC strings and Decimal values become floats.
+7. The function response is returned to Gemini. The loop is capped at four
+   model rounds.
+8. A normal analytical response receives one canonical current-sample warning.
+9. A delay investigation is formatted deterministically into Confirmed flight
+   facts, Weather context, News/disruption context, and Conclusion.
+10. The database connection closes in finally, and Streamlit saves the answer
+    in session state.
+
+
+4. FILE-BY-FILE EXPLANATION OF EVERY TRACKED FILE
+=================================================
+
+.codex/config.toml
+  Purpose: Local Codex execution policy. It requests workspace-write sandboxing,
+  on-request approval, and user review. Input/output: Codex configuration only.
+  Interacts with the development agent, not application runtime. It exists to
+  constrain automated development behavior.
+
+.env.example
+  Purpose: Safe template for environment variable names and non-secret defaults.
+  Inputs: user-supplied values copied into untracked .env. Outputs: settings read
+  by config.py. Contains AeroDataBox host/key names, MySQL settings, Gemini key,
+  and default model. It intentionally contains no real credentials.
+
+.github/ISSUE_TEMPLATE/feature_request.md
+  Purpose: Structured feature-request template. It asks for SPEC/PLAN references,
+  problem, solution, acceptance criteria, data/testing/architecture impact,
+  risks, and definition of done. Input: a future issue author. Output: consistent
+  GitHub issue content. It exists to keep scope and validation explicit.
+
+.github/pull_request_template.md
+  Purpose: Pull-request review checklist covering change rationale, phase,
+  validation, database impact, security, risks, documentation, and reviewer
+  checks. Input: a contributor opening a PR. Output: consistent PR description.
+
+.github/workflows/ci.yml
+  Purpose: Minimal CI on pushes and PRs to main. It checks out with non-persistent
+  credentials, installs Python 3.11, prints the version, runs compileall, and
+  reports whether tests/ exists. It uses read-only contents permission, a
+  10-minute timeout, and concurrency cancellation. It does not install project
+  dependencies, start MySQL, or run unit tests.
+
+.gitignore
+  Purpose: Prevent secrets and local/build artifacts from being tracked. It
+  ignores .env and .env.* except .env.example, virtual environments, caches,
+  editor files, logs, builds, coverage, and macOS files. Input: path patterns.
+  Output: Git ignore behavior.
+
+AGENTS.md
+  Purpose: Current project operating rules for Codex. It defines source-of-truth
+  order, autonomous routine work, approval boundaries, Python/MySQL/provider
+  decisions, quota protection, normalization rules, Git practices, tests, and
+  completion reporting. It affects development behavior, not app runtime.
+
+README.md
+  Purpose: Portfolio-facing project introduction, architecture, local setup,
+  dashboard/AI questions, results, screenshots, limitations, and future work.
+  It interacts with all documentation conceptually. Its 58-test references are
+  stale relative to the current 59-test working tree.
+
+app.py
+  Purpose: Entire Streamlit presentation layer. Important functions are _frame,
+  _metric, load_dashboard_data, ask_flight_pulse, render_flight_analytics,
+  render_business_overview, and render_technical_overview. Inputs: environment
+  settings, MySQL analytics, user chat. Outputs: three-tab UI and chat answers.
+  Interacts with config, repository, FlightAnalysis, FlightAnalyst, and Gemini.
+
+docs/ARCHITECTURE.md
+  Purpose: Implemented MVP component boundaries, diagrams, sequence, safety, and
+  failure behavior. Inputs: implementation decisions. Output: technical overview.
+  It predates the newest three-tab presentation but remains accurate about core
+  services and read-only tools.
+
+docs/DATA_SOURCES.md
+  Purpose: Records AeroDataBox as the approved primary MVP flight source, YYZ
+  scope, free/trial cost policy, retention caution, adapter boundary, and lack of
+  a selected fallback. It explains the source decision, not runtime logic.
+
+docs/DEVELOPMENT_LIFECYCLE.md
+  Purpose: Defines SPEC -> design -> task -> branch -> build -> validate -> review
+  -> commit -> push -> PR -> CI -> merge -> cleanup. It supplies interview context
+  for process discipline. Some listed CI checks are planned rather than active.
+
+docs/PLAN.md
+  Purpose: Original incremental roadmap from foundation through ingestion,
+  analytics, enrichment, dashboard, AI, and portfolio phases. Inputs: planned
+  scope. Output: sequencing guidance. It is aspirational: unchecked boxes and
+  generic SQL-agent ideas do not override current fixed-tool implementation.
+
+docs/SPEC.md
+  Purpose: Product requirements and possible future design. It defines the
+  problem, MySQL direction, suggested models, analytics, dashboard, chatbot,
+  grounding, testing, and MVP goals. It suggests more tables/features than the
+  implemented portfolio MVP. The guide explains actual code when they differ.
+
+docs/STATUS.md
+  Purpose: Historical milestone record, validated provider results, limitations,
+  development workflow, and validation facts. It is useful evidence for 72
+  flights, 48 weather rows, HTTP 429/503 outcomes, and sparse timestamps. Branch
+  and 58-test statements are stale relative to the current working tree.
+
+flight_pulse/analysis/__init__.py
+  Purpose: Public package surface for analytics. It imports and exports
+  FlightAnalysis through __all__. Input/output: Python import API. It exists so
+  callers use from flight_pulse.analysis import FlightAnalysis.
+
+flight_pulse/analysis/flights.py
+  Purpose: Fixed MySQL analytics. Constants contain readable SELECT queries;
+  FlightAnalysis provides cursor-safe execution and methods for overview,
+  statuses, airline/route/hour summaries, top delays, quality, disrupted flights,
+  weather context, and a combined report. Inputs: existing MySQL connection and
+  validated parameters. Outputs: dictionaries/lists for UI and tools.
+
+flight_pulse/analyst/__init__.py
+  Purpose: Public analyst package API. It exports FlightAnalyst,
+  INSUFFICIENT_EVIDENCE, and TOOL_DEFINITIONS. It keeps imports concise for app
+  and chat code.
+
+flight_pulse/analyst/tools.py
+  Purpose: Seven structured read-only analytical tools. Important constants are
+  fixed SQL statements, READ_ONLY_SQL, TOOL_DEFINITIONS, and the exact fallback
+  conclusion. Helpers serialize database values and validate flight/IATA input.
+  FlightAnalyst executes parameterized SELECTs, reuses FlightAnalysis, and
+  combines flight/weather/news evidence. Inputs: structured arguments and MySQL.
+  Outputs: JSON-safe evidence. No method accepts arbitrary SQL.
+
+flight_pulse/chat/__init__.py
+  Purpose: Public chat API exporting ChatReply, GeminiAnalystChat,
+  ToolValidationError, and dispatch_tool. It connects app.py to gemini.py without
+  exposing internal helpers.
+
+flight_pulse/chat/gemini.py
+  Purpose: Gemini integration and safety boundary. Important items:
+  SYSTEM_INSTRUCTION, SAMPLE_LIMITATION, NO_NEWS_CONTEXT, 360-minute extreme
+  threshold, four-round maximum, ChatReply, _ToolRoute, dispatch_tool,
+  _gemini_tool, history conversion, deterministic delay formatting, and
+  GeminiAnalystChat.answer. Inputs: question/history and approved tool results.
+  Outputs: answer text, tool log, API request count. It disables SDK automatic
+  execution and manually validates every call.
+
+flight_pulse/config.py
+  Purpose: Environment-backed settings. _required rejects missing/blank secrets.
+  AeroDataBoxSettings reads RapidAPI key/host; MySQLSettings validates the port
+  and reads connection values; GeminiSettings reads key/model. load_dotenv loads
+  local .env without embedding credentials in code.
+
+flight_pulse/ingestion/aerodatabox.py
+  Purpose: AeroDataBox/RapidAPI adapter. It builds YYZ airport requests, parses
+  statuses/timestamps/movements, chooses actual times conservatively, restores
+  focal airports, creates stable IDs, normalizes and deduplicates flights, and
+  supports injected HTTP I/O. Inputs: settings, airport/local window, provider
+  JSON. Outputs: NormalizedFlight list.
+
+flight_pulse/ingestion/gdelt.py
+  Purpose: GDELT DOC 2.0 adapter. It constructs article-list requests, validates
+  and canonicalizes URLs, parses publication time, creates SHA-256 identities,
+  normalizes metadata, removes duplicates, and injects HTTP I/O for tests.
+  Inputs: query/options or GDELT JSON. Outputs: NormalizedNewsArticle list.
+
+flight_pulse/ingestion/open_meteo.py
+  Purpose: Open-Meteo adapter for YYZ coordinates 43.6777, -79.6248. It requests
+  seven hourly variables in GMT, validates aligned arrays/numbers, normalizes UTC
+  timestamps, and supports injected I/O. Inputs: dates/coordinates or JSON.
+  Outputs: NormalizedWeatherObservation list.
+
+flight_pulse/models.py
+  Purpose: Provider-independent domain types and delay calculation.
+  calculate_delay_minutes validates timezone awareness and returns signed whole
+  minutes or None. NormalizedFlight, NormalizedWeatherObservation, and
+  NormalizedNewsArticle are frozen slotted dataclasses with identifier and
+  timezone validation. They are the boundary between ingestion and persistence.
+
+flight_pulse/pipeline.py
+  Purpose: Thin orchestration. ingest_yyz_window fetches and upserts flights;
+  ingest_yyz_weather derives the stored flight date range, fetches YYZ weather,
+  and upserts it; ingest_yyz_news uses the fixed disruption query/topic and
+  upserts article metadata. Inputs: injected clients/repositories. Output: count
+  persisted. It is a library module, not a scheduled job or CLI.
+
+flight_pulse/repository.py
+  Purpose: MySQL connection and persistence. Constants define parameterized
+  flight/weather/news upserts and weather matching queries. _mysql_datetime
+  converts aware values to naive UTC for DATETIME. FlightRepository,
+  WeatherRepository, and NewsRepository batch upsert with commit, rollback on
+  failure, and cursor closure. Inputs: normalized objects. Outputs: row counts or
+  read-only weather window/match summaries.
+
+hooks/hooks.json
+  Purpose: Empty tracked placeholder. It contains zero bytes and defines no hook.
+  Therefore no hook runs tests, network calls, installs software, or modifies the
+  repository automatically.
+
+requirements.txt
+  Purpose: Four pinned direct dependencies: mysql-connector-python 26.7.0,
+  python-dotenv 1.2.4, Streamlit 1.64.0, and google-genai 2.28.0. Inputs: pip.
+  Output: reproducible application environment. HTTP ingestion uses urllib from
+  the standard library; tests use unittest.
+
+skills/data-quality/SKILL.md
+  Purpose: Empty zero-byte placeholder for a possible future reusable data-quality
+  workflow. It currently defines no skill and is not executed.
+
+skills/delay-investigation/SKILL.md
+  Purpose: Empty zero-byte placeholder for a possible future delay-investigation
+  workflow. The implemented investigation lives in Python, not this file.
+
+skills/flight-data-analysis/SKILL.md
+  Purpose: Empty zero-byte placeholder for a possible future analysis workflow.
+  The implemented analytics live in flight_pulse/analysis.
+
+sql/schema.sql
+  Purpose: Idempotent MySQL DDL for flights, weather_observations, and
+  news_articles. Inputs: MySQL client. Output: InnoDB UTF-8 tables, primary keys,
+  and indexes. Comments define DATETIME values as UTC. It exists separately so
+  schema creation is explicit and never happens merely by importing Python.
+
+tests/fixtures/aerodatabox_airport.json
+  Purpose: Synthetic FIDS-like response with arrived, delayed, departed, and
+  cancelled flights. It supplies explicit/revised/missing timing cases to
+  normalization tests. No real API call is needed.
+
+tests/fixtures/gdelt_articles.json
+  Purpose: Synthetic GDELT article metadata with two distinct stories and a URL
+  fragment duplicate. It tests canonicalization, metadata parsing, and dedupe.
+
+tests/fixtures/open_meteo_hourly.json
+  Purpose: Synthetic two-hour GMT weather response containing every requested
+  variable. It tests aligned arrays, UTC handling, numbers, and weather codes.
+
+tests/test_aerodatabox.py
+  Purpose: Tests delay math, required normalization fields, statuses, UTC
+  conversion, conservative revised/runway semantics, cancellation, duplicates,
+  focal YYZ restoration, request construction, and injected HTTP. _MockResponse
+  and the fixture replace the network.
+
+tests/test_analysis.py
+  Purpose: Tests analytics method results, cursor closure, parameterization,
+  airport normalization, limits, invalid inputs, disrupted-flight SQL, and
+  weather-context parameters using mocked connection/cursor objects.
+
+tests/test_analyst.py
+  Purpose: Tests all analyst behaviors: overview reuse/breakdowns, JSON-safe
+  values, flight lookup, airline/route parameters, missing weather/news/flight,
+  unavailable news fallback, insufficient evidence, SQL read-only surface, and
+  exactly seven definitions. MySQL is mocked.
+
+tests/test_chat.py
+  Purpose: Tests whitelist dispatch, missing/extra/type rejection, declared tool
+  execution, function-result round trip, unknown-tool safety, validation mode,
+  deterministic four-section delay answer, extreme-value caution, empty news,
+  one disclaimer, history, empty questions, and settings. Gemini and analyst are
+  mocked; the synthetic key is not a credential.
+
+tests/test_news.py
+  Purpose: Tests exact GDELT query options, canonical URL dedupe, SHA-256-length
+  IDs, UTC dates, absence of article body text, injected HTTP, parameterized
+  upsert, UTC MySQL conversion, and pipeline orchestration.
+
+tests/test_repository.py
+  Purpose: Tests connection arguments, parameterized flight upsert, UTC DATETIME
+  conversion, commit/rollback/cursor behavior, empty batches, and flight pipeline
+  orchestration. MySQL and the provider client are mocked.
+
+tests/test_weather.py
+  Purpose: Tests keyless GMT request construction, all hourly variables, UTC
+  normalization, injected HTTP, stored flight window, weather upsert, 72/72 match
+  query shape, and weather pipeline orchestration. Network and MySQL are mocked.
+
+Note on package files: there is no tracked flight_pulse/__init__.py and no
+tracked flight_pulse/ingestion/__init__.py. Python uses implicit namespace
+packages, and modules are imported by their full paths.
+
+
+5. app.py IN DETAIL
+===================
+
+Page structure
+--------------
+set_page_config sets title Flight Pulse, wide layout, no icon, and collapsed
+sidebar. The main page creates three top-level tabs:
+1. Flight Analytics
+2. Business Overview
+3. Technical Overview
+
+Flight Analytics
+----------------
+render_flight_analytics calls load_dashboard_data. If MySQL cannot be read, it
+shows a controlled error and returns; presentation tabs can still render.
+
+The analytics sections are:
+- Overview: total, delayed, cancelled, delay rate, average departure/arrival
+  delay, with sample-count help text.
+- Flight Status: status distribution and delayed/cancelled table.
+- Airline Analysis: total/delayed counts, rate, and averages. The UI hides an
+  average when fewer than two values exist even though SQL returns the value.
+- Route Analysis: route counts/delays and top delayed stored flights.
+- Time Analysis: counts and delay rates by scheduled YYZ UTC hour.
+- Weather Context: conditions over time, delay-context association, and hourly
+  weather table.
+- Data Quality and Limitations: missing actual times, duplicate IDs, extreme
+  departure-delay count, and the non-causality warning.
+- Ask Flight Pulse: constrained Gemini chat over stored data.
+
+Business Overview
+-----------------
+render_business_overview explains the fragmented-data problem, Flight Pulse
+solution, questions answered, validated 72-flight/48-weather/72-of-72/59-test
+results, potential value, and limitations for non-technical stakeholders.
+
+Technical Overview
+------------------
+render_technical_overview summarizes sources, adapters, normalized persistence,
+analytics/enrichment, seven tools, Gemini dispatch, safety boundaries, testing,
+CI/Git, engineering decisions, and HTTP 429/503 limitations.
+
+MySQL loading and caching
+-------------------------
+load_dashboard_data is decorated with st.cache_data(ttl=300). On a cache miss it
+loads MySQLSettings, opens a connection, runs FlightAnalysis.report with
+minimum_flights=1 and top_limit=10, then always closes the connection. The cache
+stores the returned report for up to five minutes.
+
+Refresh Dashboard Data
+----------------------
+The actual button label is "Refresh MySQL data." Clicking it clears Streamlit's
+data cache and reruns the script, causing a fresh set of SELECT queries against
+the existing MySQL tables. It does not run pipeline.py, create an ingestion
+client, call AeroDataBox, consume RapidAPI quota, call Open-Meteo, or call GDELT.
+Starting the dashboard also does not download new flights.
+
+Session state and Ask Flight Pulse
+----------------------------------
+flight_pulse_chat_messages holds the session conversation. It starts with one
+assistant invitation. Existing messages are rendered on every rerun. On submit:
+1. prior messages are copied;
+2. the user message is appended and displayed;
+3. ask_flight_pulse opens a new MySQL connection;
+4. GeminiAnalystChat receives FlightAnalyst and GeminiSettings;
+5. chat.answer performs the validated function-calling flow;
+6. the connection closes in finally;
+7. the answer is displayed and appended to session history.
+An exception produces a generic local configuration/unavailable message without
+printing secrets.
+
+
+6. FLIGHT INGESTION: aerodatabox.py
+==================================
+
+Request construction
+--------------------
+AeroDataBoxClient.build_airport_request accepts a three-letter IATA code and
+naive local datetimes. It rejects timezone-aware window values because the FIDS
+path expects airport-local wall time, rejects reversed/equal windows, URL-quotes
+timestamps, and builds:
+
+  /flights/airports/iata/{AIRPORT}/{FROM}/{TO}
+
+Query options request both directions and legs, include cancelled flights, and
+exclude codeshares, cargo, and private flights. Headers include the RapidAPI key,
+host, and JSON Accept value. Secrets come only from AeroDataBoxSettings.
+
+Statuses
+--------
+_STATUS_MAP normalizes provider spelling/casing to scheduled, departed,
+en_route, delayed, arrived, cancelled, diverted, or unknown. The status key
+removes non-alphanumeric characters. Unknown provider values become unknown.
+
+Scheduled, actual, and revised times
+------------------------------------
+scheduledTime is always the schedule source. explicit actualTime is accepted.
+runwayTime or revisedTime is accepted as departure actual only after a status
+that confirms departure (departed, enroute, approaching, arrived, diverted).
+For arrival, fallback values are accepted only after arrived. A delayed or
+cancelled record does not turn a prediction/revision into an actual event.
+
+UTC behavior
+------------
+Provider timestamp objects use their utc field. ISO Z is converted to +00:00;
+offset-aware times are converted to UTC. Missing values stay None, and naive
+provider timestamps are rejected.
+
+Focal YYZ restoration
+---------------------
+Some FIDS records omit the airport on the focal side. normalize_payload knows
+whether an item came from departures or arrivals; when airport_iata was supplied,
+it inserts YYZ only into the missing focal movement before normalization.
+
+Deterministic IDs and duplicates
+--------------------------------
+If provider id or flightId exists, the ID is aerodatabox:{id}. Otherwise the ID
+combines provider name, flight number, origin, destination, and scheduled
+departure-or-arrival UTC timestamp. A record without provider ID and schedule is
+rejected. A dictionary keyed by this ID keeps the first duplicate in one payload.
+The MySQL primary key and upsert handle duplicates across runs.
+
+Delay calculation
+-----------------
+NormalizedFlight receives signed whole minutes from actual minus scheduled.
+Positive is late; negative is early. Missing actual or schedule yields None.
+Seconds are truncated toward zero by int(total_seconds / 60). The client does
+not invent delay from a delayed status or a revised prediction.
+
+
+7. DATA MODELS: models.py
+========================
+
+All three models are frozen, slotted dataclasses: immutable after creation,
+memory-conscious, explicit, and provider-independent.
+
+NormalizedFlight
+  Fields: provider_flight_id, flight_number, airline, origin/destination IATA,
+  four scheduled/actual timestamps, status, two delay values, fetched_at.
+  Required nonblank values: provider ID, flight number, status. Every present
+  timestamp must be timezone-aware. Input comes from AeroDataBox normalization;
+  output goes to FlightRepository.
+
+NormalizedWeatherObservation
+  Fields: airport, observation time, temperature, precipitation, snowfall,
+  visibility, wind speed/gusts, weather code, fetched_at. Airport must be three
+  letters; timestamps must be aware. Input comes from Open-Meteo normalization;
+  output goes to WeatherRepository.
+
+NormalizedNewsArticle
+  Fields: SHA-256 article ID, title, source domain, canonical URL, publication
+  time, language, query topic, fetched_at. ID/title/URL/topic are required;
+  timestamps must be aware. It intentionally has no article-body field.
+
+calculate_delay_minutes
+  Accepts scheduled and actual datetimes, returns signed whole minutes, validates
+  timezone awareness, converts both to UTC, and returns None if either is absent.
+
+
+8. MYSQL: repository.py AND schema.sql
+=====================================
+
+Connection and timestamps
+-------------------------
+connect_mysql passes only MySQLSettings values and autocommit=False to
+mysql.connector. _mysql_datetime rejects naive inputs, converts aware values to
+UTC, then removes tzinfo because MySQL DATETIME has no timezone storage. The
+schema contract says all stored DATETIME values are UTC.
+
+flights table
+-------------
+Primary key: provider_flight_id. It stores normalized identifiers, route,
+scheduled/actual times, status, delays, and fetched_at. Indexes support flight
+number, origin, destination, scheduled departure, and status queries.
+
+weather_observations table
+--------------------------
+Composite primary key: airport_iata + observation_time. It stores seven weather
+variables and fetched_at. observation_time also has an index.
+
+news_articles table
+-------------------
+Primary key: 64-character SHA-256 article_id. It stores title, domain, canonical
+URL, publication time, language, query topic, and fetched_at. Publication time
+and source domain are indexed. Full copyrighted article text is not stored.
+
+Parameterized SQL and upserts
+-----------------------------
+All values use %s placeholders. INSERT ... ON DUPLICATE KEY UPDATE makes
+ingestion repeatable. Repository methods materialize the iterable, return zero
+without opening a cursor for an empty batch, execute executemany, commit once,
+roll back on exception, re-raise, and close the cursor in finally.
+
+Weather repository reads
+------------------------
+flight_time_window finds min/max scheduled YYZ event times and attaches UTC to
+returned naive MySQL datetimes. flight_match_summary joins each flight's
+scheduled YYZ event truncated to the hour against stored weather.
+
+
+9. PIPELINE ORCHESTRATION: pipeline.py
+=====================================
+
+ingest_yyz_window(client, repository, from_local, to_local)
+  Calls client.fetch_airport_flights("YYZ", ...) and passes normalized results
+  to repository.upsert_many. Returns count. It does not create settings,
+  connections, schedules, or retries.
+
+ingest_yyz_weather(client, repository)
+  Reads the existing YYZ flight time window, converts endpoints to dates,
+  requests Open-Meteo with YYZ coordinates, upserts observations, returns count.
+
+ingest_yyz_news(client, repository)
+  Uses YYZ_DISRUPTION_QUERY, topic "YYZ operational disruption", seven-day
+  timespan, and max 75. It upserts normalized metadata and returns count.
+
+There is no automatic scheduler or command-line entry point. A caller must
+explicitly construct clients/connections and invoke a pipeline function.
+
+
+10. WEATHER
+===========
+
+Provider and request
+--------------------
+Open-Meteo uses https://api.open-meteo.com/v1/forecast without an API key.
+YYZ coordinates are 43.6777 latitude and -79.6248 longitude. Requested hourly
+variables are temperature_2m, precipitation, snowfall, visibility,
+wind_speed_10m, wind_gusts_10m, and weather_code. timezone=GMT makes source
+timestamps unambiguous UTC.
+
+Normalization and matching
+--------------------------
+The code rejects missing/non-list arrays, mismatched array lengths, nonnumeric
+values (including booleans), and a nonzero UTC offset. Each hour becomes a
+NormalizedWeatherObservation. MySQL stores one row per airport/hour. For YYZ
+departures, matching uses scheduled departure; for arrivals, scheduled arrival;
+the value is truncated to its UTC hour.
+
+Why context is not causation
+----------------------------
+Temporal alignment only proves that a modeled weather condition was stored near
+the scheduled event time. It does not prove the airline's operational decision,
+aircraft history, crew issue, ATC restriction, or official delay code. The data
+is forecast/model output, not direct METAR observation. Therefore Flight Pulse
+uses "context" or "possible contributor," never automatic causal language.
+
+
+11. NEWS
+========
+
+GDELT query
+-----------
+The query requires Toronto Pearson or YYZ plus one of: flight delays, flight
+cancellations, airport disruption, strike, air traffic control, severe weather
+disruption, runway closure, or security incident. Mode is ArtList, format JSON,
+timespan 7d, max 75, newest first.
+
+Normalization
+-------------
+Only metadata is stored. URLs must be HTTP(S). Canonicalization lowercases scheme
+and host, preserves nondefault ports/path/query, ensures a path, and removes the
+fragment. SHA-256(canonical URL) produces a 64-character deterministic ID.
+setdefault deduplicates canonical identities within a response, and the MySQL
+primary key/upsert deduplicates across runs. Publication dates support two GDELT
+formats plus ISO parsing and are normalized to UTC.
+
+Analyst use and HTTP 429
+------------------------
+get_news_context returns articles published within plus/minus 24 hours of the
+scheduled YYZ event, ordered by temporal proximity, default limit ten. The one
+approved live GDELT validation returned HTTP 429; therefore the live response
+and relevance were not end-to-end validated, and the current news table is
+empty. This means "no stored news context," not "no relevant real-world news."
+
+
+12. ANALYTICS
+=============
+
+Delayed-flight definition
+-------------------------
+DELAYED_PREDICATE is true when status='delayed' OR departure delay > 0 OR arrival
+delay > 0. There is no 15-minute threshold. A positive observed minute or the
+provider delayed status is enough. A cancelled flight is counted separately by
+status; it is not automatically delayed unless it also satisfies the predicate.
+
+OVERVIEW_SQL / overview
+  Counts total, delayed, cancelled; calculates delayed percentage; averages only
+  non-null departure/arrival delays; and reports the sample counts behind each
+  average.
+
+STATUS_COUNTS_SQL / status_counts
+  Groups by normalized status, ordering largest count then status.
+
+BY_AIRLINE_SQL / delays_by_airline
+  Groups blank/null airlines as Unknown; reports total/delayed/rate, averages,
+  and non-null sample counts; filters groups with parameterized minimum_flights.
+
+BY_ROUTE_SQL / delays_by_route
+  Groups origin/destination (Unknown for null), returns the same metrics, applies
+  parameterized minimum size, and orders by delayed count then rate.
+
+BY_HOUR_SQL / delays_by_hour
+  Selects scheduled departure if origin is YYZ, scheduled arrival if destination
+  is YYZ, otherwise a fallback schedule; groups by UTC hour and reports counts,
+  rate, and averages. Airport parameters are validated.
+
+TOP_DELAYED_SQL / top_delayed_flights
+  For flights with any observed delay, selects the non-null delay or greatest of
+  departure/arrival, orders descending, and applies a 1-100 parameterized limit.
+
+DATA_QUALITY_SQL / data_quality
+  Counts missing airline/route/schedule/actual/status values, duplicate provider
+  IDs, and absolute departure/arrival delays above 360 minutes.
+
+DISRUPTED_FLIGHTS_SQL / disrupted_flights
+  Returns cancelled or delayed-predicate records, cancellations first, with a
+  validated 1-500 limit.
+
+WEATHER_CONTEXT_SQL / weather_context
+  Creates YYZ flight event times and delayed/cancelled flags, left-joins them to
+  every stored weather hour, and returns conditions plus counts per hour.
+
+report
+  Calls every method and returns one dictionary used by Streamlit. _fetch_one and
+  _fetch_all always use dictionary cursors and close them in finally.
+
+
+13. AI ANALYST: SEVEN TOOLS
+===========================
+
+1. get_flight_overview(include_breakdowns=False)
+  Purpose: sample totals and optionally status/disrupted/airline/route detail.
+  Validation: include_breakdowns must be boolean. Data: reuses FlightAnalysis.
+  Output: JSON-safe metrics and optional lists. Example: "How many flights were
+  delayed?" or "Which airline had the most delayed flights?"
+
+2. find_flight(flight_number)
+  Purpose: latest stored record for a normalized number. Validation: removes
+  spaces, uppercases, allows only letters/numbers. Data: FIND_FLIGHT_SQL ordered
+  by latest scheduled event. Output: one record or None. Example: "Tell me about
+  AA 3606."
+
+3. get_airline_analysis(airline)
+  Purpose: counts/rate/averages for an exact case-insensitive airline name.
+  Validation: nonblank string. Data: AIRLINE_ANALYSIS_SQL. Averages are returned
+  only when at least two values exist. Output: metrics, including a zero-result
+  object when no rows match. Example: "How did Air Canada perform in this sample?"
+
+4. get_route_analysis(origin, destination, limit=25)
+  Purpose: route summary, status counts, and recent stored flights. Validation:
+  both IATA values exactly three letters; limit 1-100. Data: three parameterized
+  SELECTs. Output: summary/status_counts/flights. Example: "Show YYZ to ORD."
+
+5. get_weather_context(flight_number)
+  Purpose: stored YYZ weather at the scheduled event hour. Validation: normalized
+  flight number. Data: CTE plus weather left join at HH:00. Output: flight/event
+  and weather fields or None. Example: "What was the weather around AA 3606?"
+
+6. get_news_context(flight_number, limit=10)
+  Purpose: stored disruption metadata within plus/minus 24 hours. Validation:
+  normalized flight number and limit 1-50. Data: flight-event CTE joined to
+  news_articles. Output: closest metadata rows. Example: "Was there stored news
+  near AA 3606?"
+
+7. investigate_delay(flight_number)
+  Purpose: combine flight, weather, news, limitations, and conclusion. Validation:
+  normalized flight number. It stops context lookups for a missing flight; an
+  unavailable news lookup degrades to empty context rather than discarding valid
+  flight/weather evidence. Output always preserves the insufficient-evidence
+  conclusion in this MVP. Example: "Why was AA 3606 delayed?"
+
+Why no unrestricted SQL tool
+----------------------------
+Generic model SQL would enlarge the attack and correctness surface: destructive
+statements, expensive queries, schema leakage, prompt injection, invented joins,
+and inconsistent business definitions. Fixed functions make inputs validateable,
+queries reviewable, outputs predictable, and database access read-only. Tests
+also scan every analyst SQL constant for write/destructive verbs.
+
+
+14. GEMINI INTEGRATION
+======================
+
+System instruction
+------------------
+The model is told it is the analyst for the current local YYZ sample, must use
+declared tools for facts, has no SQL or outside-data access, must not invent
+missing values, and must treat weather/news as context. Delay answers require
+four headings, cautious language above 360 minutes, exact empty-news wording,
+and the exact insufficient-evidence sentence.
+
+Function declarations and whitelist
+-----------------------------------
+TOOL_DEFINITIONS JSON schemas become Google types.FunctionDeclaration objects.
+additionalProperties is false. _TOOL_ROUTES is a second explicit local whitelist
+mapping name to method and required/optional Python types.
+
+Argument validation and manual execution
+----------------------------------------
+dispatch_tool rejects unknown tools, non-object arguments, missing required
+arguments, extras, and wrong types. bool is specifically rejected where int is
+expected. Only after validation does getattr invoke the whitelisted method.
+Automatic SDK function calling is disabled.
+
+Bounded loop and function results
+---------------------------------
+GeminiAnalystChat.answer strips/validates the question, includes at most the last
+ten valid history messages, and sends model/config/contents. A model function call
+is logged, locally executed, wrapped in a FunctionResponse with its call ID/name,
+and sent back. Value/validation errors are safely reported; unexpected tool
+failures become a generic error. At most four model rounds run.
+
+Final answer safeguards
+-----------------------
+Normal final model text receives exactly one canonical sample disclaimer. For an
+investigate_delay result, Flight Pulse does not rely on free-form Gemini wording:
+it deterministically formats stored facts, weather, news, and conclusion. A delay
+whose absolute value exceeds 360 minutes is introduced as a stored-record value
+and flagged for cautious interpretation. Empty news says only that no stored
+context is available. The exact insufficient-evidence conclusion is retained.
+
+
+15. AA 3606 WALKTHROUGH
+=======================
+
+Question: "Why was AA 3606 delayed?"
+
+1. Streamlit captures the text and calls ask_flight_pulse with session history.
+2. A read-only MySQL connection and FlightAnalyst are created.
+3. Gemini receives the question and seven declarations. The intended tool is
+   investigate_delay with {"flight_number": "AA 3606"}.
+4. dispatch_tool verifies the name and string argument, then calls the method.
+5. _flight_number converts "AA 3606" to "AA3606".
+6. find_flight executes FIND_FLIGHT_SQL. The current stored row is:
+   - flight AA 3606, airline American, YYZ -> ORD, status departed;
+   - scheduled departure 2026-10-01 17:20 UTC;
+   - actual departure 2026-10-02 11:00 UTC;
+   - stored departure delay 1,060 minutes (17 hours 40 minutes);
+   - scheduled arrival 2026-10-01 19:20 UTC;
+   - no actual arrival and therefore no arrival-delay value.
+7. The 1,060 value is actual minus scheduled as stored. It exceeds the project's
+   360-minute quality threshold and is an extreme outlier, so the answer says
+   "The stored Flight Pulse record indicates..." rather than treating it as an
+   unquestionable operational truth.
+8. get_weather_context chooses the YYZ scheduled departure, 17:20 UTC, and joins
+   the 17:00 weather row. Current stored context is:
+   - 22.3 C; weather code 3;
+   - precipitation 0.0 mm and snowfall 0.0 cm;
+   - visibility 19,400 m;
+   - wind 21.4 km/h and gusts 46.8 km/h.
+9. get_news_context searches news_articles within plus/minus 24 hours. The query
+   is available but returns no rows because the live GDELT attempt was rate
+   limited and no live articles were stored. The answer says, "No stored news
+   context is currently available for this flight." It does not claim that no
+   relevant real-world news existed.
+10. The structured result is sent back to Gemini for the function-calling round
+    trip. Flight Pulse then deterministically formats four sections and one sample
+    disclaimer.
+11. The weather is contemporaneous context, not an official cause code. The
+    extreme timestamp may itself warrant data-quality investigation. No stored
+    news or explicit provider cause confirms why the flight was delayed.
+12. Therefore the required conclusion is:
+
+    Insufficient evidence to determine the delay cause.
+
+
+16. TESTING
+===========
+
+Framework and isolation
+-----------------------
+The project uses unittest and unittest.mock. HTTP clients accept an injected
+opener; tests pass BytesIO context managers containing fixtures. Repositories and
+analytics receive mocked connections/cursors. GeminiAnalystChat receives a
+mocked client and analyst. Therefore no automated test calls RapidAPI,
+Open-Meteo, GDELT, Gemini, or live MySQL.
+
+Fixture coverage
+----------------
+- aerodatabox_airport.json: four status/timing patterns.
+- open_meteo_hourly.json: two complete UTC weather hours.
+- gdelt_articles.json: two unique articles plus a fragment duplicate.
+
+Test-file coverage
+------------------
+- test_aerodatabox.py: 12 tests covering delay math, parsing, status/time safety,
+  UTC, duplicates, focal airport, request shape, and injected HTTP.
+- test_analysis.py: 7 tests covering aggregate/query execution, parameters,
+  validation, disruption, and weather context.
+- test_analyst.py: 13 tests covering all tool categories, serialization, missing
+  context, unavailable news, read-only SQL, and exact tool surface.
+- test_chat.py: 10 tests covering dispatch safety, model/tool round trip, history,
+  formatting safeguards, settings, and no-call empty input.
+- test_news.py: 5 tests covering request, normalization/deduplication, injected
+  HTTP, repository, and pipeline.
+- test_repository.py: 5 tests covering connection, transaction paths, UTC values,
+  empty batch, and flight pipeline.
+- test_weather.py: 7 tests covering request, normalization, injected HTTP,
+  repository reads/writes/matching, and pipeline.
+
+Current total: 59 passing tests. Counts above total 59. Tests use synthetic keys,
+synthetic data, fixtures, and mocks, so they do not consume live quota.
+
+
+17. CONFIGURATION
+=================
+
+.env
+  Local untracked secret file. config.py loads it with python-dotenv. It may hold
+  provider/database keys locally, but no real value belongs in Git, logs, docs,
+  screenshots, or interview examples. This guide did not read or reproduce it.
+
+.env.example
+  Safe names/defaults only. Required dashboard values are MySQL database/user/
+  password (host/port have defaults). Chat requires GEMINI_API_KEY. Flight
+  ingestion requires AERODATABOX_API_KEY. Open-Meteo and GDELT require no key.
+
+.gitignore
+  Protects .env and common local artifacts. The negation keeps .env.example.
+
+requirements.txt
+  Pins exactly four direct dependencies. No requests, pytest, SQLAlchemy,
+  LangChain, LlamaIndex, or agent framework is used.
+
+config.py
+  Centralizes environment loading and validation in frozen settings dataclasses.
+  It never prints values. Missing required values raise clear ValueError messages.
+
+AGENTS.md
+  Governs development safety and approval boundaries. Current rules permit
+  routine approved local work but require approval for external quota, costs,
+  dependencies, credentials, destructive changes, major architecture, merge,
+  and deployment.
+
+.codex/config.toml
+  Requests workspace-write sandboxing with on-request, user-reviewed approvals.
+  It is a development-agent setting, not production configuration.
+
+
+18. GITHUB / DEVELOPMENT WORKFLOW
+=================================
+
+Feature workflow
+----------------
+The documented flow is SPEC -> design -> scoped task -> feature branch -> build
+-> local validation -> self-review -> commit -> push -> pull request -> CI ->
+review -> approved merge -> cleanup. Branch names use feature/, fix/, docs/,
+refactor/, or test/.
+
+Pull requests and issues
+------------------------
+Templates require rationale, scope/phase, tests, database/security impact,
+limitations, and documentation. This makes interview discussion concrete: the
+project treats data, security, and validation as review concerns.
+
+CI
+--
+The current workflow runs on main pushes and PRs targeting main. Permissions are
+contents: read; checkout credentials are not persisted; duplicate runs cancel.
+It installs Python 3.11 and runs compileall. The "Test placeholder" only detects
+the tests folder. Do not claim CI runs the 59 tests. Local validation does.
+
+Branch protection
+-----------------
+docs/STATUS.md reports a GitHub ruleset requiring PRs and CI, blocking force
+pushes, and restricting deletion. That is documented project state rather than
+behavior encoded in this repository.
+
+Role of project documents
+-------------------------
+- SPEC: what the broader product should become.
+- PLAN: phased roadmap and aspirational tasks.
+- ARCHITECTURE: implemented component/trust boundaries.
+- STATUS: milestone history, results, and blockers; some current-state lines can
+  become stale.
+- DEVELOPMENT_LIFECYCLE: contribution and review process.
+- DATA_SOURCES: approved AeroDataBox decision and provider constraints.
+
+
+19. CURRENT VALIDATED RESULTS
+=============================
+
+From the current local database, implementation, and latest test run:
+- 72 real YYZ flight rows.
+- 8 delayed flights by the project predicate; delay rate 11.11%.
+- 1 cancelled flight.
+- 3 non-null departure-delay samples; average 366.33 minutes.
+- 2 non-null arrival-delay samples; average -26.50 minutes.
+- 69 flights missing actual departure and 70 missing actual arrival.
+- 0 duplicate provider IDs and 0 missing airline/origin/destination/status.
+- 1 extreme departure delay above 360 minutes; 0 extreme arrival delays.
+- 48 hourly YYZ weather observations stored.
+- 72 of 72 flights matched to a scheduled YYZ weather hour.
+- Flight, weather, analytics, dashboard, seven tools, and Gemini chat code exist.
+- 59 tests pass in the current working tree.
+- Offline Streamlit AppTest renders all three top-level tabs, chat input, and no
+  exceptions.
+- AeroDataBox live validation previously returned HTTP 200 and 72 flights.
+- Open-Meteo live validation previously returned and stored 48 observations.
+- GDELT live validation returned HTTP 429; 0 live articles were stored.
+- Gemini live validation returned HTTP 503 before tool selection; no retry.
+
+
+20. LIMITATIONS
+===============
+
+- One short 72-flight YYZ window cannot represent long-term airport, airline, or
+  route performance.
+- Only 3 departure and 2 arrival delays have actual timestamps, so averages are
+  highly unstable.
+- AA 3606's 1,060-minute stored value materially skews the departure average and
+  may reflect an operational edge case or source timestamp issue.
+- Delayed means any positive delay or provider status delayed; it is not the
+  common 15-minute operational threshold.
+- Open-Meteo data is forecast/model output, not direct METAR observation.
+- Hour-level scheduled matching is coarse and proves timing association only.
+- GDELT HTTP 429 prevented live end-to-end article validation; news is empty.
+- Gemini HTTP 503 prevented live proof of tool selection/final response.
+- Gemini free-tier data handling must be considered before sensitive use.
+- No fallback flight provider is selected.
+- Provider retention/licensing limits constrain long-term data collection.
+- There is no scheduler, CLI, sanitized seed dataset, migration framework, or
+  automatic retry/backoff.
+- Dashboard cache is in-process and fixed at five minutes.
+- CI does not run dependencies, MySQL integration, or the 59 unit tests.
+- Analyst database safety relies on fixed SQL and deployment should also use a
+  SELECT-only database account.
+- The product does not implement prediction, causal inference, or official delay
+  reason codes.
+
+
+21. WHAT A PRODUCTION VERSION WOULD NEED
+========================================
+
+Do not confuse these recommendations with implemented features.
+
+- Contracted provider plan with explicit storage, retention, redistribution,
+  quota, SLA, and Canadian coverage rights.
+- Scheduled ingestion workers, bounded retries/backoff, idempotency telemetry,
+  dead-letter handling, and provider health monitoring.
+- Database migrations, least-privilege ingestion/read-only users, backups,
+  encryption, secret manager, connection pooling, and retention policies.
+- Longer historical collection, official delay reason codes, better actual-time
+  completeness, and outlier quarantine/reconciliation.
+- Observed airport weather such as METAR, timezone/DST regression coverage, and
+  more precise event-window joins.
+- Production news source/relevance evaluation, article licensing review, and
+  robust rate-limit handling.
+- Authentication/authorization, privacy review, audit logs, prompt-injection
+  evaluation, model/data governance, and clear user disclaimers.
+- Full CI installing locked dependencies, running tests/lint/type/security/secret
+  checks, and isolated integration tests with ephemeral MySQL.
+- Observability for latency, errors, quotas, cost, freshness, and data quality.
+- Accessible UI, browser visual testing, responsive design, and deployment
+  architecture with explicit cost/network review.
+
+
+22. INTERVIEW PREPARATION: LIKELY QUESTIONS AND STRONG ANSWERS
+=============================================================
+
+1. What is Flight Pulse?
+   A YYZ-focused data application that normalizes flight, weather, and news
+   metadata into MySQL, analyzes delays, and answers questions through seven
+   constrained read-only tools and Gemini function calling.
+
+2. What problem does it solve?
+   It unifies fragmented operational/contextual signals and makes uncertainty
+   explicit when investigating delays.
+
+3. Why MySQL?
+   The records are structured and relational, the joins are time/airport based,
+   analytics are naturally SQL, and SQL demonstrates portfolio-relevant skills.
+
+4. Why AeroDataBox?
+   It supplied the required operational fields and a usable development path for
+   the MVP. Provider parsing is isolated so the domain/repository are independent.
+
+5. How do you prevent duplicates?
+   Stable provider-or-composite flight IDs, in-payload dictionary dedupe, MySQL
+   primary keys, and ON DUPLICATE KEY UPDATE.
+
+6. How is delay calculated?
+   Signed whole minutes of actual UTC minus scheduled UTC, only when both aware
+   timestamps exist. Missing actuals remain null.
+
+7. Why not use revisedTime for every delayed flight?
+   Revised can be an estimate. The code accepts it only after status confirms the
+   event, avoiding fabricated actual timestamps.
+
+8. How do you handle timezones?
+   Normalize aware timestamps to UTC internally, then store naive UTC in MySQL
+   DATETIME under an explicit schema contract.
+
+9. How is a delayed flight defined?
+   Provider status delayed, or a positive departure delay, or a positive arrival
+   delay. It does not currently use a 15-minute threshold.
+
+10. How does weather matching work?
+    It selects scheduled departure for YYZ origins or scheduled arrival for YYZ
+    destinations and joins the UTC hour to the observation hour.
+
+11. Why can you not say weather caused a delay?
+    Co-occurrence lacks an official cause code and does not exclude crew,
+    aircraft, ATC, or network effects. It is context, not causal evidence.
+
+12. What do you store from GDELT?
+    Metadata only: deterministic ID, title, domain, canonical URL, publication
+    time, language, topic, and fetch time; never full article text.
+
+13. How is news deduplicated?
+    Canonicalize the URL, remove its fragment, hash it with SHA-256, dedupe in
+    memory, then rely on the primary-key upsert.
+
+14. What happened with GDELT live validation?
+    The approved request returned HTTP 429, so live article ingestion remains
+    unverified and the table is empty. Mocked behavior is tested.
+
+15. What does the dashboard refresh do?
+    It clears Streamlit's cached MySQL report and reruns SELECT analytics. It does
+    not call any ingestion provider.
+
+16. Why cache for 300 seconds?
+    It reduces repeat MySQL work during Streamlit reruns while keeping a manual
+    local refresh path. It is a simple MVP tradeoff.
+
+17. How is business logic kept out of Streamlit?
+    SQL metrics live in FlightAnalysis; tools and dashboard both reuse them.
+    Streamlit mainly transforms values for display.
+
+18. What are the seven analyst tools?
+    Overview, flight lookup, airline analysis, route analysis, weather context,
+    news context, and combined delay investigation.
+
+19. Why no unrestricted SQL tool?
+    Fixed reviewed queries prevent destructive/arbitrary SQL, preserve consistent
+    definitions, reduce prompt-injection risk, and make validation/testing easier.
+
+20. How does function calling work?
+    Gemini proposes a declared call; local code validates whitelist/arguments,
+    executes the analyst method, returns the result, and requests a grounded final
+    response. SDK automatic execution is disabled.
+
+21. What stops Gemini from calling DROP TABLE?
+    There is no SQL function. query_sql is not whitelisted, extra arguments are
+    rejected, and tests scan analyst SQL constants for destructive verbs.
+
+22. How do you control hallucination?
+    Require tools for facts, send only structured local results, forbid invention,
+    append sample limitations, and deterministically format delay investigations.
+
+23. Why is the tool loop bounded?
+    Four rounds prevent runaway calls/cost and produce a safe fallback if the
+    model never completes.
+
+24. What happens if news is unavailable?
+    Delay investigation preserves flight/weather evidence, marks news unavailable,
+    and says no stored news context is currently available--not that no news exists.
+
+25. Explain AA 3606.
+    The row shows a 1,060-minute departure value from its two stored timestamps,
+    matched weather with 46.8 km/h gusts, and no stored news. The value is an
+    outlier and weather is only context, so the cause is insufficiently evidenced.
+
+26. What is the biggest data-quality issue?
+    Sparse actual timestamps: 69 of 72 lack actual departure and 70 lack actual
+    arrival. The three-value departure average is dominated by one outlier.
+
+27. How do repositories handle failure?
+    Explicit transaction: executemany, commit on success, rollback and re-raise on
+    failure, cursor closure in finally.
+
+28. How do tests avoid quota?
+    Injected URL openers return fixture BytesIO responses; DB and Gemini objects
+    are mocks. No test uses live credentials or services.
+
+29. What does CI currently validate?
+    Python 3.11 setup, syntax via compileall, and presence of tests. The full
+    59-test suite is currently a local validation, not a CI claim.
+
+30. What would you improve first?
+    Collect a licensed longitudinal dataset with better actual-time completeness,
+    investigate/quarantine outliers, and put the full suite in reproducible CI.
+
+31. Why dataclasses rather than provider dictionaries throughout?
+    They create an explicit validated boundary, reduce provider coupling, and
+    make persistence/testing predictable.
+
+32. Why urllib.request instead of requests?
+    It met the small synchronous-client need without adding another dependency,
+    while still allowing injected I/O for tests.
+
+33. What is the difference between STATUS and code?
+    STATUS records milestone history and external results; code is current runtime
+    truth. For example, STATUS says 58 tests while current code validates 59.
+
+34. Did Gemini live validation succeed?
+    No. One approved request returned HTTP 503 before tool selection. Mocked
+    routing passed, but live end-to-end success must not be claimed.
+
+35. Is this a prediction system?
+    No. It is descriptive analytics and evidence-grounded investigation. It does
+    not predict delays or infer causal effects.
+
+
+23. PROJECT PITCHES
+===================
+
+30-second non-technical pitch
+-----------------------------
+Flight Pulse brings flight operations, weather, and disruption context into one
+clear YYZ dashboard. It shows where delays appear and lets a user ask questions
+in plain language. The key design principle is honesty: it separates confirmed
+flight facts from possible context and says when there is not enough evidence to
+explain a delay.
+
+60-second technical pitch
+-------------------------
+Flight Pulse is a Python/MySQL analytics pipeline for YYZ. Provider-specific
+adapters use urllib to normalize AeroDataBox flights, Open-Meteo hourly weather,
+and GDELT metadata into frozen dataclasses and duplicate-safe MySQL upserts.
+Fixed parameterized SQL powers Streamlit analytics for status, airline, route,
+time, weather, and quality. Gemini gets exactly seven structured read-only tools;
+local code validates every call and never exposes generic SQL. Delay answers
+deterministically separate facts, weather, news, and conclusion. The current
+sample has 72 flights, 48 weather rows, 72/72 matching, and 59 passing mocked
+tests, with GDELT 429 and Gemini 503 limitations stated explicitly.
+
+2-minute technical pitch
+------------------------
+I built Flight Pulse to demonstrate an end-to-end data product and responsible
+LLM integration around a concrete question: what evidence is available about a
+flight delay? The flight adapter builds a RapidAPI AeroDataBox FIDS request for
+YYZ, normalizes statuses and offset timestamps, avoids treating unconfirmed
+revised times as actuals, calculates signed delays only from observed timestamps,
+restores omitted focal-airport fields, and assigns deterministic identities.
+
+Open-Meteo provides seven hourly variables for fixed YYZ coordinates in GMT, and
+GDELT supplies metadata-only disruption results using canonical URL SHA-256
+identities. Three repository classes persist normalized dataclasses to three
+MySQL tables using parameterized transactional upserts and a UTC DATETIME
+contract. A reusable FlightAnalysis layer holds the business definitions and
+readable SQL, so Streamlit and AI tools do not duplicate analytics logic.
+
+For AI, I rejected unrestricted model-generated SQL. FlightAnalyst exposes seven
+fixed functions. Gemini sees their schemas, but SDK auto-execution is disabled;
+my dispatcher validates names, required/optional arguments, extras, and types,
+then executes only reviewed SELECT logic. The loop is bounded. Delay responses
+are formatted into confirmed facts, weather, news, and conclusion, with the exact
+insufficient-evidence fallback and cautious outlier wording.
+
+The validated local sample contains 72 real flights and 48 weather observations,
+with every flight matched by scheduled YYZ hour. The 59-test suite uses fixtures
+and injected mocks, so it consumes no quota. I also clearly document that actual
+timestamps are sparse, one 1,060-minute value dominates averages, weather is not
+causal proof, GDELT returned 429, and Gemini live validation returned 503.
+
+
+24. WHAT NOT TO CLAIM IN AN INTERVIEW
+=====================================
+
+Do not claim:
+- "Weather caused AA 3606's delay." Say weather was stored near the scheduled
+  event and may be context; cause is unconfirmed.
+- "AA 3606 was definitely 1,060 minutes late." Say the stored record indicates
+  that extreme derived value and it needs cautious data-quality interpretation.
+- "There was no relevant news." Say no stored news context is currently available.
+- "Gemini live function calling passed." The live request returned HTTP 503
+  before tool selection; mocked routing passed.
+- "GDELT ingestion works live." The live validation received HTTP 429.
+- "The system has historical/representative airline performance." It has one
+  72-flight YYZ window.
+- "Average delay is reliable." Only three departure and two arrival values exist.
+- "All delayed flights are at least 15 minutes late." The current predicate uses
+  any positive delay or provider status delayed.
+- "The dashboard refreshes flight providers." It refreshes SELECT results only.
+- "Gemini writes SQL." It selects from seven functions; SQL is fixed in Python.
+- "The model has database access." Local code owns credentials and execution.
+- "The AI database account is proven read-only." Queries are read-only by code;
+  production should additionally enforce a SELECT-only database user.
+- "CI runs all 59 tests." CI currently runs compileall and a test-folder check.
+- "The project uses SQLAlchemy, requests, pytest, LangChain, or an agent
+  framework." It does not.
+- "News article text is stored." Only metadata is stored.
+- "Open-Meteo values are direct airport observations." They are forecast/model
+  data from the forecast endpoint.
+- "The app is production deployed and monitored." Production infrastructure is
+  explicitly outside the current implementation.
+- "The SPEC is fully implemented." It is broader and aspirational; explain the
+  intentionally smaller fixed-tool MVP.
+
+
+25. FINAL TRACKED REPOSITORY TREE
+=================================
+
+.codex/config.toml                         - Codex sandbox/approval configuration.
+.env.example                               - Secret-free environment template.
+.github/ISSUE_TEMPLATE/feature_request.md  - Structured feature issue template.
+.github/pull_request_template.md           - PR validation/security checklist.
+.github/workflows/ci.yml                   - Python 3.11 syntax-focused CI.
+.gitignore                                 - Secrets, environments, caches, artifacts.
+AGENTS.md                                  - Current development operating rules.
+README.md                                  - Portfolio overview and setup guide.
+app.py                                     - Three-tab Streamlit dashboard and chat.
+docs/ARCHITECTURE.md                       - Implemented architecture and boundaries.
+docs/DATA_SOURCES.md                       - AeroDataBox provider decision.
+docs/DEVELOPMENT_LIFECYCLE.md              - Branch/PR/CI/review lifecycle.
+docs/FLIGHT_PULSE_COMPLETE_GUIDE.txt       - Complete implementation/interview study guide.
+docs/PLAN.md                               - Aspirational phased implementation plan.
+docs/SPEC.md                               - Product requirements and future scope.
+docs/STATUS.md                             - Milestone history, results, limitations.
+flight_pulse/analysis/__init__.py          - Public FlightAnalysis export.
+flight_pulse/analysis/flights.py           - Fixed read-only analytics SQL/methods.
+flight_pulse/analyst/__init__.py           - Public analyst exports.
+flight_pulse/analyst/tools.py              - Seven read-only tools and evidence logic.
+flight_pulse/chat/__init__.py              - Public Gemini chat exports.
+flight_pulse/chat/gemini.py                - Validated Gemini function-calling loop.
+flight_pulse/config.py                     - Environment-backed settings.
+flight_pulse/ingestion/aerodatabox.py      - Flight request and normalization adapter.
+flight_pulse/ingestion/gdelt.py            - News metadata request/normalization.
+flight_pulse/ingestion/open_meteo.py       - YYZ hourly weather adapter.
+flight_pulse/models.py                     - Normalized dataclasses and delay math.
+flight_pulse/pipeline.py                   - Thin YYZ ingestion orchestration.
+flight_pulse/repository.py                 - MySQL connection, queries, upserts.
+hooks/hooks.json                           - Empty hook placeholder; no active hooks.
+requirements.txt                           - Four pinned direct dependencies.
+skills/data-quality/SKILL.md               - Empty future skill placeholder.
+skills/delay-investigation/SKILL.md        - Empty future skill placeholder.
+skills/flight-data-analysis/SKILL.md       - Empty future skill placeholder.
+sql/schema.sql                             - Three-table MySQL DDL and indexes.
+tests/fixtures/aerodatabox_airport.json    - Synthetic flight response fixture.
+tests/fixtures/gdelt_articles.json         - Synthetic news metadata fixture.
+tests/fixtures/open_meteo_hourly.json      - Synthetic hourly weather fixture.
+tests/test_aerodatabox.py                  - Flight client/normalization/delay tests.
+tests/test_analysis.py                     - Analytics SQL behavior tests.
+tests/test_analyst.py                      - Seven-tool and read-only safety tests.
+tests/test_chat.py                         - Mocked Gemini routing/formatting tests.
+tests/test_news.py                         - GDELT normalization/repository tests.
+tests/test_repository.py                   - MySQL flight persistence/pipeline tests.
+tests/test_weather.py                      - Weather client/repository/pipeline tests.
+
+The guide file itself, docs/FLIGHT_PULSE_COMPLETE_GUIDE.txt, is newly created by
+the current task and was not part of the original 44-file tracked inventory. Its
+purpose is to consolidate implementation, workflow, limitations, interview
+questions, pitches, and the complete tracked-file reference in one study aid.
+
+
+END OF GUIDE
+============
