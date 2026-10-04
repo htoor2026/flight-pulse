@@ -1,0 +1,13 @@
+{
+  "task": "MA-001",
+  "gate": "independent-review",
+  "kind": "review",
+  "attempt": "883beccb-17eb-4eba-b2b3-03c5e1484401",
+  "human": "Harkamal Toor",
+  "reason": "Reviewed the native multi-agent role configuration, permission boundaries, Genesis evidence, test results, security controls, and shipping restrictions.",
+  "observed_at": "2026-10-04T07:36:21.151Z",
+  "source_hash": "7c7cddf05fd1bf3aa9c889c7ac968740db2777fde144d70d199173f8db479c9d",
+  "config_hash": "b6fa9e0f2b3ee4b9759c18c0dbdf0d485a7690aa8e77b67a700f3c531d9271db",
+  "reviewed_proofs": "fce0c1fda22488bdd33c44f39ecf14afe18e5a29c24dea8c99fe5c1204705b09",
+  "hash": "dedc0384da6054e866d53c1411da4c8d47eea92bd4d88c4be7a5f2e3beba9ae7"
+}

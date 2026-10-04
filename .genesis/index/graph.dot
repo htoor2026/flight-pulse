@@ -15,6 +15,7 @@ digraph genesis {
   "file:flight_pulse/models.py" [label="flight_pulse/models.py",class="file"];
   "file:flight_pulse/pipeline.py" [label="flight_pulse/pipeline.py",class="file"];
   "file:flight_pulse/repository.py" [label="flight_pulse/repository.py",class="file"];
+  "file:hooks/notify.py" [label="hooks/notify.py",class="file"];
   "file:tests/test_aerodatabox.py" [label="tests/test_aerodatabox.py",class="file"];
   "file:tests/test_analysis.py" [label="tests/test_analysis.py",class="file"];
   "file:tests/test_analyst.py" [label="tests/test_analyst.py",class="file"];
@@ -40,6 +41,8 @@ digraph genesis {
   "runtime:python:os" [label="os",class="runtime"];
   "runtime:python:pathlib" [label="pathlib",class="runtime"];
   "runtime:python:re" [label="re",class="runtime"];
+  "runtime:python:subprocess" [label="subprocess",class="runtime"];
+  "runtime:python:sys" [label="sys",class="runtime"];
   "runtime:python:typing" [label="typing",class="runtime"];
   "runtime:python:unittest" [label="unittest",class="runtime"];
   "runtime:python:unittest.mock" [label="unittest.mock",class="runtime"];
@@ -158,6 +161,8 @@ digraph genesis {
   "symbol:flight_pulse/repository.py#function:WeatherRepository.flight_match_summary" [label="WeatherRepository.flight_match_summary",class="symbol"];
   "symbol:flight_pulse/repository.py#function:WeatherRepository.flight_time_window" [label="WeatherRepository.flight_time_window",class="symbol"];
   "symbol:flight_pulse/repository.py#function:WeatherRepository.upsert_many" [label="WeatherRepository.upsert_many",class="symbol"];
+  "symbol:hooks/notify.py#function:main" [label="main",class="symbol"];
+  "symbol:hooks/notify.py#function:notify" [label="notify",class="symbol"];
   "symbol:tests/test_aerodatabox.py#class:_MockResponse" [label="_MockResponse",class="symbol"];
   "symbol:tests/test_aerodatabox.py#class:AeroDataBoxClientTests" [label="AeroDataBoxClientTests",class="symbol"];
   "symbol:tests/test_aerodatabox.py#class:AeroDataBoxNormalizationTests" [label="AeroDataBoxNormalizationTests",class="symbol"];
@@ -372,6 +377,7 @@ digraph genesis {
   "symbol:flight_pulse/repository.py#function:FlightRepository.upsert_many" -> "symbol:flight_pulse/repository.py#function:_flight_values" [label="calls"];
   "symbol:flight_pulse/repository.py#function:NewsRepository.upsert_many" -> "symbol:flight_pulse/repository.py#function:_news_values" [label="calls"];
   "symbol:flight_pulse/repository.py#function:WeatherRepository.upsert_many" -> "symbol:flight_pulse/repository.py#function:_weather_values" [label="calls"];
+  "symbol:hooks/notify.py#function:main" -> "symbol:hooks/notify.py#function:notify" [label="calls"];
   "symbol:tests/test_aerodatabox.py#function:AeroDataBoxClientTests.setUp" -> "symbol:flight_pulse/config.py#class:AeroDataBoxSettings" [label="calls"];
   "symbol:tests/test_aerodatabox.py#function:AeroDataBoxClientTests.test_builds_yyz_airport_request_without_sending_it" -> "symbol:flight_pulse/ingestion/aerodatabox.py#class:AeroDataBoxClient" [label="calls"];
   "symbol:tests/test_aerodatabox.py#function:AeroDataBoxClientTests.test_builds_yyz_airport_request_without_sending_it" -> "symbol:flight_pulse/ingestion/aerodatabox.py#function:AeroDataBoxClient.build_airport_request" [label="calls"];
@@ -579,6 +585,8 @@ digraph genesis {
   "file:flight_pulse/repository.py" -> "symbol:flight_pulse/repository.py#function:WeatherRepository.flight_match_summary" [label="defines"];
   "file:flight_pulse/repository.py" -> "symbol:flight_pulse/repository.py#function:WeatherRepository.flight_time_window" [label="defines"];
   "file:flight_pulse/repository.py" -> "symbol:flight_pulse/repository.py#function:WeatherRepository.upsert_many" [label="defines"];
+  "file:hooks/notify.py" -> "symbol:hooks/notify.py#function:main" [label="defines"];
+  "file:hooks/notify.py" -> "symbol:hooks/notify.py#function:notify" [label="defines"];
   "file:tests/test_aerodatabox.py" -> "symbol:tests/test_aerodatabox.py#class:_MockResponse" [label="defines"];
   "file:tests/test_aerodatabox.py" -> "symbol:tests/test_aerodatabox.py#class:AeroDataBoxClientTests" [label="defines"];
   "file:tests/test_aerodatabox.py" -> "symbol:tests/test_aerodatabox.py#class:AeroDataBoxNormalizationTests" [label="defines"];
@@ -755,6 +763,9 @@ digraph genesis {
   "file:flight_pulse/repository.py" -> "runtime:python:collections.abc" [label="imports"];
   "file:flight_pulse/repository.py" -> "runtime:python:datetime" [label="imports"];
   "file:flight_pulse/repository.py" -> "runtime:python:typing" [label="imports"];
+  "file:hooks/notify.py" -> "runtime:python:json" [label="imports"];
+  "file:hooks/notify.py" -> "runtime:python:subprocess" [label="imports"];
+  "file:hooks/notify.py" -> "runtime:python:sys" [label="imports"];
   "file:tests/test_aerodatabox.py" -> "file:flight_pulse/config.py" [label="imports"];
   "file:tests/test_aerodatabox.py" -> "file:flight_pulse/ingestion/aerodatabox.py" [label="imports"];
   "file:tests/test_aerodatabox.py" -> "file:flight_pulse/models.py" [label="imports"];

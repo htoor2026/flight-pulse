@@ -261,6 +261,22 @@ Review:
 - architecture implications
 - security implications
 
+For Genesis-managed multi-agent work, the root Master / Orchestrator delegates
+bounded implementation and then requests independent code, security, and test
+review as appropriate to task risk. Reviewer agents report findings; they do
+not rewrite application code. The Master decides which findings are accepted
+and delegates accepted fixes to the Implementation Agent.
+
+The Master records commands, results, findings, blockers, and checkpoint state
+in Genesis. Specialist agents read the active brief but do not independently
+mutate Genesis state. Executable gates must pass before shipping, and any
+human-controlled gate remains pending until a human explicitly approves it.
+
+The Shipping Agent may act only after explicit delegation and required
+approval. It may prepare a feature branch, stage approved files, commit, push,
+and prepare or open a pull request. It must never merge `main`, force push,
+delete branches, or expose credentials.
+
 ---
 
 # 13. Merge

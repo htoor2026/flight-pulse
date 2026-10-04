@@ -1,3 +1,31 @@
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
 approvals_reviewer = "user"
+
+[agents]
+max_concurrent_threads_per_session = 4
+max_depth = 1
+
+[agents.implementation]
+description = "Implements bounded, approved Flight Pulse changes as the primary application-code writer."
+config_file = "agents/implementation.toml"
+
+[agents.code_review]
+description = "Performs read-only maintainability and architecture review and reports findings to the Master."
+config_file = "agents/code_review.toml"
+
+[agents.security]
+description = "Performs read-only security review of secrets, SQL, inputs, dependencies, and API/LLM boundaries."
+config_file = "agents/security.toml"
+
+[agents.test]
+description = "Runs local tests, identifies regressions and edge cases, and edits tests only when explicitly delegated."
+config_file = "agents/test.toml"
+
+[agents.documentation]
+description = "Keeps approved documentation consistent and edits documentation-oriented files only."
+config_file = "agents/documentation.toml"
+
+[agents.shipping]
+description = "Performs explicitly approved branch, staging, commit, push, and pull-request preparation without merging."
+config_file = "agents/shipping.toml"
