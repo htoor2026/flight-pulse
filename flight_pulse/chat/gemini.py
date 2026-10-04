@@ -24,13 +24,16 @@ Use only the declared Flight Pulse tools for factual claims about flights,
 airlines, routes, weather, news, counts, or delays. You have no SQL tool and no
 access to data outside the tool results. Never invent missing values.
 
-Every analytical answer must state that it describes only the current Flight
-Pulse sample and is not representative of broader airline, route, airport, or
-historical performance.
+Do not add a general sample-size disclaimer. The application appends that
+disclaimer exactly once after the grounded answer.
 
-For delay investigations, clearly separate confirmed flight facts from weather
-or news context and from possible contributors. Weather and news are contextual
-associations unless stored evidence explicitly confirms causation. When the
+For delay investigations, organize the answer under these exact headings:
+"Confirmed flight facts", "Weather context", "News/disruption context", and
+"Conclusion". Weather and news are contextual associations unless stored
+evidence explicitly confirms causation. When a stored delay value has an
+absolute value greater than 360 minutes, introduce it with "The stored Flight
+Pulse record indicates" and describe it cautiously. When stored news is empty,
+say: "No stored news context is currently available for this flight." When the
 evidence does not confirm a cause, include this exact sentence:
 "Insufficient evidence to determine the delay cause."
 
@@ -43,6 +46,8 @@ SAMPLE_LIMITATION = (
     "This answer describes only the current Flight Pulse sample and is not "
     "representative of broader performance."
 )
+NO_NEWS_CONTEXT = "No stored news context is currently available for this flight."
+EXTREME_DELAY_THRESHOLD_MINUTES = 360
 MAX_TOOL_ROUNDS = 4
 
 
@@ -194,15 +199,114 @@ def _function_calls(content: types.Content) -> list[types.FunctionCall]:
     ]
 
 
-def _final_text(response: Any, *, insufficient_evidence: bool) -> str:
-    text = (getattr(response, "text", None) or "").strip()
+def _format_delay_investigation(result: Mapping[str, Any]) -> str:
+    """Render one delay investigation from its structured, grounded evidence."""
+    flight = result.get("flight")
+    sections = ["### Confirmed flight facts"]
+    if isinstance(flight, Mapping):
+        fact_fields = (
+            ("flight_number", "Flight"),
+            ("airline", "Airline"),
+            ("origin_iata", "Origin"),
+            ("destination_iata", "Destination"),
+            ("status", "Status"),
+            ("scheduled_departure", "Scheduled departure"),
+            ("actual_departure", "Actual departure"),
+            ("scheduled_arrival", "Scheduled arrival"),
+            ("actual_arrival", "Actual arrival"),
+        )
+        fact_lines = [
+            f"- {label}: {flight[key]}"
+            for key, label in fact_fields
+            if flight.get(key) is not None
+        ]
+        for key, label in (
+            ("departure_delay_minutes", "departure"),
+            ("arrival_delay_minutes", "arrival"),
+        ):
+            delay = flight.get(key)
+            if delay is None:
+                continue
+            if isinstance(delay, (int, float)) and abs(delay) > EXTREME_DELAY_THRESHOLD_MINUTES:
+                fact_lines.append(
+                    "- The stored Flight Pulse record indicates a "
+                    f"{label} delay value of {delay} minutes. This exceeds the "
+                    "project's 360-minute quality threshold and should be "
+                    "interpreted cautiously."
+                )
+            else:
+                fact_lines.append(f"- {label.capitalize()} delay: {delay} minutes")
+        sections.append(
+            "\n".join(fact_lines)
+            if fact_lines
+            else "A stored flight record was found, but its operational fields are empty."
+        )
+    else:
+        sections.append("No matching stored flight record was found.")
+
+    sections.append("\n### Weather context")
+    weather = result.get("weather_context")
+    if isinstance(weather, Mapping):
+        weather_fields = (
+            ("observation_time", "Observation time"),
+            ("temperature_c", "Temperature (°C)"),
+            ("precipitation_mm", "Precipitation (mm)"),
+            ("snowfall_cm", "Snowfall (cm)"),
+            ("visibility_m", "Visibility (m)"),
+            ("wind_speed_kmh", "Wind speed (km/h)"),
+            ("wind_gusts_kmh", "Wind gusts (km/h)"),
+            ("weather_code", "Weather code"),
+        )
+        weather_lines = [
+            f"- {label}: {weather[key]}"
+            for key, label in weather_fields
+            if weather.get(key) is not None
+        ]
+        sections.append(
+            "\n".join(weather_lines)
+            if weather_lines
+            else "No stored weather context is currently available for this flight."
+        )
+    else:
+        sections.append("No stored weather context is currently available for this flight.")
+
+    sections.append("\n### News/disruption context")
+    news = result.get("news_context")
+    if isinstance(news, Sequence) and not isinstance(news, (str, bytes)) and news:
+        news_lines = []
+        for article in news:
+            if not isinstance(article, Mapping):
+                continue
+            title = article.get("title") or "Untitled stored article"
+            source = article.get("source_domain") or "unknown source"
+            published = article.get("published_at")
+            timing = f", published {published}" if published is not None else ""
+            news_lines.append(f"- {title} ({source}{timing})")
+        sections.append("\n".join(news_lines) if news_lines else NO_NEWS_CONTEXT)
+    else:
+        sections.append(NO_NEWS_CONTEXT)
+
+    sections.append("\n### Conclusion")
+    sections.append(INSUFFICIENT_EVIDENCE)
+    return "\n".join(sections)
+
+
+def _final_text(
+    response: Any,
+    *,
+    insufficient_evidence: bool,
+    investigation: Mapping[str, Any] | None = None,
+) -> str:
+    if investigation is not None:
+        text = _format_delay_investigation(investigation)
+    else:
+        text = (getattr(response, "text", None) or "").strip()
     if not text:
         text = "I could not produce a grounded answer from the available data."
     if insufficient_evidence and INSUFFICIENT_EVIDENCE not in text:
         text = f"{text}\n\n{INSUFFICIENT_EVIDENCE}"
-    if SAMPLE_LIMITATION not in text:
-        text = f"{text}\n\n{SAMPLE_LIMITATION}"
-    return text
+    text = text.replace(SAMPLE_LIMITATION, "").strip()
+    return f"{text}\n\n{SAMPLE_LIMITATION}"
 
 
 class GeminiAnalystChat:
@@ -243,6 +347,7 @@ class GeminiAnalystChat:
         contents.append(types.Content(role="user", parts=[types.Part(text=prompt)]))
         tool_log: list[dict[str, Any]] = []
         insufficient_evidence = False
+        investigation: Mapping[str, Any] | None = None
         api_requests = 0
 
         for _ in range(MAX_TOOL_ROUNDS):
@@ -259,6 +364,7 @@ class GeminiAnalystChat:
                     text=_final_text(
                         response,
                         insufficient_evidence=insufficient_evidence,
+                        investigation=investigation,
                     ),
                     tool_calls=tuple(tool_log),
                     api_requests=api_requests,
@@ -279,6 +385,8 @@ class GeminiAnalystChat:
                         and result.get("conclusion") == INSUFFICIENT_EVIDENCE
                     ):
                         insufficient_evidence = True
+                    if name == "investigate_delay" and isinstance(result, Mapping):
+                        investigation = result
                     payload = {"result": result}
                 except (ToolValidationError, ValueError) as exc:
                     payload = {"error": str(exc)}

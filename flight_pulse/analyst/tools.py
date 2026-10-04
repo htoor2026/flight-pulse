@@ -461,15 +461,26 @@ class FlightAnalyst:
             }
 
         weather = self.get_weather_context(normalized)
-        news = self.get_news_context(normalized)
+        news_available = True
+        try:
+            news = self.get_news_context(normalized)
+        except Exception:
+            news = []
+            news_available = False
+        limitations = [
+            "Weather near the scheduled YYZ event is contextual association, not proof of causation.",
+            "Stored news metadata is supporting context and does not confirm a flight-specific cause.",
+        ]
+        if not news_available:
+            limitations.append(
+                "No stored news context is currently available for this flight."
+            )
         return {
             "flight_number": normalized,
             "flight": flight,
             "weather_context": weather,
             "news_context": news,
+            "news_context_available": news_available,
             "conclusion": INSUFFICIENT_EVIDENCE,
-            "limitations": [
-                "Weather near the scheduled YYZ event is contextual association, not proof of causation.",
-                "Stored news metadata is supporting context and does not confirm a flight-specific cause.",
-            ],
+            "limitations": limitations,
         }
