@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "project": "flight-pulse",
-  "revision": "71d0e6f4aac32fed5bde7411e688d9188907e450",
-  "sourceHash": "7acb8ff649bfad0511825de446d2a0c391b4bc254b111c2470e02321521b35d4",
+  "revision": "e7aed14b79b6dd104f469735118828fbe5c37584",
+  "sourceHash": "8dc5d38a9f33fba3fed7ec896b3b0f952b2c341d0130b4b3deb8be60dae612a6",
   "provenance": {
     "tool": "genesis-graphizer",
     "method": "static-analysis",
@@ -17,7 +17,7 @@
       "language": "python",
       "confidence": 1,
       "extractor": "filesystem",
-      "contentHash": "d88e0ab0a1a03442a5608df039ffb8785caeb79e9513452d1c6b7373fc5fb368"
+      "contentHash": "a625f3ef0aa722ece1282debc744414b5d71e0f5d9be59f6c1c2a0f30446d31d"
     },
     {
       "id": "file:flight_pulse/analysis/__init__.py",
@@ -37,7 +37,7 @@
       "language": "python",
       "confidence": 1,
       "extractor": "filesystem",
-      "contentHash": "3e4180c74dbbef42588e6198adce796ac8bed1119c971e77c16160af1be34e69"
+      "contentHash": "0d726c47aa021c45c7c188c95e9eb5c0e7a16d4db657b6f555e19288da090f02"
     },
     {
       "id": "file:flight_pulse/analyst/__init__.py",
@@ -167,7 +167,7 @@
       "language": "python",
       "confidence": 1,
       "extractor": "filesystem",
-      "contentHash": "98ee30f58d716a557aeedcad4dc5707e0e7de7c818acccb54b99b5424adb309d"
+      "contentHash": "e63cf729c4625cd8d8ea80e9dec8647c9fc66329403ecbde29a6f761fcd57429"
     },
     {
       "id": "file:tests/test_analyst.py",
@@ -382,6 +382,15 @@
       "contentHash": "7e94b3e53ed926a0862ab420950da1727eead16cbd6a34908b9d475846791a02"
     },
     {
+      "id": "runtime:python:sqlite3",
+      "type": "runtime",
+      "label": "sqlite3",
+      "language": "python",
+      "confidence": 0.85,
+      "extractor": "standard-library",
+      "contentHash": "f6e23ec7339de058f541d44340d6972733f6db32bb2d1c41696df0e30af3c638"
+    },
+    {
       "id": "runtime:python:typing",
       "type": "runtime",
       "label": "typing",
@@ -433,7 +442,7 @@
       "name": "_frame",
       "label": "_frame",
       "path": "app.py",
-      "line": 50,
+      "line": 51,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "85918208fbb43c7fdca8e7b629b4072e318f87cf3a3a4851ef511556c7eadaa7"
@@ -445,7 +454,7 @@
       "name": "_metric",
       "label": "_metric",
       "path": "app.py",
-      "line": 57,
+      "line": 58,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "0a404eef81eef3fac8ffc1d3711cf9375815c37cf8dce61cc835f4f24d72a6b4"
@@ -457,7 +466,7 @@
       "name": "ask_flight_pulse",
       "label": "ask_flight_pulse",
       "path": "app.py",
-      "line": 77,
+      "line": 78,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "e20e52d7b74e1235d6b9406ef2c15fb7a908b1ae627a989cefa4908b2d33ac7a"
@@ -469,7 +478,7 @@
       "name": "load_dashboard_data",
       "label": "load_dashboard_data",
       "path": "app.py",
-      "line": 68,
+      "line": 69,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "9f4223ee0da7f4644ebdb0bc52e9d9ca649a26c39f67e567435a6db13fa540f8"
@@ -481,7 +490,7 @@
       "name": "render_business_overview",
       "label": "render_business_overview",
       "path": "app.py",
-      "line": 446,
+      "line": 460,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "3f2269b18667ace9b5f63fcd3c898f268bce79e11be02e29417178fe756c32b6"
@@ -493,7 +502,7 @@
       "name": "render_flight_analytics",
       "label": "render_flight_analytics",
       "path": "app.py",
-      "line": 93,
+      "line": 94,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "91877f1f6ea5760f8f2af5b07cc5ba328c7828109a4bf8e26049954455633e17"
@@ -505,7 +514,7 @@
       "name": "render_technical_overview",
       "label": "render_technical_overview",
       "path": "app.py",
-      "line": 517,
+      "line": 531,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "7285c5ac6f5f2d4fcb4af8cc81accb272a166b8f8e5b51a8a29f145534fd591c"
@@ -517,7 +526,7 @@
       "name": "FlightAnalysis",
       "label": "FlightAnalysis",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 217,
+      "line": 232,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "240cb94aa7b2ef0e8e809d84b6749a1ef631e4ddc91a01c38ab2ffac65d955e9"
@@ -529,7 +538,7 @@
       "name": "FlightAnalysis.__init__",
       "label": "FlightAnalysis.__init__",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 220,
+      "line": 235,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "8f62ed6c1b581b35edc8b4a3e7faa10632810f6b740834a64df3e172c8006646"
@@ -541,7 +550,7 @@
       "name": "FlightAnalysis._fetch_all",
       "label": "FlightAnalysis._fetch_all",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 223,
+      "line": 238,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "48d2ad21782b8028ef64af0776ebf6757ba0208e99d66e7681ce114395c7fce9"
@@ -553,7 +562,7 @@
       "name": "FlightAnalysis._fetch_one",
       "label": "FlightAnalysis._fetch_one",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 235,
+      "line": 250,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "e4645652d094b3542bc92e52406faf4b8082a3c0885f8ad151a36b4cd737553c"
@@ -565,7 +574,7 @@
       "name": "FlightAnalysis.data_quality",
       "label": "FlightAnalysis.data_quality",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 274,
+      "line": 289,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "403e56725952f67cc2af506b3ee829571552ebd0649d3616b7768803fdfd2695"
@@ -577,7 +586,7 @@
       "name": "FlightAnalysis.delays_by_airline",
       "label": "FlightAnalysis.delays_by_airline",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 253,
+      "line": 268,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "e71cb207e6564533fc2c68bc93f58d96f39e3f0be3d7bc34181e79570ce0ad4c"
@@ -589,7 +598,7 @@
       "name": "FlightAnalysis.delays_by_hour",
       "label": "FlightAnalysis.delays_by_hour",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 263,
+      "line": 278,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "13ded5357cdd1e25e891688e4eda0bd83fdce82e03ccb8ca51d17d6194b09c9f"
@@ -601,7 +610,7 @@
       "name": "FlightAnalysis.delays_by_route",
       "label": "FlightAnalysis.delays_by_route",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 258,
+      "line": 273,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "656ebb9530a87e7152fc8aed85474fd6805a7fd114f434fbc09d02b6560e27e0"
@@ -613,7 +622,7 @@
       "name": "FlightAnalysis.disrupted_flights",
       "label": "FlightAnalysis.disrupted_flights",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 277,
+      "line": 292,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "aa61cb09d0ff473c2f18b43c0a37e230239424a1e504b3e40f01ad861cd54251"
@@ -625,7 +634,7 @@
       "name": "FlightAnalysis.overview",
       "label": "FlightAnalysis.overview",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 247,
+      "line": 262,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "c7027e86bcc0907a04248d4d404357d150fcd7bde713bd62d71ca219e6ac440d"
@@ -637,7 +646,7 @@
       "name": "FlightAnalysis.report",
       "label": "FlightAnalysis.report",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 295,
+      "line": 310,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "7aa6e7b9e032af0fde21df83c2ea08d2739247b361f2608b13e6e16856d32c64"
@@ -649,7 +658,7 @@
       "name": "FlightAnalysis.status_counts",
       "label": "FlightAnalysis.status_counts",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 250,
+      "line": 265,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "848ae8144283450be436749629afd27dacbbade140cb82ac00419e2ee859555e"
@@ -661,7 +670,7 @@
       "name": "FlightAnalysis.top_delayed_flights",
       "label": "FlightAnalysis.top_delayed_flights",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 269,
+      "line": 284,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "c018030a3ac910f0a30bb197f4d4aafc36caa3ceada478f557c3930f39f7d2ba"
@@ -673,7 +682,7 @@
       "name": "FlightAnalysis.weather_context",
       "label": "FlightAnalysis.weather_context",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 282,
+      "line": 297,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "7cba94fbcaeafbb9d7133fdc5b963f0b8b2131c114ad954e5dd6d13cba9b66f2"
@@ -2029,10 +2038,22 @@
       "name": "FlightAnalysisTests",
       "label": "FlightAnalysisTests",
       "path": "tests/test_analysis.py",
-      "line": 15,
+      "line": 16,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "393cf32d75a4ea6737d9e2b138c0749a08c2cc29ca6694f1f1a96b60e4d961b5"
+    },
+    {
+      "id": "symbol:tests/test_analysis.py#function:FlightAnalysisTests._execute_overview_semantics_in_sqlite",
+      "type": "symbol",
+      "kind": "function",
+      "name": "FlightAnalysisTests._execute_overview_semantics_in_sqlite",
+      "label": "FlightAnalysisTests._execute_overview_semantics_in_sqlite",
+      "path": "tests/test_analysis.py",
+      "line": 23,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "9cfeeac42e1b245714c93812bb220715d5e9649436537401466727929fa23ed8"
     },
     {
       "id": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.setUp",
@@ -2041,7 +2062,7 @@
       "name": "FlightAnalysisTests.setUp",
       "label": "FlightAnalysisTests.setUp",
       "path": "tests/test_analysis.py",
-      "line": 16,
+      "line": 17,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "b1da71629fe4428be455b88699cbae741ffebd6215d4ff7740a7f3d9318cba8c"
@@ -2053,7 +2074,7 @@
       "name": "FlightAnalysisTests.test_airline_minimum_is_parameterized",
       "label": "FlightAnalysisTests.test_airline_minimum_is_parameterized",
       "path": "tests/test_analysis.py",
-      "line": 40,
+      "line": 99,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "741420708cc38b874ff455a07cc884adde3fa0c5bae1f5e4b758be34664b7ddc"
@@ -2065,7 +2086,7 @@
       "name": "FlightAnalysisTests.test_disrupted_flights_limit_is_parameterized",
       "label": "FlightAnalysisTests.test_disrupted_flights_limit_is_parameterized",
       "path": "tests/test_analysis.py",
-      "line": 77,
+      "line": 136,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "211cef4848842a879692f6b2b792038d80c930240dff1d358204c30f4f0586c1"
@@ -2077,7 +2098,7 @@
       "name": "FlightAnalysisTests.test_hour_analysis_uses_parameterized_airport_context",
       "label": "FlightAnalysisTests.test_hour_analysis_uses_parameterized_airport_context",
       "path": "tests/test_analysis.py",
-      "line": 59,
+      "line": 118,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "952bc8ea90b9bd1901757120e744eeb912a0770434aac9152261f619db883b72"
@@ -2089,10 +2110,22 @@
       "name": "FlightAnalysisTests.test_overview_returns_database_aggregates_and_closes_cursor",
       "label": "FlightAnalysisTests.test_overview_returns_database_aggregates_and_closes_cursor",
       "path": "tests/test_analysis.py",
-      "line": 22,
+      "line": 49,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "b209ff3bb4c8773ed9775d2a7465de015b75b8072a09846266d92caeabedeb82"
+    },
+    {
+      "id": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_overview_sql_uses_non_reserved_delay_rank_alias",
+      "type": "symbol",
+      "kind": "function",
+      "name": "FlightAnalysisTests.test_overview_sql_uses_non_reserved_delay_rank_alias",
+      "label": "FlightAnalysisTests.test_overview_sql_uses_non_reserved_delay_rank_alias",
+      "path": "tests/test_analysis.py",
+      "line": 88,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "e49f228cee6fd2de0b4e0dbeb7867d6cca7d1d877ba27dff78378ebce4917c6e"
     },
     {
       "id": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_rejects_invalid_group_and_limit_values_without_querying",
@@ -2101,10 +2134,46 @@
       "name": "FlightAnalysisTests.test_rejects_invalid_group_and_limit_values_without_querying",
       "label": "FlightAnalysisTests.test_rejects_invalid_group_and_limit_values_without_querying",
       "path": "tests/test_analysis.py",
-      "line": 67,
+      "line": 126,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "17cb3b2fc9268bcfdff21367d4128c57b092ecc8910bc5c656f889d6aedc7265"
+    },
+    {
+      "id": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_sqlite_semantics_calculate_even_sample_median",
+      "type": "symbol",
+      "kind": "function",
+      "name": "FlightAnalysisTests.test_sqlite_semantics_calculate_even_sample_median",
+      "label": "FlightAnalysisTests.test_sqlite_semantics_calculate_even_sample_median",
+      "path": "tests/test_analysis.py",
+      "line": 76,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "b5be46e65827974f1c07364d5e856e528a8ede70ff414fb484de8057ca56f882"
+    },
+    {
+      "id": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_sqlite_semantics_calculate_odd_sample_median",
+      "type": "symbol",
+      "kind": "function",
+      "name": "FlightAnalysisTests.test_sqlite_semantics_calculate_odd_sample_median",
+      "label": "FlightAnalysisTests.test_sqlite_semantics_calculate_odd_sample_median",
+      "path": "tests/test_analysis.py",
+      "line": 70,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "e539d2091fdda13894da6dfaa4bc53286ae00530ca3db3e7b91ff4f3a179d477"
+    },
+    {
+      "id": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_sqlite_semantics_have_no_median_without_delay_observations",
+      "type": "symbol",
+      "kind": "function",
+      "name": "FlightAnalysisTests.test_sqlite_semantics_have_no_median_without_delay_observations",
+      "label": "FlightAnalysisTests.test_sqlite_semantics_have_no_median_without_delay_observations",
+      "path": "tests/test_analysis.py",
+      "line": 82,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "e982704e708e898d1646ceb9bbd5493ae7b80f3914b8a875af8e7a5114ebba27"
     },
     {
       "id": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_top_delayed_limit_is_parameterized",
@@ -2113,7 +2182,7 @@
       "name": "FlightAnalysisTests.test_top_delayed_limit_is_parameterized",
       "label": "FlightAnalysisTests.test_top_delayed_limit_is_parameterized",
       "path": "tests/test_analysis.py",
-      "line": 51,
+      "line": 110,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "0324ba1be4d774d5e21ca34b1295fbc765df6717e17d398dbee1be4ef1c64a75"
@@ -2125,7 +2194,7 @@
       "name": "FlightAnalysisTests.test_weather_context_uses_parameterized_airport",
       "label": "FlightAnalysisTests.test_weather_context_uses_parameterized_airport",
       "path": "tests/test_analysis.py",
-      "line": 87,
+      "line": 146,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "72acde1d663640620bc78545f01688198233bd2d5778b04b6812f33cacf459f7"
@@ -4298,6 +4367,33 @@
     },
     {
       "type": "calls",
+      "source": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_sqlite_semantics_calculate_even_sample_median",
+      "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests._execute_overview_semantics_in_sqlite",
+      "tier": "proven",
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast-calls"
+    },
+    {
+      "type": "calls",
+      "source": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_sqlite_semantics_calculate_odd_sample_median",
+      "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests._execute_overview_semantics_in_sqlite",
+      "tier": "proven",
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast-calls"
+    },
+    {
+      "type": "calls",
+      "source": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_sqlite_semantics_have_no_median_without_delay_observations",
+      "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests._execute_overview_semantics_in_sqlite",
+      "tier": "proven",
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast-calls"
+    },
+    {
+      "type": "calls",
       "source": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_top_delayed_limit_is_parameterized",
       "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.top_delayed_flights",
       "tier": "ambiguous",
@@ -5065,7 +5161,7 @@
       "type": "defines",
       "source": "file:app.py",
       "target": "symbol:app.py#function:_frame",
-      "line": 50,
+      "line": 51,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5074,7 +5170,7 @@
       "type": "defines",
       "source": "file:app.py",
       "target": "symbol:app.py#function:_metric",
-      "line": 57,
+      "line": 58,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5083,7 +5179,7 @@
       "type": "defines",
       "source": "file:app.py",
       "target": "symbol:app.py#function:ask_flight_pulse",
-      "line": 77,
+      "line": 78,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5092,7 +5188,7 @@
       "type": "defines",
       "source": "file:app.py",
       "target": "symbol:app.py#function:load_dashboard_data",
-      "line": 68,
+      "line": 69,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5101,7 +5197,7 @@
       "type": "defines",
       "source": "file:app.py",
       "target": "symbol:app.py#function:render_business_overview",
-      "line": 446,
+      "line": 460,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5110,7 +5206,7 @@
       "type": "defines",
       "source": "file:app.py",
       "target": "symbol:app.py#function:render_flight_analytics",
-      "line": 93,
+      "line": 94,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5119,7 +5215,7 @@
       "type": "defines",
       "source": "file:app.py",
       "target": "symbol:app.py#function:render_technical_overview",
-      "line": 517,
+      "line": 531,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5128,7 +5224,7 @@
       "type": "defines",
       "source": "file:flight_pulse/analysis/flights.py",
       "target": "symbol:flight_pulse/analysis/flights.py#class:FlightAnalysis",
-      "line": 217,
+      "line": 232,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5137,24 +5233,6 @@
       "type": "defines",
       "source": "file:flight_pulse/analysis/flights.py",
       "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.__init__",
-      "line": 220,
-      "resolved": true,
-      "confidence": 1,
-      "extractor": "python-stdlib-ast"
-    },
-    {
-      "type": "defines",
-      "source": "file:flight_pulse/analysis/flights.py",
-      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis._fetch_all",
-      "line": 223,
-      "resolved": true,
-      "confidence": 1,
-      "extractor": "python-stdlib-ast"
-    },
-    {
-      "type": "defines",
-      "source": "file:flight_pulse/analysis/flights.py",
-      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis._fetch_one",
       "line": 235,
       "resolved": true,
       "confidence": 1,
@@ -5163,8 +5241,8 @@
     {
       "type": "defines",
       "source": "file:flight_pulse/analysis/flights.py",
-      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.data_quality",
-      "line": 274,
+      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis._fetch_all",
+      "line": 238,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5172,61 +5250,7 @@
     {
       "type": "defines",
       "source": "file:flight_pulse/analysis/flights.py",
-      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.delays_by_airline",
-      "line": 253,
-      "resolved": true,
-      "confidence": 1,
-      "extractor": "python-stdlib-ast"
-    },
-    {
-      "type": "defines",
-      "source": "file:flight_pulse/analysis/flights.py",
-      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.delays_by_hour",
-      "line": 263,
-      "resolved": true,
-      "confidence": 1,
-      "extractor": "python-stdlib-ast"
-    },
-    {
-      "type": "defines",
-      "source": "file:flight_pulse/analysis/flights.py",
-      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.delays_by_route",
-      "line": 258,
-      "resolved": true,
-      "confidence": 1,
-      "extractor": "python-stdlib-ast"
-    },
-    {
-      "type": "defines",
-      "source": "file:flight_pulse/analysis/flights.py",
-      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.disrupted_flights",
-      "line": 277,
-      "resolved": true,
-      "confidence": 1,
-      "extractor": "python-stdlib-ast"
-    },
-    {
-      "type": "defines",
-      "source": "file:flight_pulse/analysis/flights.py",
-      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.overview",
-      "line": 247,
-      "resolved": true,
-      "confidence": 1,
-      "extractor": "python-stdlib-ast"
-    },
-    {
-      "type": "defines",
-      "source": "file:flight_pulse/analysis/flights.py",
-      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.report",
-      "line": 295,
-      "resolved": true,
-      "confidence": 1,
-      "extractor": "python-stdlib-ast"
-    },
-    {
-      "type": "defines",
-      "source": "file:flight_pulse/analysis/flights.py",
-      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.status_counts",
+      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis._fetch_one",
       "line": 250,
       "resolved": true,
       "confidence": 1,
@@ -5235,8 +5259,80 @@
     {
       "type": "defines",
       "source": "file:flight_pulse/analysis/flights.py",
+      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.data_quality",
+      "line": 289,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:flight_pulse/analysis/flights.py",
+      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.delays_by_airline",
+      "line": 268,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:flight_pulse/analysis/flights.py",
+      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.delays_by_hour",
+      "line": 278,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:flight_pulse/analysis/flights.py",
+      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.delays_by_route",
+      "line": 273,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:flight_pulse/analysis/flights.py",
+      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.disrupted_flights",
+      "line": 292,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:flight_pulse/analysis/flights.py",
+      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.overview",
+      "line": 262,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:flight_pulse/analysis/flights.py",
+      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.report",
+      "line": 310,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:flight_pulse/analysis/flights.py",
+      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.status_counts",
+      "line": 265,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:flight_pulse/analysis/flights.py",
       "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.top_delayed_flights",
-      "line": 269,
+      "line": 284,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5245,7 +5341,7 @@
       "type": "defines",
       "source": "file:flight_pulse/analysis/flights.py",
       "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.weather_context",
-      "line": 282,
+      "line": 297,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -6262,15 +6358,6 @@
       "type": "defines",
       "source": "file:tests/test_analysis.py",
       "target": "symbol:tests/test_analysis.py#class:FlightAnalysisTests",
-      "line": 15,
-      "resolved": true,
-      "confidence": 1,
-      "extractor": "python-stdlib-ast"
-    },
-    {
-      "type": "defines",
-      "source": "file:tests/test_analysis.py",
-      "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.setUp",
       "line": 16,
       "resolved": true,
       "confidence": 1,
@@ -6279,8 +6366,26 @@
     {
       "type": "defines",
       "source": "file:tests/test_analysis.py",
+      "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests._execute_overview_semantics_in_sqlite",
+      "line": 23,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_analysis.py",
+      "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.setUp",
+      "line": 17,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_analysis.py",
       "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_airline_minimum_is_parameterized",
-      "line": 40,
+      "line": 99,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -6289,7 +6394,7 @@
       "type": "defines",
       "source": "file:tests/test_analysis.py",
       "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_disrupted_flights_limit_is_parameterized",
-      "line": 77,
+      "line": 136,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -6298,7 +6403,7 @@
       "type": "defines",
       "source": "file:tests/test_analysis.py",
       "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_hour_analysis_uses_parameterized_airport_context",
-      "line": 59,
+      "line": 118,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -6307,7 +6412,16 @@
       "type": "defines",
       "source": "file:tests/test_analysis.py",
       "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_overview_returns_database_aggregates_and_closes_cursor",
-      "line": 22,
+      "line": 49,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_analysis.py",
+      "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_overview_sql_uses_non_reserved_delay_rank_alias",
+      "line": 88,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -6316,7 +6430,34 @@
       "type": "defines",
       "source": "file:tests/test_analysis.py",
       "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_rejects_invalid_group_and_limit_values_without_querying",
-      "line": 67,
+      "line": 126,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_analysis.py",
+      "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_sqlite_semantics_calculate_even_sample_median",
+      "line": 76,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_analysis.py",
+      "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_sqlite_semantics_calculate_odd_sample_median",
+      "line": 70,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_analysis.py",
+      "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_sqlite_semantics_have_no_median_without_delay_observations",
+      "line": 82,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -6325,7 +6466,7 @@
       "type": "defines",
       "source": "file:tests/test_analysis.py",
       "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_top_delayed_limit_is_parameterized",
-      "line": 51,
+      "line": 110,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -6334,7 +6475,7 @@
       "type": "defines",
       "source": "file:tests/test_analysis.py",
       "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_weather_context_uses_parameterized_airport",
-      "line": 87,
+      "line": 146,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -7863,7 +8004,7 @@
       "source": "file:tests/test_analysis.py",
       "target": "file:flight_pulse/analysis/flights.py",
       "specifier": "flight_pulse.analysis.flights",
-      "line": 6,
+      "line": 7,
       "resolved": true,
       "confidence": 0.85,
       "extractor": "python-imports"
@@ -7881,9 +8022,19 @@
     {
       "type": "imports",
       "source": "file:tests/test_analysis.py",
+      "target": "runtime:python:sqlite3",
+      "specifier": "sqlite3",
+      "line": 3,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:tests/test_analysis.py",
       "target": "runtime:python:unittest",
       "specifier": "unittest",
-      "line": 3,
+      "line": 4,
       "resolved": true,
       "confidence": 0.85,
       "extractor": "python-imports"
@@ -7893,7 +8044,7 @@
       "source": "file:tests/test_analysis.py",
       "target": "runtime:python:unittest.mock",
       "specifier": "unittest.mock",
-      "line": 4,
+      "line": 5,
       "resolved": true,
       "confidence": 0.85,
       "extractor": "python-imports"
@@ -8381,6 +8532,6 @@
   ],
   "warnings": [],
   "stats": {
-    "unresolvedCalls": 579
+    "unresolvedCalls": 595
   }
 }

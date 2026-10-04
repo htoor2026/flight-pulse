@@ -15,9 +15,9 @@ Load Genesis and official Ponytail full, then run `genesis brief .` for the curr
 Fetch full records with `genesis context . --id ID` only when needed. Do not load project.json or historical proof wholesale.
 Ask the index before reading code: `genesis query . search|scope|callers|callees|impact|path` (`--json` for parsing). Run `genesis query . impact PATH` before editing shared code. Answers are advisory static analysis; `ambiguous` means candidates were not ruled out, so confirm in source.
 Run `genesis serve .` for a live map of the repository when structure is unclear; it reindexes on save and is read-only. Run `genesis index .` if the index is stale and nothing is watching.
-Context fingerprint: c5e0b7b2040e3a8d4c7a3f383f2359d25c575ccb5fc85cff7e3250172ad70b21. Use --since only after receiving that full packet; kickoff is not the packet.
-- DECISION-16821ef8: MA-001 specialist review triage
-- DECISION-5b3c09cf: Native MA-001 orchestration model
-- KNOWLEDGE-d3efdb20: MA-001 specialist review evidence
+Context fingerprint: c57ec9b03cd755344b8800f9872e1c588fca122bdb16a1ca2f105cd2eb59203e. Use --since only after receiving that full packet; kickoff is not the packet.
+- DECISION-45dc7055: FP-002 reserved alias fix
+- DECISION-21fac250: FP-001 median departure-delay design
+- KNOWLEDGE-0e168dd0: FP-002 MySQL and specialist verification
 Applicable invariants, active rules, authorization and proof references are in the packet. Truncated summaries are retrieval pointers, not the full evidence.
 Reuse fresh gates with --reuse. Reconcile interrupted attempts before replaying commands. Report state → evidence → blocker → next action; checkpoint before stopping.

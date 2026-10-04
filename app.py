@@ -30,6 +30,7 @@ NUMERIC_COLUMNS = {
     "flight_count",
     "delay_rate_percent",
     "average_departure_delay_minutes",
+    "median_departure_delay_minutes",
     "average_arrival_delay_minutes",
     "departure_delay_samples",
     "arrival_delay_samples",
@@ -127,7 +128,7 @@ def render_flight_analytics() -> None:
         "Cancelled flights",
         _metric(overview.get("cancelled_flights")),
     )
-    metric_columns = st.columns(3)
+    metric_columns = st.columns(4)
     metric_columns[0].metric(
         "Delay rate",
         _metric(overview.get("delay_rate_percent"), suffix="%", decimals=2),
@@ -145,6 +146,19 @@ def render_flight_analytics() -> None:
         ),
     )
     metric_columns[2].metric(
+        "Median departure delay (current sample)",
+        _metric(
+            overview.get("median_departure_delay_minutes"),
+            suffix=" min",
+            decimals=2,
+        ),
+        help=(
+            f"Typical stored departure delay across the current sample's "
+            f"{int(overview.get('departure_delay_samples') or 0)} flights "
+            "with known departure delays."
+        ),
+    )
+    metric_columns[3].metric(
         "Average arrival delay",
         _metric(
             overview.get("average_arrival_delay_minutes"),
