@@ -9,7 +9,7 @@
     "non_goals": [],
     "trust_boundary": "local repository",
     "created_at": "2026-10-04T06:50:21.313Z",
-    "updated_at": "2026-10-04T07:52:01.827Z"
+    "updated_at": "2026-10-04T09:02:06.858Z"
   },
   "policy": {
     "ponytail": "full",
@@ -87,6 +87,26 @@
       "recorded_at": "2026-10-04T07:25:31.300Z",
       "paths": [],
       "tags": []
+    },
+    {
+      "id": "DECISION-21fac250",
+      "title": "FP-001 median departure-delay design",
+      "text": "Compute median departure delay inside the existing read-only OVERVIEW_SQL using MySQL window functions over non-null departure_delay_minutes. Preserve the existing departure_delay_samples key, expose the new value through the unchanged overview/report path, display it as a current-sample metric, and return null when no observations exist. Validate odd/even/null behavior locally without new dependencies or external calls.",
+      "status": "accepted",
+      "source": "FP-001",
+      "recorded_at": "2026-10-04T08:28:54.919Z",
+      "paths": [],
+      "tags": []
+    },
+    {
+      "id": "DECISION-45dc7055",
+      "title": "FP-002 reserved alias fix",
+      "text": "Local MySQL INFORMATION_SCHEMA.KEYWORDS classified ROW_NUMBER as reserved (RESERVED=1). Preserve the ROW_NUMBER() window function but rename its derived-column alias and reference from row_number to delay_rank. Keep SQLite tests limited to median semantics and require separate execution of the exact production OVERVIEW_SQL on local MySQL for dialect validation.",
+      "status": "accepted",
+      "source": "FP-002 local MySQL validation",
+      "recorded_at": "2026-10-04T08:56:41.456Z",
+      "paths": [],
+      "tags": []
     }
   ],
   "knowledge": [
@@ -97,6 +117,24 @@
       "source": "MA-001 specialist agents",
       "tags": [],
       "recorded_at": "2026-10-04T07:28:06.886Z",
+      "paths": []
+    },
+    {
+      "id": "KNOWLEDGE-f31dec21",
+      "title": "FP-001 specialist review and validation evidence",
+      "text": "Implementation added the median to existing OVERVIEW_SQL/report and dashboard paths. Test Agent added odd, even, and no-observation coverage using in-memory SQLite with a minimal MySQL DIV translation; targeted analytics tests passed 10/10. Code Review found no correctness, MySQL compatibility, readability, duplication, maintainability, or architecture issues. Security found no unsafe SQL, credential exposure, dependency, external-call, or trust-boundary changes. Documentation updated only the complete study guide. Genesis full suite passed 62 tests and diff-check passed at source hash 0296146d22a035cee2d40af678294a10b91e684610bd0436625b46f1e4711724.",
+      "source": "FP-001 specialist agents and Genesis gates",
+      "tags": [],
+      "recorded_at": "2026-10-04T08:29:24.121Z",
+      "paths": []
+    },
+    {
+      "id": "KNOWLEDGE-0e168dd0",
+      "title": "FP-002 MySQL and specialist verification",
+      "text": "Local MySQL metadata returned ROW_NUMBER RESERVED=1. The exact FlightAnalysis(connection).overview() validation then succeeded with: total_flights=72, delayed_flights=8, cancelled_flights=1, delay_rate_percent=11.11, average_departure_delay_minutes=366.33, median_departure_delay_minutes=21.00, average_arrival_delay_minutes=-26.50, departure_delay_samples=3, arrival_delay_samples=2. Test Agent added a non-reserved-alias regression and labeled SQLite checks as semantics-only; targeted analytics tests passed 11. Code Review and Security reported no actionable findings. Genesis full suite passed 63 tests and diff-check passed.",
+      "source": "FP-002 local MySQL validation, specialist reviews, and Genesis gates",
+      "tags": [],
+      "recorded_at": "2026-10-04T08:59:07.462Z",
       "paths": []
     }
   ],
@@ -219,6 +257,254 @@
         "tests/test_repository.py": "6d56d8e4af96569776fb8883f00da8c54587cc93b86036072a4ad7214c715d51",
         "tests/test_weather.py": "42edbf18b497fa128bc1bbfda3833c4c869075beb298f9afc1ce7854b15060b9"
       }
+    },
+    {
+      "id": "FP-001",
+      "outcome": "Add a median departure-delay metric to Flight Pulse analytics and the dashboard so users can compare the typical observed delay with the average without changing ingestion or external-provider behavior.",
+      "state": "done",
+      "risk": "medium",
+      "owner": "master",
+      "scope": [
+        ".genesis",
+        "flight_pulse/analysis",
+        "app.py",
+        "tests",
+        "docs"
+      ],
+      "dependencies": [],
+      "requirements": [],
+      "inputs": [],
+      "environment": [],
+      "scenarios": [],
+      "gates": [
+        {
+          "id": "tests",
+          "kind": "command",
+          "command": "python -m unittest discover -s tests -v",
+          "mandatory": true,
+          "status": "pass",
+          "evidence": {
+            "path": ".genesis/evidence/FP-001-tests-bfa6c7a9-26e3-478c-aac1-254bae553900.json",
+            "hash": "df78aab273f776c122087ca6b890b54d65fb19be8c899464d59ab4a80eb8bf89",
+            "source_hash": "0296146d22a035cee2d40af678294a10b91e684610bd0436625b46f1e4711724",
+            "config_hash": "a8e8ca8ecbe223978abb72e22c8aa34bb48176584d04aed1dbfb1e89b4bb67db",
+            "observed_at": "2026-10-04T08:29:03.464Z"
+          }
+        },
+        {
+          "id": "diff-check",
+          "kind": "command",
+          "command": "git diff --check",
+          "mandatory": true,
+          "status": "pass",
+          "evidence": {
+            "path": ".genesis/evidence/FP-001-diff-check-b9e26935-9077-4d26-addb-23d6516b18d6.json",
+            "hash": "6ed3287d4d20c240b789828d4068a17b15f60dc1c81ccc2293ba8f1e5ddc54dd",
+            "source_hash": "0296146d22a035cee2d40af678294a10b91e684610bd0436625b46f1e4711724",
+            "config_hash": "a8e8ca8ecbe223978abb72e22c8aa34bb48176584d04aed1dbfb1e89b4bb67db",
+            "observed_at": "2026-10-04T08:29:03.785Z"
+          }
+        },
+        {
+          "id": "independent-review",
+          "kind": "review",
+          "command": "",
+          "mandatory": true,
+          "status": "pass",
+          "evidence": {
+            "path": ".genesis/evidence/FP-001-independent-review-44d3517a-0913-495d-a90c-22aa399bf86d.json",
+            "hash": "4ce6e23a526daa68fac1c5a3b9462a46fdeab6b636eadce6690614b804d0b2d2",
+            "source_hash": "0296146d22a035cee2d40af678294a10b91e684610bd0436625b46f1e4711724",
+            "config_hash": "a8e8ca8ecbe223978abb72e22c8aa34bb48176584d04aed1dbfb1e89b4bb67db",
+            "observed_at": "2026-10-04T08:48:19.833Z"
+          }
+        }
+      ],
+      "next_action": "Await human independent-review approval; then complete FP-001 through Genesis before any shipping action.",
+      "blocker": null,
+      "notes": [
+        "Implementation, focused tests, Code Review, Security review, documentation assessment/update, and executable Genesis gates are complete. No commit, push, PR, merge, database access, credentials, dependencies, or external API calls."
+      ],
+      "failures": [],
+      "limitations": [],
+      "created_at": "2026-10-04T08:02:02.805Z",
+      "updated_at": "2026-10-04T08:48:26.356Z",
+      "base_manifest": {
+        ".codex/agents/code_review.toml": "442011b7f82de05c7f276945368b6f5477571636bc2de2ffce3ed894b9f6d13e",
+        ".codex/agents/documentation.toml": "b282f396d0d1b3015778ae2eda2030294d6041106545d16aa518f70b88a45baf",
+        ".codex/agents/implementation.toml": "07cf9ff0c78de15af4889fc8ecab455fe5bda04c764d09b40a01f618c3118f12",
+        ".codex/agents/security.toml": "992d7f764186730f76cbffaec14aa58c0fcab4a7c9b13db88c138bde6dbc3d00",
+        ".codex/agents/shipping.toml": "93e85486b53300791312e461141d1ca599e2d2b11f594d0914006f542f112653",
+        ".codex/agents/test.toml": "3864ba7ac431f33bc80df40a3c481cae32b877f475ae4bd650e10572473d4154",
+        ".codex/config.toml": "06ecf4599a8f3db5f5714202485241287b588c81d7cae2988a4661d21dd71b97",
+        ".env.example": "f7236e9197d65ae9300d42997a2932fe9a55107e6949d8b0398dbc2d2eb6791f",
+        ".github/ISSUE_TEMPLATE/feature_request.md": "a1399a9d3376d8af39dc258eb6365466c4ca41f43c20c35bc0d0409aedcb2b7b",
+        ".github/pull_request_template.md": "fab01488def22a92ca24e5ebdb96a1b5154eaef21cb294ad296be2ac4b6424ff",
+        ".github/workflows/ci.yml": "a30a469441e07c5f2fecb5b529d32c59a0d5b5e812733580a48628851465d212",
+        ".gitignore": "826b8bd49913b281414f426167e356f8527a0eaf864a8b09793b4b9d14756429",
+        "AGENTS.md": "8d38f9d48f7c7324d2b37d01929f27ac90fce7c10cc1c2250da2be08f1a64250",
+        "README.md": "1e2bd4987d0f1d14242aea0d262d99420a36b260fd0a1cf227b6ee4acee8c371",
+        "app.py": "8fb3c05bd654687b1a18e2045d9e4fbc8a2e123361953b486d47c44ebe537cbb",
+        "docs/ARCHITECTURE.md": "120f73b03b85f8d7c9209fe031f12e8cca7f546491b740adae14b810cecfc612",
+        "docs/DATA_SOURCES.md": "d0a74825f1a8266be234a0a75044a237afa8fcac19684ad29f1436acc6599315",
+        "docs/DEVELOPMENT_LIFECYCLE.md": "1ea0973ad96e373c751294c5b2f4e3e576e2e6b084f1b85a1880493d140e7d9c",
+        "docs/FLIGHT_PULSE_COMPLETE_GUIDE.txt": "664bcebd95ce548fae9da6d3b9d8a14d7dc303048f0ed023433134d15d5e440c",
+        "docs/PLAN.md": "f242b0169edb045467ebdf8949678208ce6280f3b27d65c70cddec495623bc12",
+        "docs/SPEC.md": "93063fab2af07d4c7d829044f656a93f5c3777426b2748f7bfc0ec143481cb57",
+        "docs/STATUS.md": "225f13ae5e1dc6d9c890eb2e234051fee6dbabf9d0284634ec76adaef59f02cc",
+        "flight_pulse/analysis/__init__.py": "e19d9533dddaa9f48956ef3656ac4d1960dcb714815b69c2c0591e305d959061",
+        "flight_pulse/analysis/flights.py": "650138fd60b486f01d1de3a91340562318d8338dc4e7194f07afab8f2a508319",
+        "flight_pulse/analyst/__init__.py": "0a7e052de059356999674f29c8ab8ad4ff5d47b5d0321d5d53b45d2a9949564e",
+        "flight_pulse/analyst/tools.py": "58e0954d0decf0945acf610f3b1a1457eb5519fec24a05017a61806be69631b8",
+        "flight_pulse/chat/__init__.py": "e8e0b97ccf3829eb992aba3617e7dbf1a6f608535f11ac8b8d41968a6aea41b3",
+        "flight_pulse/chat/gemini.py": "34369dbca577956e7c63f0ed0937f496cab8573beca42742fc23c0d973fa3cf6",
+        "flight_pulse/config.py": "422d9a84c5fa80c8797f3cc48c95b4993ed52f141ae7cdb66c67ff69596ad10f",
+        "flight_pulse/ingestion/aerodatabox.py": "3263551cb93ff9ccbe65f856e69e7c283d8f894c7f3b0150a289ff03a27196af",
+        "flight_pulse/ingestion/gdelt.py": "5fd13f4b952f09ac57072d0cd173b7809b4376f7e911b9993e098a9dc8777ed3",
+        "flight_pulse/ingestion/open_meteo.py": "80428d03fb820634cdb7443623bc34f4a63b02c04456fbce4609bf45e9dfe6b7",
+        "flight_pulse/models.py": "b1836f5964db2316e92144d5aec6f217d98ff9245e7525a66d736b7295f4b880",
+        "flight_pulse/pipeline.py": "d260225c7714bd05b366c3caa579437840c839732c81e539ead142d758053870",
+        "flight_pulse/repository.py": "6ffbe72dc3266b7376fbe05a1f58c62a3213f287dc4b76eee0f9c38533e09cb4",
+        "hooks/hooks.json": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "requirements.txt": "6302bd6e31184d18326014d15ec00b9bf4084b2e12d2c5fd43e04991de516233",
+        "skills/data-quality/SKILL.md": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "skills/delay-investigation/SKILL.md": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "skills/flight-data-analysis/SKILL.md": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "sql/schema.sql": "37169d61676cbd7829429b420cfda001f7f6b2c38cd4762d33eb1b246b8c3da2",
+        "tests/fixtures/aerodatabox_airport.json": "35057fe21253ad880710bc250e08a7e26128eb0f8c38f24782bca2e2001676ac",
+        "tests/fixtures/gdelt_articles.json": "801e5c47ddb855cbb2bfc5446513918030918d8a58262f8ead276f822af33947",
+        "tests/fixtures/open_meteo_hourly.json": "e167b9550cc0991eb7c010f6dbed0e5fe51e33d0ea094f1837bf78f8059deeb2",
+        "tests/test_aerodatabox.py": "bc965ba92a33fc5d15dc421c424cae077794f56da1b5bb34f3806d6b71030190",
+        "tests/test_analysis.py": "4df08f6a5770d5d3e992927bdd80c8286b24f406582ccd550548a644db221023",
+        "tests/test_analyst.py": "4cd03b9ee2af96e8c0e4b7e8d567308c7ee4841dc06cf536c90d5f72bb8e7f0f",
+        "tests/test_chat.py": "f5732d721df98cd34a5b1dfcd8a56e55489faabc7e70086330dc5dafdf759dec",
+        "tests/test_news.py": "fe363301ee28019d1a31b9d05b5751b1d4acd4d41e7483f1188ac436f97ab770",
+        "tests/test_repository.py": "6d56d8e4af96569776fb8883f00da8c54587cc93b86036072a4ad7214c715d51",
+        "tests/test_weather.py": "42edbf18b497fa128bc1bbfda3833c4c869075beb298f9afc1ce7854b15060b9"
+      }
+    },
+    {
+      "id": "FP-002",
+      "outcome": "Fix the median departure-delay MySQL query so the exact production OVERVIEW_SQL executes successfully on local MySQL, and strengthen validation so MySQL-specific syntax failures are not hidden by SQLite translation.",
+      "state": "done",
+      "risk": "medium",
+      "owner": "master",
+      "scope": [
+        ".genesis",
+        "flight_pulse/analysis",
+        "tests"
+      ],
+      "dependencies": [],
+      "requirements": [],
+      "inputs": [],
+      "environment": [],
+      "scenarios": [],
+      "gates": [
+        {
+          "id": "tests",
+          "kind": "command",
+          "command": "python -m unittest discover -s tests -v",
+          "mandatory": true,
+          "status": "pass",
+          "evidence": {
+            "path": ".genesis/evidence/FP-002-tests-a2295e3d-2c89-41f3-a614-359d15851308.json",
+            "hash": "da01c4a8a8f7470ee9cce6590d49727a31720fe258c9d9739b39d690b792849e",
+            "source_hash": "3a6b4acec34a92e324ac0a966f5c6ddbc40183964929719ee8d203cc8f20ffff",
+            "config_hash": "fdd5c103a040281ba7a4238d376d50a34af6731c0f6d1ea8372fa98afe930519",
+            "observed_at": "2026-10-04T08:57:38.998Z"
+          }
+        },
+        {
+          "id": "diff-check",
+          "kind": "command",
+          "command": "git diff --check",
+          "mandatory": true,
+          "status": "pass",
+          "evidence": {
+            "path": ".genesis/evidence/FP-002-diff-check-36969b04-cd88-427b-8234-7c5e72618bdc.json",
+            "hash": "617b4672ec57ebe4d0b5a6c555bba83dd70ac4e88105167736e45cd0aab86896",
+            "source_hash": "3a6b4acec34a92e324ac0a966f5c6ddbc40183964929719ee8d203cc8f20ffff",
+            "config_hash": "fdd5c103a040281ba7a4238d376d50a34af6731c0f6d1ea8372fa98afe930519",
+            "observed_at": "2026-10-04T08:57:39.442Z"
+          }
+        },
+        {
+          "id": "independent-review",
+          "kind": "review",
+          "command": "",
+          "mandatory": true,
+          "status": "pass",
+          "evidence": {
+            "path": ".genesis/evidence/FP-002-independent-review-9a905ab0-19e9-4492-9834-100d66429326.json",
+            "hash": "d7adc86b4351a5fc33a4251271e7709eb4eaaeb2f96753dd84b9de6a24e2e364",
+            "source_hash": "3a6b4acec34a92e324ac0a966f5c6ddbc40183964929719ee8d203cc8f20ffff",
+            "config_hash": "fdd5c103a040281ba7a4238d376d50a34af6731c0f6d1ea8372fa98afe930519",
+            "observed_at": "2026-10-04T09:02:01.938Z"
+          }
+        }
+      ],
+      "next_action": "Await human independent-review approval; then complete FP-002 through Genesis before any shipping action.",
+      "blocker": null,
+      "notes": [
+        "Reserved alias diagnosis, minimal production fix, exact local MySQL validation, regression testing, Code Review, Security review, and executable Genesis gates are complete. No commit, push, PR, merge, schema change, dependency change, credentials output, or external API calls."
+      ],
+      "failures": [],
+      "limitations": [],
+      "created_at": "2026-10-04T08:50:02.399Z",
+      "updated_at": "2026-10-04T09:02:06.681Z",
+      "base_manifest": {
+        ".codex/agents/code_review.toml": "442011b7f82de05c7f276945368b6f5477571636bc2de2ffce3ed894b9f6d13e",
+        ".codex/agents/documentation.toml": "b282f396d0d1b3015778ae2eda2030294d6041106545d16aa518f70b88a45baf",
+        ".codex/agents/implementation.toml": "07cf9ff0c78de15af4889fc8ecab455fe5bda04c764d09b40a01f618c3118f12",
+        ".codex/agents/security.toml": "992d7f764186730f76cbffaec14aa58c0fcab4a7c9b13db88c138bde6dbc3d00",
+        ".codex/agents/shipping.toml": "93e85486b53300791312e461141d1ca599e2d2b11f594d0914006f542f112653",
+        ".codex/agents/test.toml": "3864ba7ac431f33bc80df40a3c481cae32b877f475ae4bd650e10572473d4154",
+        ".codex/config.toml": "06ecf4599a8f3db5f5714202485241287b588c81d7cae2988a4661d21dd71b97",
+        ".env.example": "f7236e9197d65ae9300d42997a2932fe9a55107e6949d8b0398dbc2d2eb6791f",
+        ".github/ISSUE_TEMPLATE/feature_request.md": "a1399a9d3376d8af39dc258eb6365466c4ca41f43c20c35bc0d0409aedcb2b7b",
+        ".github/pull_request_template.md": "fab01488def22a92ca24e5ebdb96a1b5154eaef21cb294ad296be2ac4b6424ff",
+        ".github/workflows/ci.yml": "a30a469441e07c5f2fecb5b529d32c59a0d5b5e812733580a48628851465d212",
+        ".gitignore": "826b8bd49913b281414f426167e356f8527a0eaf864a8b09793b4b9d14756429",
+        "AGENTS.md": "8d38f9d48f7c7324d2b37d01929f27ac90fce7c10cc1c2250da2be08f1a64250",
+        "README.md": "1e2bd4987d0f1d14242aea0d262d99420a36b260fd0a1cf227b6ee4acee8c371",
+        "app.py": "23b017e141516a681291b5b8b7104b5434b449ba10c9c628bad7f5d6d855c083",
+        "docs/ARCHITECTURE.md": "120f73b03b85f8d7c9209fe031f12e8cca7f546491b740adae14b810cecfc612",
+        "docs/DATA_SOURCES.md": "d0a74825f1a8266be234a0a75044a237afa8fcac19684ad29f1436acc6599315",
+        "docs/DEVELOPMENT_LIFECYCLE.md": "1ea0973ad96e373c751294c5b2f4e3e576e2e6b084f1b85a1880493d140e7d9c",
+        "docs/FLIGHT_PULSE_COMPLETE_GUIDE.txt": "13619213beb1ec05ff404739c976d87722449f7b5ca888b6c9c5127a47a6cc75",
+        "docs/PLAN.md": "f242b0169edb045467ebdf8949678208ce6280f3b27d65c70cddec495623bc12",
+        "docs/SPEC.md": "93063fab2af07d4c7d829044f656a93f5c3777426b2748f7bfc0ec143481cb57",
+        "docs/STATUS.md": "225f13ae5e1dc6d9c890eb2e234051fee6dbabf9d0284634ec76adaef59f02cc",
+        "flight_pulse/analysis/__init__.py": "e19d9533dddaa9f48956ef3656ac4d1960dcb714815b69c2c0591e305d959061",
+        "flight_pulse/analysis/flights.py": "92ed8ec930fccb99eaed12d1894579da04308fdc0048ade5ee5e299458f210fb",
+        "flight_pulse/analyst/__init__.py": "0a7e052de059356999674f29c8ab8ad4ff5d47b5d0321d5d53b45d2a9949564e",
+        "flight_pulse/analyst/tools.py": "58e0954d0decf0945acf610f3b1a1457eb5519fec24a05017a61806be69631b8",
+        "flight_pulse/chat/__init__.py": "e8e0b97ccf3829eb992aba3617e7dbf1a6f608535f11ac8b8d41968a6aea41b3",
+        "flight_pulse/chat/gemini.py": "34369dbca577956e7c63f0ed0937f496cab8573beca42742fc23c0d973fa3cf6",
+        "flight_pulse/config.py": "422d9a84c5fa80c8797f3cc48c95b4993ed52f141ae7cdb66c67ff69596ad10f",
+        "flight_pulse/ingestion/aerodatabox.py": "3263551cb93ff9ccbe65f856e69e7c283d8f894c7f3b0150a289ff03a27196af",
+        "flight_pulse/ingestion/gdelt.py": "5fd13f4b952f09ac57072d0cd173b7809b4376f7e911b9993e098a9dc8777ed3",
+        "flight_pulse/ingestion/open_meteo.py": "80428d03fb820634cdb7443623bc34f4a63b02c04456fbce4609bf45e9dfe6b7",
+        "flight_pulse/models.py": "b1836f5964db2316e92144d5aec6f217d98ff9245e7525a66d736b7295f4b880",
+        "flight_pulse/pipeline.py": "d260225c7714bd05b366c3caa579437840c839732c81e539ead142d758053870",
+        "flight_pulse/repository.py": "6ffbe72dc3266b7376fbe05a1f58c62a3213f287dc4b76eee0f9c38533e09cb4",
+        "hooks/hooks.json": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "requirements.txt": "6302bd6e31184d18326014d15ec00b9bf4084b2e12d2c5fd43e04991de516233",
+        "skills/data-quality/SKILL.md": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "skills/delay-investigation/SKILL.md": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "skills/flight-data-analysis/SKILL.md": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "sql/schema.sql": "37169d61676cbd7829429b420cfda001f7f6b2c38cd4762d33eb1b246b8c3da2",
+        "tests/fixtures/aerodatabox_airport.json": "35057fe21253ad880710bc250e08a7e26128eb0f8c38f24782bca2e2001676ac",
+        "tests/fixtures/gdelt_articles.json": "801e5c47ddb855cbb2bfc5446513918030918d8a58262f8ead276f822af33947",
+        "tests/fixtures/open_meteo_hourly.json": "e167b9550cc0991eb7c010f6dbed0e5fe51e33d0ea094f1837bf78f8059deeb2",
+        "tests/test_aerodatabox.py": "bc965ba92a33fc5d15dc421c424cae077794f56da1b5bb34f3806d6b71030190",
+        "tests/test_analysis.py": "0a44bea77d8115b52ed6b0848dc052315af01200a4d4df335005a05b6d245c93",
+        "tests/test_analyst.py": "4cd03b9ee2af96e8c0e4b7e8d567308c7ee4841dc06cf536c90d5f72bb8e7f0f",
+        "tests/test_chat.py": "f5732d721df98cd34a5b1dfcd8a56e55489faabc7e70086330dc5dafdf759dec",
+        "tests/test_news.py": "fe363301ee28019d1a31b9d05b5751b1d4acd4d41e7483f1188ac436f97ab770",
+        "tests/test_repository.py": "6d56d8e4af96569776fb8883f00da8c54587cc93b86036072a4ad7214c715d51",
+        "tests/test_weather.py": "42edbf18b497fa128bc1bbfda3833c4c869075beb298f9afc1ce7854b15060b9"
+      }
     }
   ],
   "learning_proposals": [],
@@ -240,6 +526,24 @@
       "task": "MA-001",
       "human": "Harkamal Toor",
       "reason": "Re-reviewed the current MA-001 workflow after refreshing stale test and diff evidence.",
+      "revision": null
+    },
+    {
+      "id": "44d3517a-0913-495d-a90c-22aa399bf86d",
+      "at": "2026-10-04T08:48:19.833Z",
+      "action": "approve",
+      "task": "FP-001",
+      "human": "Harkamal Toor",
+      "reason": "Reviewed FP-001 implementation, exact MySQL execution, specialist reviews, and current executable evidence.",
+      "revision": null
+    },
+    {
+      "id": "9a905ab0-19e9-4492-9834-100d66429326",
+      "at": "2026-10-04T09:02:01.938Z",
+      "action": "approve",
+      "task": "FP-002",
+      "human": "Harkamal Toor",
+      "reason": "Reviewed FP-002 fix, exact local MySQL validation, specialist reviews, and current executable evidence.",
       "revision": null
     }
   ],
@@ -387,6 +691,102 @@
       "cost": null,
       "stop_reason": null,
       "ended_at": "2026-10-04T07:51:14.573Z"
+    },
+    {
+      "id": "bfa6c7a9-26e3-478c-aac1-254bae553900",
+      "task": "FP-001",
+      "kind": "gate",
+      "command": "python -m unittest discover -s tests -v",
+      "timeout": 120000,
+      "authorization": null,
+      "pid": 42383,
+      "child_pid": 42426,
+      "started_at": "2026-10-04T08:29:02.360Z",
+      "status": "passed",
+      "before_hash": "0296146d22a035cee2d40af678294a10b91e684610bd0436625b46f1e4711724",
+      "config_hash": "a8e8ca8ecbe223978abb72e22c8aa34bb48176584d04aed1dbfb1e89b4bb67db",
+      "environment": {
+        "node": "v18.20.8",
+        "platform": "darwin",
+        "arch": "arm64",
+        "verifier": "cbdddbf25e5ed5f3406b93881ae54f64d11a8c54f0bfe177d19d9d9946a6a971",
+        "variables": {}
+      },
+      "cost": null,
+      "stop_reason": null,
+      "ended_at": "2026-10-04T08:29:03.464Z"
+    },
+    {
+      "id": "b9e26935-9077-4d26-addb-23d6516b18d6",
+      "task": "FP-001",
+      "kind": "gate",
+      "command": "git diff --check",
+      "timeout": 120000,
+      "authorization": null,
+      "pid": 42383,
+      "child_pid": 42643,
+      "started_at": "2026-10-04T08:29:03.609Z",
+      "status": "passed",
+      "before_hash": "0296146d22a035cee2d40af678294a10b91e684610bd0436625b46f1e4711724",
+      "config_hash": "a8e8ca8ecbe223978abb72e22c8aa34bb48176584d04aed1dbfb1e89b4bb67db",
+      "environment": {
+        "node": "v18.20.8",
+        "platform": "darwin",
+        "arch": "arm64",
+        "verifier": "cbdddbf25e5ed5f3406b93881ae54f64d11a8c54f0bfe177d19d9d9946a6a971",
+        "variables": {}
+      },
+      "cost": null,
+      "stop_reason": null,
+      "ended_at": "2026-10-04T08:29:03.785Z"
+    },
+    {
+      "id": "a2295e3d-2c89-41f3-a614-359d15851308",
+      "task": "FP-002",
+      "kind": "gate",
+      "command": "python -m unittest discover -s tests -v",
+      "timeout": 120000,
+      "authorization": null,
+      "pid": 47723,
+      "child_pid": 47784,
+      "started_at": "2026-10-04T08:57:38.272Z",
+      "status": "passed",
+      "before_hash": "3a6b4acec34a92e324ac0a966f5c6ddbc40183964929719ee8d203cc8f20ffff",
+      "config_hash": "fdd5c103a040281ba7a4238d376d50a34af6731c0f6d1ea8372fa98afe930519",
+      "environment": {
+        "node": "v18.20.8",
+        "platform": "darwin",
+        "arch": "arm64",
+        "verifier": "cbdddbf25e5ed5f3406b93881ae54f64d11a8c54f0bfe177d19d9d9946a6a971",
+        "variables": {}
+      },
+      "cost": null,
+      "stop_reason": null,
+      "ended_at": "2026-10-04T08:57:38.998Z"
+    },
+    {
+      "id": "36969b04-cd88-427b-8234-7c5e72618bdc",
+      "task": "FP-002",
+      "kind": "gate",
+      "command": "git diff --check",
+      "timeout": 120000,
+      "authorization": null,
+      "pid": 47723,
+      "child_pid": 48046,
+      "started_at": "2026-10-04T08:57:39.185Z",
+      "status": "passed",
+      "before_hash": "3a6b4acec34a92e324ac0a966f5c6ddbc40183964929719ee8d203cc8f20ffff",
+      "config_hash": "fdd5c103a040281ba7a4238d376d50a34af6731c0f6d1ea8372fa98afe930519",
+      "environment": {
+        "node": "v18.20.8",
+        "platform": "darwin",
+        "arch": "arm64",
+        "verifier": "cbdddbf25e5ed5f3406b93881ae54f64d11a8c54f0bfe177d19d9d9946a6a971",
+        "variables": {}
+      },
+      "cost": null,
+      "stop_reason": null,
+      "ended_at": "2026-10-04T08:57:39.442Z"
     }
   ],
   "authorizations": [],
@@ -418,11 +818,11 @@
     }
   },
   "checkpoint": {
-    "at": "2026-10-04T07:52:01.799Z",
+    "at": "2026-10-04T09:02:06.830Z",
     "revision": {
-      "commit": "71d0e6f4aac32fed5bde7411e688d9188907e450",
+      "commit": "e7aed14b79b6dd104f469735118828fbe5c37584",
       "dirty": true,
-      "source_hash": "5b57e1ecfd103855e2465eb22ab59c0fc13667a37ce9269c6b460ec9ed3a0e4e"
+      "source_hash": "3a6b4acec34a92e324ac0a966f5c6ddbc40183964929719ee8d203cc8f20ffff"
     },
     "active_task": null,
     "next_action": "Review completed work and choose the next bounded outcome."
