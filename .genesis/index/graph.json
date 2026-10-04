@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "project": "flight-pulse",
-  "revision": "ebffc39c0ccbd92ceb8e35d65800052f8a815281",
-  "sourceHash": "7acb8ff649bfad0511825de446d2a0c391b4bc254b111c2470e02321521b35d4",
+  "revision": "af6a68b89e6afbf26c0749812284de06a84c5cd4",
+  "sourceHash": "0d2a3b5c9da168219f6a46686860738cad7128c81d68c1b9b71c3fedf57dd5e2",
   "provenance": {
     "tool": "genesis-graphizer",
     "method": "static-analysis",
@@ -148,6 +148,16 @@
       "confidence": 1,
       "extractor": "filesystem",
       "contentHash": "cce316dba0a683f661061f302288aeddd19ec2b2ac07f9a9183541fe1c1f1031"
+    },
+    {
+      "id": "file:hooks/notify.py",
+      "type": "file",
+      "label": "hooks/notify.py",
+      "path": "hooks/notify.py",
+      "language": "python",
+      "confidence": 1,
+      "extractor": "filesystem",
+      "contentHash": "f789dfaa0db58b7130690f68e88620c804e80fa4d5a30ddb3c7dcf16376f3aae"
     },
     {
       "id": "file:tests/test_aerodatabox.py",
@@ -380,6 +390,24 @@
       "confidence": 0.85,
       "extractor": "standard-library",
       "contentHash": "7e94b3e53ed926a0862ab420950da1727eead16cbd6a34908b9d475846791a02"
+    },
+    {
+      "id": "runtime:python:subprocess",
+      "type": "runtime",
+      "label": "subprocess",
+      "language": "python",
+      "confidence": 0.85,
+      "extractor": "standard-library",
+      "contentHash": "a838328aadb7ae4f3b986cc1409c6659a059df7eed89854a55e95a2db3e316f3"
+    },
+    {
+      "id": "runtime:python:sys",
+      "type": "runtime",
+      "label": "sys",
+      "language": "python",
+      "confidence": 0.85,
+      "extractor": "standard-library",
+      "contentHash": "7d3229dfe3e291c80e4154dd2b38be4cad6b87d09a7e0a44f5ca68464fa2cb0b"
     },
     {
       "id": "runtime:python:typing",
@@ -1781,6 +1809,30 @@
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "8f6192f0595b0a08b87258c23762328ff2112d468027bac1d85f563177e04ce5"
+    },
+    {
+      "id": "symbol:hooks/notify.py#function:main",
+      "type": "symbol",
+      "kind": "function",
+      "name": "main",
+      "label": "main",
+      "path": "hooks/notify.py",
+      "line": 25,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "f583c61a40c09d3bfca9b3e6ef3e28a4f4dfaced58f9b895d0d76c0d77a8dd4c"
+    },
+    {
+      "id": "symbol:hooks/notify.py#function:notify",
+      "type": "symbol",
+      "kind": "function",
+      "name": "notify",
+      "label": "notify",
+      "path": "hooks/notify.py",
+      "line": 8,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "d3ed8547dc6ace39ac5cb4baff5ebfb47e64c50f046be448c36277aa60b0ea64"
     },
     {
       "id": "symbol:tests/test_aerodatabox.py#class:_MockResponse",
@@ -4082,6 +4134,15 @@
     },
     {
       "type": "calls",
+      "source": "symbol:hooks/notify.py#function:main",
+      "target": "symbol:hooks/notify.py#function:notify",
+      "tier": "proven",
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast-calls"
+    },
+    {
+      "type": "calls",
       "source": "symbol:tests/test_aerodatabox.py#function:AeroDataBoxClientTests.setUp",
       "target": "symbol:flight_pulse/config.py#class:AeroDataBoxSettings",
       "tier": "proven",
@@ -6080,6 +6141,24 @@
     },
     {
       "type": "defines",
+      "source": "file:hooks/notify.py",
+      "target": "symbol:hooks/notify.py#function:main",
+      "line": 25,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:hooks/notify.py",
+      "target": "symbol:hooks/notify.py#function:notify",
+      "line": 8,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
       "source": "file:tests/test_aerodatabox.py",
       "target": "symbol:tests/test_aerodatabox.py#class:_MockResponse",
       "line": 25,
@@ -7740,6 +7819,36 @@
     },
     {
       "type": "imports",
+      "source": "file:hooks/notify.py",
+      "target": "runtime:python:json",
+      "specifier": "json",
+      "line": 3,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:hooks/notify.py",
+      "target": "runtime:python:subprocess",
+      "specifier": "subprocess",
+      "line": 4,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:hooks/notify.py",
+      "target": "runtime:python:sys",
+      "specifier": "sys",
+      "line": 5,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
       "source": "file:tests/test_aerodatabox.py",
       "target": "file:flight_pulse/config.py",
       "specifier": "flight_pulse.config",
@@ -8381,6 +8490,6 @@
   ],
   "warnings": [],
   "stats": {
-    "unresolvedCalls": 579
+    "unresolvedCalls": 585
   }
 }

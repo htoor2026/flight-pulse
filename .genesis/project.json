@@ -9,7 +9,7 @@
     "non_goals": [],
     "trust_boundary": "local repository",
     "created_at": "2026-10-04T06:50:21.313Z",
-    "updated_at": "2026-10-04T06:52:56.310Z"
+    "updated_at": "2026-10-04T07:36:49.105Z"
   },
   "policy": {
     "ponytail": "full",
@@ -23,11 +23,11 @@
     }
   },
   "lifecycle": {
-    "phase": "discovery",
-    "status": "ready",
-    "active_task": null,
+    "phase": "build",
+    "status": "active",
+    "active_task": "MA-001",
     "blocker": null,
-    "next_action": "Review the adoption report and confirm project invariants."
+    "next_action": "Await human independent-review approval; then complete MA-001 through Genesis."
   },
   "commands": {},
   "workflow": null,
@@ -67,13 +67,271 @@
       "tags": []
     }
   ],
-  "decisions": [],
-  "knowledge": [],
-  "tasks": [],
+  "decisions": [
+    {
+      "id": "DECISION-5b3c09cf",
+      "title": "Native MA-001 orchestration model",
+      "text": "Use the root Codex session as Master / Orchestrator and sole Genesis state writer. Register six native specialist roles in .codex/config.toml with bounded TOML instructions under .codex/agents. Cap agent depth at one; reviewer agents report findings and the Master delegates accepted fixes to the Implementation Agent.",
+      "status": "accepted",
+      "source": "MA-001",
+      "recorded_at": "2026-10-04T07:20:05.467Z",
+      "paths": [],
+      "tags": []
+    },
+    {
+      "id": "DECISION-16821ef8",
+      "title": "MA-001 specialist review triage",
+      "text": "Accepted Security's defense-in-depth recommendation and set approval_policy=never for Code Review and Security agents. Rejected the claimed Python runtime mismatch after reproducing the Genesis child process environment: conda run -n flight-pulse resolves python to /opt/anaconda3/envs/flight-pulse/bin/python, Python 3.11.17, with CONDA_DEFAULT_ENV=flight-pulse. Code Review reported no findings; Test reported no additional automated tests needed.",
+      "status": "accepted",
+      "source": "MA-001 specialist reviews",
+      "recorded_at": "2026-10-04T07:25:31.300Z",
+      "paths": [],
+      "tags": []
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "KNOWLEDGE-d3efdb20",
+      "title": "MA-001 specialist review evidence",
+      "text": "Code Review found no actionable maintainability or architecture issues. Security's accepted fail-closed reviewer change was implemented and final re-review found no remaining security issues. Test confirmed 59 mocked/local tests passed, diff-check passed, native multi_agent is enabled, and all role TOMLs parse with valid registry links. Documentation found the role and lifecycle text consistent. Shipping found the change scoped and secret-free, with unrelated hooks/notify.py excluded. The independent-review gate remains pending for a human reviewer.",
+      "source": "MA-001 specialist agents",
+      "tags": [],
+      "recorded_at": "2026-10-04T07:28:06.886Z",
+      "paths": []
+    }
+  ],
+  "tasks": [
+    {
+      "id": "MA-001",
+      "outcome": "Implement the repository-native Codex multi-agent engineering workflow for Flight Pulse with Master, Implementation, Code Review, Security, Test, Documentation, and Shipping roles.",
+      "state": "active",
+      "risk": "medium",
+      "owner": "master",
+      "scope": [
+        ".codex",
+        ".genesis",
+        "AGENTS.md",
+        "docs",
+        ".github"
+      ],
+      "dependencies": [],
+      "requirements": [],
+      "inputs": [],
+      "environment": [],
+      "scenarios": [],
+      "gates": [
+        {
+          "id": "tests",
+          "kind": "command",
+          "command": "python -m unittest discover -s tests -v",
+          "mandatory": true,
+          "status": "pass",
+          "evidence": {
+            "path": ".genesis/evidence/MA-001-tests-ddc130b9-5d2e-418d-9f40-7fc390f499e8.json",
+            "hash": "74195b39ac21ac4a72e113224234e7a9375e8d84016a9c1b33933eda625ff202",
+            "source_hash": "7c7cddf05fd1bf3aa9c889c7ac968740db2777fde144d70d199173f8db479c9d",
+            "config_hash": "b6fa9e0f2b3ee4b9759c18c0dbdf0d485a7690aa8e77b67a700f3c531d9271db",
+            "observed_at": "2026-10-04T07:25:53.407Z"
+          }
+        },
+        {
+          "id": "diff-check",
+          "kind": "command",
+          "command": "git diff --check",
+          "mandatory": true,
+          "status": "pass",
+          "evidence": {
+            "path": ".genesis/evidence/MA-001-diff-check-2526af71-1b86-4bf6-95f4-004164015712.json",
+            "hash": "e62a18003874f2b0df5829902acee74a1d382267c529c6fc14b137dbb37cce3c",
+            "source_hash": "7c7cddf05fd1bf3aa9c889c7ac968740db2777fde144d70d199173f8db479c9d",
+            "config_hash": "b6fa9e0f2b3ee4b9759c18c0dbdf0d485a7690aa8e77b67a700f3c531d9271db",
+            "observed_at": "2026-10-04T07:25:53.756Z"
+          }
+        },
+        {
+          "id": "independent-review",
+          "kind": "review",
+          "command": "",
+          "mandatory": true,
+          "status": "pass",
+          "evidence": {
+            "path": ".genesis/evidence/MA-001-independent-review-883beccb-17eb-4eba-b2b3-03c5e1484401.json",
+            "hash": "dedc0384da6054e866d53c1411da4c8d47eea92bd4d88c4be7a5f2e3beba9ae7",
+            "source_hash": "7c7cddf05fd1bf3aa9c889c7ac968740db2777fde144d70d199173f8db479c9d",
+            "config_hash": "b6fa9e0f2b3ee4b9759c18c0dbdf0d485a7690aa8e77b67a700f3c531d9271db",
+            "observed_at": "2026-10-04T07:36:21.151Z"
+          }
+        }
+      ],
+      "next_action": "Await human independent-review approval; then complete MA-001 through Genesis.",
+      "blocker": null,
+      "notes": [
+        "Native role configuration, executable gates, and specialist reviews are complete. No commit, push, PR, or merge performed."
+      ],
+      "failures": [],
+      "limitations": [],
+      "created_at": "2026-10-04T07:10:37.109Z",
+      "updated_at": "2026-10-04T07:28:46.285Z",
+      "base_manifest": {
+        ".codex/config.toml": "fdcb2ab75a578cba903379f9a9b77f424172a30361a544b926a9b3d741ab6c8e",
+        ".env.example": "f7236e9197d65ae9300d42997a2932fe9a55107e6949d8b0398dbc2d2eb6791f",
+        ".github/ISSUE_TEMPLATE/feature_request.md": "a1399a9d3376d8af39dc258eb6365466c4ca41f43c20c35bc0d0409aedcb2b7b",
+        ".github/pull_request_template.md": "fab01488def22a92ca24e5ebdb96a1b5154eaef21cb294ad296be2ac4b6424ff",
+        ".github/workflows/ci.yml": "a30a469441e07c5f2fecb5b529d32c59a0d5b5e812733580a48628851465d212",
+        ".gitignore": "826b8bd49913b281414f426167e356f8527a0eaf864a8b09793b4b9d14756429",
+        "AGENTS.md": "761d6cb3aa3e2b7c3f25f8e3cdbac2e7aab599a1a09e5e28165e580042cc5829",
+        "README.md": "1e2bd4987d0f1d14242aea0d262d99420a36b260fd0a1cf227b6ee4acee8c371",
+        "app.py": "8fb3c05bd654687b1a18e2045d9e4fbc8a2e123361953b486d47c44ebe537cbb",
+        "docs/ARCHITECTURE.md": "120f73b03b85f8d7c9209fe031f12e8cca7f546491b740adae14b810cecfc612",
+        "docs/DATA_SOURCES.md": "d0a74825f1a8266be234a0a75044a237afa8fcac19684ad29f1436acc6599315",
+        "docs/DEVELOPMENT_LIFECYCLE.md": "036d5d8edac301d0979369b6e70bc82c5c308f78300fc8f1b2b9d66e7c736501",
+        "docs/FLIGHT_PULSE_COMPLETE_GUIDE.txt": "664bcebd95ce548fae9da6d3b9d8a14d7dc303048f0ed023433134d15d5e440c",
+        "docs/PLAN.md": "f242b0169edb045467ebdf8949678208ce6280f3b27d65c70cddec495623bc12",
+        "docs/SPEC.md": "93063fab2af07d4c7d829044f656a93f5c3777426b2748f7bfc0ec143481cb57",
+        "docs/STATUS.md": "225f13ae5e1dc6d9c890eb2e234051fee6dbabf9d0284634ec76adaef59f02cc",
+        "flight_pulse/analysis/__init__.py": "e19d9533dddaa9f48956ef3656ac4d1960dcb714815b69c2c0591e305d959061",
+        "flight_pulse/analysis/flights.py": "650138fd60b486f01d1de3a91340562318d8338dc4e7194f07afab8f2a508319",
+        "flight_pulse/analyst/__init__.py": "0a7e052de059356999674f29c8ab8ad4ff5d47b5d0321d5d53b45d2a9949564e",
+        "flight_pulse/analyst/tools.py": "58e0954d0decf0945acf610f3b1a1457eb5519fec24a05017a61806be69631b8",
+        "flight_pulse/chat/__init__.py": "e8e0b97ccf3829eb992aba3617e7dbf1a6f608535f11ac8b8d41968a6aea41b3",
+        "flight_pulse/chat/gemini.py": "34369dbca577956e7c63f0ed0937f496cab8573beca42742fc23c0d973fa3cf6",
+        "flight_pulse/config.py": "422d9a84c5fa80c8797f3cc48c95b4993ed52f141ae7cdb66c67ff69596ad10f",
+        "flight_pulse/ingestion/aerodatabox.py": "3263551cb93ff9ccbe65f856e69e7c283d8f894c7f3b0150a289ff03a27196af",
+        "flight_pulse/ingestion/gdelt.py": "5fd13f4b952f09ac57072d0cd173b7809b4376f7e911b9993e098a9dc8777ed3",
+        "flight_pulse/ingestion/open_meteo.py": "80428d03fb820634cdb7443623bc34f4a63b02c04456fbce4609bf45e9dfe6b7",
+        "flight_pulse/models.py": "b1836f5964db2316e92144d5aec6f217d98ff9245e7525a66d736b7295f4b880",
+        "flight_pulse/pipeline.py": "d260225c7714bd05b366c3caa579437840c839732c81e539ead142d758053870",
+        "flight_pulse/repository.py": "6ffbe72dc3266b7376fbe05a1f58c62a3213f287dc4b76eee0f9c38533e09cb4",
+        "hooks/hooks.json": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "requirements.txt": "6302bd6e31184d18326014d15ec00b9bf4084b2e12d2c5fd43e04991de516233",
+        "skills/data-quality/SKILL.md": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "skills/delay-investigation/SKILL.md": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "skills/flight-data-analysis/SKILL.md": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "sql/schema.sql": "37169d61676cbd7829429b420cfda001f7f6b2c38cd4762d33eb1b246b8c3da2",
+        "tests/fixtures/aerodatabox_airport.json": "35057fe21253ad880710bc250e08a7e26128eb0f8c38f24782bca2e2001676ac",
+        "tests/fixtures/gdelt_articles.json": "801e5c47ddb855cbb2bfc5446513918030918d8a58262f8ead276f822af33947",
+        "tests/fixtures/open_meteo_hourly.json": "e167b9550cc0991eb7c010f6dbed0e5fe51e33d0ea094f1837bf78f8059deeb2",
+        "tests/test_aerodatabox.py": "bc965ba92a33fc5d15dc421c424cae077794f56da1b5bb34f3806d6b71030190",
+        "tests/test_analysis.py": "4df08f6a5770d5d3e992927bdd80c8286b24f406582ccd550548a644db221023",
+        "tests/test_analyst.py": "4cd03b9ee2af96e8c0e4b7e8d567308c7ee4841dc06cf536c90d5f72bb8e7f0f",
+        "tests/test_chat.py": "f5732d721df98cd34a5b1dfcd8a56e55489faabc7e70086330dc5dafdf759dec",
+        "tests/test_news.py": "fe363301ee28019d1a31b9d05b5751b1d4acd4d41e7483f1188ac436f97ab770",
+        "tests/test_repository.py": "6d56d8e4af96569776fb8883f00da8c54587cc93b86036072a4ad7214c715d51",
+        "tests/test_weather.py": "42edbf18b497fa128bc1bbfda3833c4c869075beb298f9afc1ce7854b15060b9"
+      }
+    }
+  ],
   "learning_proposals": [],
   "cleanup_proposals": [],
-  "controls": [],
-  "attempts": [],
+  "controls": [
+    {
+      "id": "883beccb-17eb-4eba-b2b3-03c5e1484401",
+      "at": "2026-10-04T07:36:21.151Z",
+      "action": "approve",
+      "task": "MA-001",
+      "human": "Harkamal Toor",
+      "reason": "Reviewed the native multi-agent role configuration, permission boundaries, Genesis evidence, test results, security controls, and shipping restrictions.",
+      "revision": null
+    }
+  ],
+  "attempts": [
+    {
+      "id": "8c6de9b3-5f78-4ad0-ba44-feb0e1ebae6a",
+      "task": "MA-001",
+      "kind": "gate",
+      "command": "python -m unittest discover -s tests -v",
+      "timeout": 120000,
+      "authorization": null,
+      "pid": 24857,
+      "child_pid": 24885,
+      "started_at": "2026-10-04T07:21:17.933Z",
+      "status": "passed",
+      "before_hash": "ff7830bb36d6399652634daece408f3d4b622ce7aad95a55c05cd86be288d45d",
+      "config_hash": "b6fa9e0f2b3ee4b9759c18c0dbdf0d485a7690aa8e77b67a700f3c531d9271db",
+      "environment": {
+        "node": "v18.20.8",
+        "platform": "darwin",
+        "arch": "arm64",
+        "verifier": "cbdddbf25e5ed5f3406b93881ae54f64d11a8c54f0bfe177d19d9d9946a6a971",
+        "variables": {}
+      },
+      "cost": null,
+      "stop_reason": null,
+      "ended_at": "2026-10-04T07:21:18.704Z"
+    },
+    {
+      "id": "5705a15e-e4b6-4fe1-b56f-fecbf9a6bc1a",
+      "task": "MA-001",
+      "kind": "gate",
+      "command": "git diff --check",
+      "timeout": 120000,
+      "authorization": null,
+      "pid": 24857,
+      "child_pid": 25052,
+      "started_at": "2026-10-04T07:21:18.828Z",
+      "status": "passed",
+      "before_hash": "ff7830bb36d6399652634daece408f3d4b622ce7aad95a55c05cd86be288d45d",
+      "config_hash": "b6fa9e0f2b3ee4b9759c18c0dbdf0d485a7690aa8e77b67a700f3c531d9271db",
+      "environment": {
+        "node": "v18.20.8",
+        "platform": "darwin",
+        "arch": "arm64",
+        "verifier": "cbdddbf25e5ed5f3406b93881ae54f64d11a8c54f0bfe177d19d9d9946a6a971",
+        "variables": {}
+      },
+      "cost": null,
+      "stop_reason": null,
+      "ended_at": "2026-10-04T07:21:18.976Z"
+    },
+    {
+      "id": "ddc130b9-5d2e-418d-9f40-7fc390f499e8",
+      "task": "MA-001",
+      "kind": "gate",
+      "command": "python -m unittest discover -s tests -v",
+      "timeout": 120000,
+      "authorization": null,
+      "pid": 27338,
+      "child_pid": 27413,
+      "started_at": "2026-10-04T07:25:52.844Z",
+      "status": "passed",
+      "before_hash": "7c7cddf05fd1bf3aa9c889c7ac968740db2777fde144d70d199173f8db479c9d",
+      "config_hash": "b6fa9e0f2b3ee4b9759c18c0dbdf0d485a7690aa8e77b67a700f3c531d9271db",
+      "environment": {
+        "node": "v18.20.8",
+        "platform": "darwin",
+        "arch": "arm64",
+        "verifier": "cbdddbf25e5ed5f3406b93881ae54f64d11a8c54f0bfe177d19d9d9946a6a971",
+        "variables": {}
+      },
+      "cost": null,
+      "stop_reason": null,
+      "ended_at": "2026-10-04T07:25:53.407Z"
+    },
+    {
+      "id": "2526af71-1b86-4bf6-95f4-004164015712",
+      "task": "MA-001",
+      "kind": "gate",
+      "command": "git diff --check",
+      "timeout": 120000,
+      "authorization": null,
+      "pid": 27338,
+      "child_pid": 27673,
+      "started_at": "2026-10-04T07:25:53.558Z",
+      "status": "passed",
+      "before_hash": "7c7cddf05fd1bf3aa9c889c7ac968740db2777fde144d70d199173f8db479c9d",
+      "config_hash": "b6fa9e0f2b3ee4b9759c18c0dbdf0d485a7690aa8e77b67a700f3c531d9271db",
+      "environment": {
+        "node": "v18.20.8",
+        "platform": "darwin",
+        "arch": "arm64",
+        "verifier": "cbdddbf25e5ed5f3406b93881ae54f64d11a8c54f0bfe177d19d9d9946a6a971",
+        "variables": {}
+      },
+      "cost": null,
+      "stop_reason": null,
+      "ended_at": "2026-10-04T07:25:53.756Z"
+    }
+  ],
   "authorizations": [],
   "experiments": [],
   "incidents": [],
@@ -103,14 +361,14 @@
     }
   },
   "checkpoint": {
-    "at": "2026-10-04T06:52:56.282Z",
+    "at": "2026-10-04T07:36:49.077Z",
     "revision": {
-      "commit": "ebffc39c0ccbd92ceb8e35d65800052f8a815281",
+      "commit": "af6a68b89e6afbf26c0749812284de06a84c5cd4",
       "dirty": true,
-      "source_hash": "e3f9c33a60c82ed27a062243f4a95448cc844cf92ad0995a6a1089f7980fcc8a"
+      "source_hash": "7c7cddf05fd1bf3aa9c889c7ac968740db2777fde144d70d199173f8db479c9d"
     },
-    "active_task": null,
-    "next_action": "Review the adoption report and confirm project invariants."
+    "active_task": "MA-001",
+    "next_action": "Await human independent-review approval; then complete MA-001 through Genesis."
   },
   "legacy": null
 }
