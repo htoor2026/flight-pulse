@@ -8,7 +8,7 @@
 - blocker: none
 - next action: Await human independent-review approval; then complete MA-001 through Genesis.
 - phase instruction: Work only on the active bounded task. Check `genesis query . impact PATH` before editing shared code.
-- gates: tests:pass, diff-check:pass, independent-review:pass
+- gates: tests:stale, diff-check:stale, independent-review:stale
 - recent failures: none
 
 ## Resume
@@ -17,7 +17,7 @@ Load Genesis and official Ponytail full, then run `genesis brief .` for the curr
 Fetch full records with `genesis context . --id ID` only when needed. Do not load project.json or historical proof wholesale.
 Ask the index before reading code: `genesis query . search|scope|callers|callees|impact|path` (`--json` for parsing). Run `genesis query . impact PATH` before editing shared code. Answers are advisory static analysis; `ambiguous` means candidates were not ruled out, so confirm in source.
 Run `genesis serve .` for a live map of the repository when structure is unclear; it reindexes on save and is read-only. Run `genesis index .` if the index is stale and nothing is watching.
-Context fingerprint: b7d1ee8dc2ce59616cceadf1dcc0ac7fdb694ac7986f8eb72ed0da7dfb4e959d. Use --since only after receiving that full packet; kickoff is not the packet.
+Context fingerprint: 5a7b5672001028eb34b51a8116ba920f8bad3c5c7a047a691aa2620bd71a7be2. Use --since only after receiving that full packet; kickoff is not the packet.
 - KNOWLEDGE-d3efdb20: MA-001 specialist review evidence
 - DECISION-16821ef8: MA-001 specialist review triage
 - DECISION-5b3c09cf: Native MA-001 orchestration model
