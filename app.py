@@ -499,14 +499,24 @@ def render_business_overview() -> None:
         )
 
     st.subheader("Validated project results")
-    result_columns = st.columns(4)
+    result_columns = st.columns(5)
     result_columns[0].metric("YYZ flights", "72")
     result_columns[1].metric("Weather observations", "48")
     result_columns[2].metric("Flights matched to weather", "72 / 72")
-    result_columns[3].metric("Automated tests", "59")
+    result_columns[3].metric(
+        "Median departure delay",
+        "21.00 min",
+        help="Based on 3 flights with observed departure-delay values.",
+    )
+    result_columns[4].metric("Automated tests", "63")
     st.write(
         "The project also includes a reusable analytics layer, an interactive "
         "dashboard, seven read-only analyst tools, and Gemini function-calling chat."
+    )
+    st.caption(
+        "The 21.00-minute median uses the 3 flights with observed departure-delay "
+        "values in the current sample. Delivery quality is supported by automated "
+        "testing, CI validation, reviewed pull requests, and human-controlled merges."
     )
 
     value_column, limits_column = st.columns(2)
@@ -608,7 +618,7 @@ def render_technical_overview() -> None:
 
     st.subheader("Testing, CI, and Git workflow")
     st.markdown(
-        "- **Testing:** 59 unit tests cover normalization, delay calculations, "
+        "- **Testing:** 63 unit tests cover normalization, delay calculations, "
         "repositories, analytics, enrichment, tool validation, and mocked Gemini "
         "routing without consuming provider quota.\n"
         "- **Application validation:** Streamlit is exercised offline to verify the "
@@ -616,6 +626,28 @@ def render_technical_overview() -> None:
         "- **CI:** GitHub Actions performs the repository's configured syntax checks.\n"
         "- **Git:** milestone work is developed on feature branches, validated, and "
         "merged into `main` after review."
+    )
+
+    st.subheader("Engineering workflow and governance")
+    st.markdown(
+        "**Human** → **Master / Orchestrator** → **Genesis task, scope, evidence, "
+        "gates, and checkpoints** → **specialist agents**\n\n"
+        "The Master coordinates bounded work and triages findings. Genesis stores "
+        "bounded task state, scope, evidence, gates, and checkpoints. The "
+        "Implementation Agent writes approved code; the Test Agent validates locally "
+        "without live provider calls; Code Review and Security are read-only "
+        "reviewers; the Documentation Agent is docs-focused; and the Shipping Agent "
+        "may stage, commit, push, and open an approved pull request, but cannot merge "
+        "`main`. Final merges and sensitive boundaries remain human-controlled."
+    )
+
+    st.subheader("Layered validation example")
+    st.write(
+        "FP-001 implemented the median departure-delay metric and passed semantic "
+        "tests. Exact local MySQL validation then exposed a production-dialect issue: "
+        "`row_number` conflicted with MySQL reserved terminology. FP-002 changed the "
+        "alias to `delay_rank`; exact MySQL validation succeeded, the final 63-test "
+        "suite and CI passed, and the merge remained human-controlled."
     )
 
     decisions_column, limitations_column = st.columns(2)
