@@ -482,7 +482,7 @@ Provider retries, deployment, and merging remain separate approval decisions.
 - Conda environment: PASS
 - Python 3.11 requirement: PASS
 - approved dependency installation: PASS
-- unit tests: PASS (63 tests)
+- unit tests: PASS (70 tests)
 - `git diff --check`: PASS
 - local MySQL connection: PASS
 - provisional schema execution: PASS
@@ -538,7 +538,7 @@ Provider retries, deployment, and merging remain separate approval decisions.
 - `.env.example` placeholders/defaults only: PASS
 - direct dependency consistency: PASS
 - `pip check`: PASS
-- final complete test suite: PASS (63 tests)
+- final complete test suite: PASS (70 tests)
 - final Streamlit import/start validation: PASS (0 exceptions)
 - external provider requests during portfolio polish: 0
 - credentials committed: NO
