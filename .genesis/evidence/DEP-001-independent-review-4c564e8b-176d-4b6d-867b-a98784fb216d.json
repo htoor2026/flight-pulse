@@ -1,0 +1,13 @@
+{
+  "task": "DEP-001",
+  "gate": "independent-review",
+  "kind": "review",
+  "attempt": "4c564e8b-176d-4b6d-867b-a98784fb216d",
+  "human": "Harkamal Toor",
+  "reason": "Reviewed DEP-001 implementation, validation, code review, security review, synthetic demo disclosure, and zero-external-call behavior. Approved for shipping.",
+  "observed_at": "2026-10-05T21:38:44.014Z",
+  "source_hash": "b99157f9988ed50137e484652c5f8d603deab4ee910a7ac8d0bf702b9cbad3cf",
+  "config_hash": "b123a38fc6b079861a35e36d0a16a817f63cf0285b767407a2bdcf5bc8373f1f",
+  "reviewed_proofs": "8542076a2de9913fee0d0e22bc4424966ec4a276cff95a52284bdc215d477209",
+  "hash": "7d611f48bdc8df7b1c23738383170a5a57265f3f4cb27ae1a215dcadacfa69f8"
+}

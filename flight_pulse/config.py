@@ -8,6 +8,28 @@ from dataclasses import dataclass
 from dotenv import load_dotenv
 
 
+TRUE_VALUES = frozenset({"1", "true", "yes", "on"})
+FALSE_VALUES = frozenset({"0", "false", "no", "off"})
+
+
+def demo_mode_enabled() -> bool:
+    """Return the explicitly configured dashboard mode."""
+    load_dotenv()
+    value = os.getenv("DEMO_MODE")
+    if value is None:
+        return False
+
+    normalized = value.strip().lower()
+    if normalized in TRUE_VALUES:
+        return True
+    if normalized in FALSE_VALUES:
+        return False
+    raise ValueError(
+        "DEMO_MODE must be one of: "
+        + ", ".join(sorted(TRUE_VALUES | FALSE_VALUES))
+    )
+
+
 def _required(name: str) -> str:
     value = os.getenv(name)
     if value is None or not value.strip():
