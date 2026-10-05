@@ -9,7 +9,7 @@
     "non_goals": [],
     "trust_boundary": "local repository",
     "created_at": "2026-10-04T06:50:21.313Z",
-    "updated_at": "2026-10-05T09:36:12.850Z"
+    "updated_at": "2026-10-05T10:09:23.752Z"
   },
   "policy": {
     "ponytail": "full",
@@ -23,11 +23,11 @@
     }
   },
   "lifecycle": {
-    "phase": "build",
-    "status": "active",
-    "active_task": "DOC-001",
+    "phase": "verify",
+    "status": "ready",
+    "active_task": null,
     "blocker": null,
-    "next_action": "Await human review and approval of the final documentation diff; do not commit or push."
+    "next_action": "Review completed work and choose the next bounded outcome."
   },
   "commands": {},
   "workflow": null,
@@ -107,6 +107,16 @@
       "recorded_at": "2026-10-04T08:56:41.456Z",
       "paths": [],
       "tags": []
+    },
+    {
+      "id": "DECISION-d3bd96fb",
+      "title": "Defer DOC-001 terminal reconciliation",
+      "text": "DOC-001 was approved, shipped, and merged in PR #18, but Genesis completion refuses because the immutable original task scope omitted the later human-approved .gitattributes file. Do not hand-edit generated task state or erase the audit trail. Requeue DOC-001 and activate the already-declared UI-001; reconcile DOC-001 terminal state separately if Genesis gains a supported scope-correction path.",
+      "status": "accepted",
+      "source": "Genesis task complete scope enforcement after PR #18",
+      "recorded_at": "2026-10-05T09:49:08.547Z",
+      "paths": [],
+      "tags": []
     }
   ],
   "knowledge": [
@@ -162,6 +172,15 @@
       "source": "DOC-001 final human-requested correction and local validation",
       "tags": [],
       "recorded_at": "2026-10-05T09:36:12.415Z",
+      "paths": []
+    },
+    {
+      "id": "KNOWLEDGE-d034dd3c",
+      "title": "UI-001 implementation, render, test, and review evidence",
+      "text": "Implementation changed only render_business_overview and render_technical_overview in app.py. Test Agent ran the complete local suite in the flight-pulse Python 3.11 Conda environment: 63 tests passed with no live provider calls. Streamlit AppTest executed the real app with zero exceptions and rendered exactly Flight Analytics, Business Overview, and Technical Overview; displayed metrics included median departure delay 21.00 min and Automated tests 63. Flight Analytics, analytics/SQL/ingestion/schema/Gemini/dependency/external-service behavior were unchanged. Independent Code Review reported no actionable findings. Direct git diff --check passed. The first Genesis test-gate attempt used base Python 3.13 and failed because google.genai was unavailable there; the preserved retry under the documented flight-pulse Conda environment passed both executable gates.",
+      "source": "UI-001 Implementation Agent, Test Agent, Code Review Agent, Streamlit AppTest, and Genesis gate receipts",
+      "tags": [],
+      "recorded_at": "2026-10-05T09:55:59.760Z",
       "paths": []
     }
   ],
@@ -536,7 +555,7 @@
     {
       "id": "DOC-001",
       "outcome": "Synchronize final Flight Pulse portfolio documentation and add a dedicated multi-agent engineering guide without changing application behavior.",
-      "state": "active",
+      "state": "rejected",
       "risk": "low",
       "owner": "master",
       "scope": [
@@ -557,11 +576,11 @@
           "mandatory": true,
           "status": "pass",
           "evidence": {
-            "path": ".genesis/evidence/DOC-001-diff-check-23bba91e-f918-4d46-ad86-af8511b6ef44.json",
-            "hash": "b819b300430f7b1d711abd2caf40f9194100f52b15c98cf5fc04c9ac16d8fe99",
+            "path": ".genesis/evidence/DOC-001-diff-check-2d40769d-7ff2-4ecb-8186-5ab65ec0ff2f.json",
+            "hash": "e15c55db411587ccba6816484f2f7ba1a78dccf5f412fe104427f2388c87d550",
             "source_hash": "de27064a28aec55118daa1135cdd663a07427fd66cd6cbb8d0db9d70822b8372",
             "config_hash": "21122881bbd2c0add52f9da99fe3dec24591075bb2e9c2f165e4eaadc03dcda1",
-            "observed_at": "2026-10-05T09:36:12.184Z"
+            "observed_at": "2026-10-05T10:06:12.848Z"
           }
         }
       ],
@@ -597,6 +616,209 @@
         "docs/PLAN.md": "f242b0169edb045467ebdf8949678208ce6280f3b27d65c70cddec495623bc12",
         "docs/SPEC.md": "93063fab2af07d4c7d829044f656a93f5c3777426b2748f7bfc0ec143481cb57",
         "docs/STATUS.md": "225f13ae5e1dc6d9c890eb2e234051fee6dbabf9d0284634ec76adaef59f02cc",
+        "flight_pulse/analysis/__init__.py": "e19d9533dddaa9f48956ef3656ac4d1960dcb714815b69c2c0591e305d959061",
+        "flight_pulse/analysis/flights.py": "4be628f7a7571808cd2a3f8af1f6546fd7ed59a5b800b2f30732e801945b719a",
+        "flight_pulse/analyst/__init__.py": "0a7e052de059356999674f29c8ab8ad4ff5d47b5d0321d5d53b45d2a9949564e",
+        "flight_pulse/analyst/tools.py": "58e0954d0decf0945acf610f3b1a1457eb5519fec24a05017a61806be69631b8",
+        "flight_pulse/chat/__init__.py": "e8e0b97ccf3829eb992aba3617e7dbf1a6f608535f11ac8b8d41968a6aea41b3",
+        "flight_pulse/chat/gemini.py": "34369dbca577956e7c63f0ed0937f496cab8573beca42742fc23c0d973fa3cf6",
+        "flight_pulse/config.py": "422d9a84c5fa80c8797f3cc48c95b4993ed52f141ae7cdb66c67ff69596ad10f",
+        "flight_pulse/ingestion/aerodatabox.py": "3263551cb93ff9ccbe65f856e69e7c283d8f894c7f3b0150a289ff03a27196af",
+        "flight_pulse/ingestion/gdelt.py": "5fd13f4b952f09ac57072d0cd173b7809b4376f7e911b9993e098a9dc8777ed3",
+        "flight_pulse/ingestion/open_meteo.py": "80428d03fb820634cdb7443623bc34f4a63b02c04456fbce4609bf45e9dfe6b7",
+        "flight_pulse/models.py": "b1836f5964db2316e92144d5aec6f217d98ff9245e7525a66d736b7295f4b880",
+        "flight_pulse/pipeline.py": "d260225c7714bd05b366c3caa579437840c839732c81e539ead142d758053870",
+        "flight_pulse/repository.py": "6ffbe72dc3266b7376fbe05a1f58c62a3213f287dc4b76eee0f9c38533e09cb4",
+        "hooks/hooks.json": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "requirements.txt": "6302bd6e31184d18326014d15ec00b9bf4084b2e12d2c5fd43e04991de516233",
+        "skills/data-quality/SKILL.md": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "skills/delay-investigation/SKILL.md": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "skills/flight-data-analysis/SKILL.md": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "sql/schema.sql": "37169d61676cbd7829429b420cfda001f7f6b2c38cd4762d33eb1b246b8c3da2",
+        "tests/fixtures/aerodatabox_airport.json": "35057fe21253ad880710bc250e08a7e26128eb0f8c38f24782bca2e2001676ac",
+        "tests/fixtures/gdelt_articles.json": "801e5c47ddb855cbb2bfc5446513918030918d8a58262f8ead276f822af33947",
+        "tests/fixtures/open_meteo_hourly.json": "e167b9550cc0991eb7c010f6dbed0e5fe51e33d0ea094f1837bf78f8059deeb2",
+        "tests/test_aerodatabox.py": "bc965ba92a33fc5d15dc421c424cae077794f56da1b5bb34f3806d6b71030190",
+        "tests/test_analysis.py": "9924a21d887a94c15ccea4e74cec68bd1b8985c6b8879149caa3ba206a88b302",
+        "tests/test_analyst.py": "4cd03b9ee2af96e8c0e4b7e8d567308c7ee4841dc06cf536c90d5f72bb8e7f0f",
+        "tests/test_chat.py": "f5732d721df98cd34a5b1dfcd8a56e55489faabc7e70086330dc5dafdf759dec",
+        "tests/test_news.py": "fe363301ee28019d1a31b9d05b5751b1d4acd4d41e7483f1188ac436f97ab770",
+        "tests/test_repository.py": "6d56d8e4af96569776fb8883f00da8c54587cc93b86036072a4ad7214c715d51",
+        "tests/test_weather.py": "42edbf18b497fa128bc1bbfda3833c4c869075beb298f9afc1ce7854b15060b9"
+      }
+    },
+    {
+      "id": "UI-001",
+      "outcome": "Synchronize the Streamlit Business Overview and Technical Overview with the final validated Flight Pulse state and engineering workflow without changing analytics, ingestion, database, or AI behavior.",
+      "state": "done",
+      "risk": "low",
+      "owner": "master",
+      "scope": [
+        ".genesis",
+        "app.py"
+      ],
+      "dependencies": [],
+      "requirements": [],
+      "inputs": [],
+      "environment": [],
+      "scenarios": [],
+      "gates": [
+        {
+          "id": "tests",
+          "kind": "command",
+          "command": "python -m unittest discover -s tests -v",
+          "mandatory": true,
+          "status": "pass",
+          "evidence": {
+            "path": ".genesis/evidence/UI-001-tests-adbe3c9d-5c2d-4cab-a811-00c2fb5707fa.json",
+            "hash": "85a1dac781ed09ba0d03b998f8867e47699ed78acba308b14f96162f9b3a1d81",
+            "source_hash": "fd4900f01dc95572122f97bdbbaa6ab51582952144f9cabba49168539a906842",
+            "config_hash": "775d6bb8512780557c4a39eb9b4d5da1da7eb8eb6bc7cb36c110fd522ad3988e",
+            "observed_at": "2026-10-05T09:55:36.303Z"
+          }
+        },
+        {
+          "id": "diff-check",
+          "kind": "command",
+          "command": "git diff --check",
+          "mandatory": true,
+          "status": "pass",
+          "evidence": {
+            "path": ".genesis/evidence/UI-001-diff-check-c143630b-ee29-4158-9636-8b9fbce4e6c9.json",
+            "hash": "986939f1d5b4a90c9c339cc8dcd53737713651e20758676fea6f7c79af85c04f",
+            "source_hash": "fd4900f01dc95572122f97bdbbaa6ab51582952144f9cabba49168539a906842",
+            "config_hash": "775d6bb8512780557c4a39eb9b4d5da1da7eb8eb6bc7cb36c110fd522ad3988e",
+            "observed_at": "2026-10-05T09:55:36.841Z"
+          }
+        }
+      ],
+      "next_action": "Await human review and approval of UI-001; do not commit, push, open a PR, or merge.",
+      "blocker": null,
+      "notes": [],
+      "failures": [
+        "Initial Genesis tests gate used base Python 3.13 and failed importing google.genai after 54 discovered tests; the documented flight-pulse Python 3.11 environment had already passed all 63 tests. Retry the unchanged gate under the flight-pulse Conda environment."
+      ],
+      "limitations": [],
+      "created_at": "2026-10-05T09:48:06.936Z",
+      "updated_at": "2026-10-05T09:58:33.702Z",
+      "base_manifest": {
+        ".codex/agents/code_review.toml": "442011b7f82de05c7f276945368b6f5477571636bc2de2ffce3ed894b9f6d13e",
+        ".codex/agents/documentation.toml": "b282f396d0d1b3015778ae2eda2030294d6041106545d16aa518f70b88a45baf",
+        ".codex/agents/implementation.toml": "07cf9ff0c78de15af4889fc8ecab455fe5bda04c764d09b40a01f618c3118f12",
+        ".codex/agents/security.toml": "992d7f764186730f76cbffaec14aa58c0fcab4a7c9b13db88c138bde6dbc3d00",
+        ".codex/agents/shipping.toml": "93e85486b53300791312e461141d1ca599e2d2b11f594d0914006f542f112653",
+        ".codex/agents/test.toml": "3864ba7ac431f33bc80df40a3c481cae32b877f475ae4bd650e10572473d4154",
+        ".codex/config.toml": "06ecf4599a8f3db5f5714202485241287b588c81d7cae2988a4661d21dd71b97",
+        ".env.example": "f7236e9197d65ae9300d42997a2932fe9a55107e6949d8b0398dbc2d2eb6791f",
+        ".gitattributes": "a0ca5a6496ac07d75cd5d0fd6e7ad60b46701749e274a76d4c184e6686b7d7c1",
+        ".github/ISSUE_TEMPLATE/feature_request.md": "a1399a9d3376d8af39dc258eb6365466c4ca41f43c20c35bc0d0409aedcb2b7b",
+        ".github/pull_request_template.md": "fab01488def22a92ca24e5ebdb96a1b5154eaef21cb294ad296be2ac4b6424ff",
+        ".github/workflows/ci.yml": "a30a469441e07c5f2fecb5b529d32c59a0d5b5e812733580a48628851465d212",
+        ".gitignore": "826b8bd49913b281414f426167e356f8527a0eaf864a8b09793b4b9d14756429",
+        "AGENTS.md": "8d38f9d48f7c7324d2b37d01929f27ac90fce7c10cc1c2250da2be08f1a64250",
+        "README.md": "87d4c187aad6221635411fb66838e84c6db9001b54ee6fdacdb5d50cf6a51a99",
+        "app.py": "23b017e141516a681291b5b8b7104b5434b449ba10c9c628bad7f5d6d855c083",
+        "docs/ARCHITECTURE.md": "120f73b03b85f8d7c9209fe031f12e8cca7f546491b740adae14b810cecfc612",
+        "docs/DATA_SOURCES.md": "d0a74825f1a8266be234a0a75044a237afa8fcac19684ad29f1436acc6599315",
+        "docs/DEVELOPMENT_LIFECYCLE.md": "1ea0973ad96e373c751294c5b2f4e3e576e2e6b084f1b85a1880493d140e7d9c",
+        "docs/FLIGHT_PULSE_COMPLETE_GUIDE.txt": "13619213beb1ec05ff404739c976d87722449f7b5ca888b6c9c5127a47a6cc75",
+        "docs/FLIGHT_PULSE_MULTI_AGENT_GUIDE.txt": "dfe912f1cb30a66e1ad54703254226d0d178ba547709f4d3e7c27524032510eb",
+        "docs/PLAN.md": "f242b0169edb045467ebdf8949678208ce6280f3b27d65c70cddec495623bc12",
+        "docs/SPEC.md": "93063fab2af07d4c7d829044f656a93f5c3777426b2748f7bfc0ec143481cb57",
+        "docs/STATUS.md": "3d9042bcd07ea9ea749512fc893515024ba7be11e1652ba979072512c31ee24a",
+        "flight_pulse/analysis/__init__.py": "e19d9533dddaa9f48956ef3656ac4d1960dcb714815b69c2c0591e305d959061",
+        "flight_pulse/analysis/flights.py": "4be628f7a7571808cd2a3f8af1f6546fd7ed59a5b800b2f30732e801945b719a",
+        "flight_pulse/analyst/__init__.py": "0a7e052de059356999674f29c8ab8ad4ff5d47b5d0321d5d53b45d2a9949564e",
+        "flight_pulse/analyst/tools.py": "58e0954d0decf0945acf610f3b1a1457eb5519fec24a05017a61806be69631b8",
+        "flight_pulse/chat/__init__.py": "e8e0b97ccf3829eb992aba3617e7dbf1a6f608535f11ac8b8d41968a6aea41b3",
+        "flight_pulse/chat/gemini.py": "34369dbca577956e7c63f0ed0937f496cab8573beca42742fc23c0d973fa3cf6",
+        "flight_pulse/config.py": "422d9a84c5fa80c8797f3cc48c95b4993ed52f141ae7cdb66c67ff69596ad10f",
+        "flight_pulse/ingestion/aerodatabox.py": "3263551cb93ff9ccbe65f856e69e7c283d8f894c7f3b0150a289ff03a27196af",
+        "flight_pulse/ingestion/gdelt.py": "5fd13f4b952f09ac57072d0cd173b7809b4376f7e911b9993e098a9dc8777ed3",
+        "flight_pulse/ingestion/open_meteo.py": "80428d03fb820634cdb7443623bc34f4a63b02c04456fbce4609bf45e9dfe6b7",
+        "flight_pulse/models.py": "b1836f5964db2316e92144d5aec6f217d98ff9245e7525a66d736b7295f4b880",
+        "flight_pulse/pipeline.py": "d260225c7714bd05b366c3caa579437840c839732c81e539ead142d758053870",
+        "flight_pulse/repository.py": "6ffbe72dc3266b7376fbe05a1f58c62a3213f287dc4b76eee0f9c38533e09cb4",
+        "hooks/hooks.json": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "requirements.txt": "6302bd6e31184d18326014d15ec00b9bf4084b2e12d2c5fd43e04991de516233",
+        "skills/data-quality/SKILL.md": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "skills/delay-investigation/SKILL.md": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "skills/flight-data-analysis/SKILL.md": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "sql/schema.sql": "37169d61676cbd7829429b420cfda001f7f6b2c38cd4762d33eb1b246b8c3da2",
+        "tests/fixtures/aerodatabox_airport.json": "35057fe21253ad880710bc250e08a7e26128eb0f8c38f24782bca2e2001676ac",
+        "tests/fixtures/gdelt_articles.json": "801e5c47ddb855cbb2bfc5446513918030918d8a58262f8ead276f822af33947",
+        "tests/fixtures/open_meteo_hourly.json": "e167b9550cc0991eb7c010f6dbed0e5fe51e33d0ea094f1837bf78f8059deeb2",
+        "tests/test_aerodatabox.py": "bc965ba92a33fc5d15dc421c424cae077794f56da1b5bb34f3806d6b71030190",
+        "tests/test_analysis.py": "9924a21d887a94c15ccea4e74cec68bd1b8985c6b8879149caa3ba206a88b302",
+        "tests/test_analyst.py": "4cd03b9ee2af96e8c0e4b7e8d567308c7ee4841dc06cf536c90d5f72bb8e7f0f",
+        "tests/test_chat.py": "f5732d721df98cd34a5b1dfcd8a56e55489faabc7e70086330dc5dafdf759dec",
+        "tests/test_news.py": "fe363301ee28019d1a31b9d05b5751b1d4acd4d41e7483f1188ac436f97ab770",
+        "tests/test_repository.py": "6d56d8e4af96569776fb8883f00da8c54587cc93b86036072a4ad7214c715d51",
+        "tests/test_weather.py": "42edbf18b497fa128bc1bbfda3833c4c869075beb298f9afc1ce7854b15060b9"
+      }
+    },
+    {
+      "id": "DOC-002",
+      "outcome": "Reconcile Genesis state after the completed DOC-001 recruiter documentation was merged with an original scope mismatch, without changing product files.",
+      "state": "done",
+      "risk": "low",
+      "owner": "master",
+      "scope": [
+        ".genesis"
+      ],
+      "dependencies": [],
+      "requirements": [],
+      "inputs": [],
+      "environment": [],
+      "scenarios": [],
+      "gates": [
+        {
+          "id": "diff-check",
+          "kind": "command",
+          "command": "git diff --check",
+          "mandatory": true,
+          "status": "pass",
+          "evidence": {
+            "path": ".genesis/evidence/DOC-002-diff-check-3af04abf-a891-4440-81e6-d5600086e72d.json",
+            "hash": "9d7dfb33c132f5bfd02aed0b4a4ec27d0878deebfb851219d754340e2b8c6651",
+            "source_hash": "de27064a28aec55118daa1135cdd663a07427fd66cd6cbb8d0db9d70822b8372",
+            "config_hash": "020c025994107e25edf2efe1ec19ee53ddcd2a601ee4cf66c7e19d5a334403c6",
+            "observed_at": "2026-10-05T10:09:23.290Z"
+          }
+        }
+      ],
+      "next_action": "Verify repository consistency, complete the reconciliation task, and return Genesis to ready state.",
+      "blocker": null,
+      "notes": [],
+      "failures": [],
+      "limitations": [],
+      "created_at": "2026-10-05T10:09:19.310Z",
+      "updated_at": "2026-10-05T10:09:23.537Z",
+      "base_manifest": {
+        ".codex/agents/code_review.toml": "442011b7f82de05c7f276945368b6f5477571636bc2de2ffce3ed894b9f6d13e",
+        ".codex/agents/documentation.toml": "b282f396d0d1b3015778ae2eda2030294d6041106545d16aa518f70b88a45baf",
+        ".codex/agents/implementation.toml": "07cf9ff0c78de15af4889fc8ecab455fe5bda04c764d09b40a01f618c3118f12",
+        ".codex/agents/security.toml": "992d7f764186730f76cbffaec14aa58c0fcab4a7c9b13db88c138bde6dbc3d00",
+        ".codex/agents/shipping.toml": "93e85486b53300791312e461141d1ca599e2d2b11f594d0914006f542f112653",
+        ".codex/agents/test.toml": "3864ba7ac431f33bc80df40a3c481cae32b877f475ae4bd650e10572473d4154",
+        ".codex/config.toml": "06ecf4599a8f3db5f5714202485241287b588c81d7cae2988a4661d21dd71b97",
+        ".env.example": "f7236e9197d65ae9300d42997a2932fe9a55107e6949d8b0398dbc2d2eb6791f",
+        ".gitattributes": "a0ca5a6496ac07d75cd5d0fd6e7ad60b46701749e274a76d4c184e6686b7d7c1",
+        ".github/ISSUE_TEMPLATE/feature_request.md": "a1399a9d3376d8af39dc258eb6365466c4ca41f43c20c35bc0d0409aedcb2b7b",
+        ".github/pull_request_template.md": "fab01488def22a92ca24e5ebdb96a1b5154eaef21cb294ad296be2ac4b6424ff",
+        ".github/workflows/ci.yml": "a30a469441e07c5f2fecb5b529d32c59a0d5b5e812733580a48628851465d212",
+        ".gitignore": "826b8bd49913b281414f426167e356f8527a0eaf864a8b09793b4b9d14756429",
+        "AGENTS.md": "8d38f9d48f7c7324d2b37d01929f27ac90fce7c10cc1c2250da2be08f1a64250",
+        "README.md": "87d4c187aad6221635411fb66838e84c6db9001b54ee6fdacdb5d50cf6a51a99",
+        "app.py": "23b017e141516a681291b5b8b7104b5434b449ba10c9c628bad7f5d6d855c083",
+        "docs/ARCHITECTURE.md": "120f73b03b85f8d7c9209fe031f12e8cca7f546491b740adae14b810cecfc612",
+        "docs/DATA_SOURCES.md": "d0a74825f1a8266be234a0a75044a237afa8fcac19684ad29f1436acc6599315",
+        "docs/DEVELOPMENT_LIFECYCLE.md": "1ea0973ad96e373c751294c5b2f4e3e576e2e6b084f1b85a1880493d140e7d9c",
+        "docs/FLIGHT_PULSE_COMPLETE_GUIDE.txt": "13619213beb1ec05ff404739c976d87722449f7b5ca888b6c9c5127a47a6cc75",
+        "docs/FLIGHT_PULSE_MULTI_AGENT_GUIDE.txt": "dfe912f1cb30a66e1ad54703254226d0d178ba547709f4d3e7c27524032510eb",
+        "docs/PLAN.md": "f242b0169edb045467ebdf8949678208ce6280f3b27d65c70cddec495623bc12",
+        "docs/SPEC.md": "93063fab2af07d4c7d829044f656a93f5c3777426b2748f7bfc0ec143481cb57",
+        "docs/STATUS.md": "3d9042bcd07ea9ea749512fc893515024ba7be11e1652ba979072512c31ee24a",
         "flight_pulse/analysis/__init__.py": "e19d9533dddaa9f48956ef3656ac4d1960dcb714815b69c2c0591e305d959061",
         "flight_pulse/analysis/flights.py": "4be628f7a7571808cd2a3f8af1f6546fd7ed59a5b800b2f30732e801945b719a",
         "flight_pulse/analyst/__init__.py": "0a7e052de059356999674f29c8ab8ad4ff5d47b5d0321d5d53b45d2a9949564e",
@@ -666,6 +888,33 @@
       "task": "FP-002",
       "human": "Harkamal Toor",
       "reason": "Reviewed FP-002 fix, exact local MySQL validation, specialist reviews, and current executable evidence.",
+      "revision": null
+    },
+    {
+      "id": "76568ef1-63c7-4d61-9f2c-01843e50831d",
+      "at": "2026-10-05T09:49:08.748Z",
+      "action": "requeue",
+      "task": "DOC-001",
+      "human": null,
+      "reason": null,
+      "revision": null
+    },
+    {
+      "id": "0365f454-3592-444d-857e-a49afa40b98c",
+      "at": "2026-10-05T09:49:08.962Z",
+      "action": "resume",
+      "task": "UI-001",
+      "human": null,
+      "reason": null,
+      "revision": null
+    },
+    {
+      "id": "4658f1e0-66d0-4206-b909-cde20a876bbd",
+      "at": "2026-10-05T10:09:15.124Z",
+      "action": "reject",
+      "task": "DOC-001",
+      "human": "Harkamal Toor",
+      "reason": "DOC-001 recruiter documentation was successfully merged in PR #18, but the immutable original task scope omitted .gitattributes. Genesis correctly blocks completion because of that scope mismatch; rejecting the obsolete task contract instead of rewriting its history.",
       "revision": null
     }
   ],
@@ -1005,6 +1254,150 @@
       "cost": null,
       "stop_reason": null,
       "ended_at": "2026-10-05T09:36:12.183Z"
+    },
+    {
+      "id": "13fd18af-1d43-4750-8647-4bdf470e511d",
+      "task": "UI-001",
+      "kind": "gate",
+      "command": "python -m unittest discover -s tests -v",
+      "timeout": 120000,
+      "authorization": null,
+      "pid": 95695,
+      "child_pid": 95781,
+      "started_at": "2026-10-05T09:54:33.789Z",
+      "status": "failed",
+      "before_hash": "fd4900f01dc95572122f97bdbbaa6ab51582952144f9cabba49168539a906842",
+      "config_hash": "775d6bb8512780557c4a39eb9b4d5da1da7eb8eb6bc7cb36c110fd522ad3988e",
+      "environment": {
+        "node": "v18.20.8",
+        "platform": "darwin",
+        "arch": "arm64",
+        "verifier": "cbdddbf25e5ed5f3406b93881ae54f64d11a8c54f0bfe177d19d9d9946a6a971",
+        "variables": {}
+      },
+      "cost": null,
+      "stop_reason": "command-failed",
+      "ended_at": "2026-10-05T09:54:34.111Z"
+    },
+    {
+      "id": "adbe3c9d-5c2d-4cab-a811-00c2fb5707fa",
+      "task": "UI-001",
+      "kind": "gate",
+      "command": "python -m unittest discover -s tests -v",
+      "timeout": 120000,
+      "authorization": null,
+      "pid": 96290,
+      "child_pid": 96375,
+      "started_at": "2026-10-05T09:55:35.730Z",
+      "status": "passed",
+      "before_hash": "fd4900f01dc95572122f97bdbbaa6ab51582952144f9cabba49168539a906842",
+      "config_hash": "775d6bb8512780557c4a39eb9b4d5da1da7eb8eb6bc7cb36c110fd522ad3988e",
+      "environment": {
+        "node": "v18.20.8",
+        "platform": "darwin",
+        "arch": "arm64",
+        "verifier": "cbdddbf25e5ed5f3406b93881ae54f64d11a8c54f0bfe177d19d9d9946a6a971",
+        "variables": {}
+      },
+      "cost": null,
+      "stop_reason": null,
+      "ended_at": "2026-10-05T09:55:36.303Z"
+    },
+    {
+      "id": "c143630b-ee29-4158-9636-8b9fbce4e6c9",
+      "task": "UI-001",
+      "kind": "gate",
+      "command": "git diff --check",
+      "timeout": 120000,
+      "authorization": null,
+      "pid": 96290,
+      "child_pid": 96700,
+      "started_at": "2026-10-05T09:55:36.523Z",
+      "status": "passed",
+      "before_hash": "fd4900f01dc95572122f97bdbbaa6ab51582952144f9cabba49168539a906842",
+      "config_hash": "775d6bb8512780557c4a39eb9b4d5da1da7eb8eb6bc7cb36c110fd522ad3988e",
+      "environment": {
+        "node": "v18.20.8",
+        "platform": "darwin",
+        "arch": "arm64",
+        "verifier": "cbdddbf25e5ed5f3406b93881ae54f64d11a8c54f0bfe177d19d9d9946a6a971",
+        "variables": {}
+      },
+      "cost": null,
+      "stop_reason": null,
+      "ended_at": "2026-10-05T09:55:36.841Z"
+    },
+    {
+      "id": "38436213-b852-447c-92b6-ff550317f698",
+      "task": "DOC-001",
+      "kind": "gate",
+      "command": "git diff --check",
+      "timeout": 120000,
+      "authorization": null,
+      "pid": 274,
+      "child_pid": 503,
+      "started_at": "2026-10-05T10:02:44.901Z",
+      "status": "passed",
+      "before_hash": "fd4900f01dc95572122f97bdbbaa6ab51582952144f9cabba49168539a906842",
+      "config_hash": "21122881bbd2c0add52f9da99fe3dec24591075bb2e9c2f165e4eaadc03dcda1",
+      "environment": {
+        "node": "v18.20.8",
+        "platform": "darwin",
+        "arch": "arm64",
+        "verifier": "cbdddbf25e5ed5f3406b93881ae54f64d11a8c54f0bfe177d19d9d9946a6a971",
+        "variables": {}
+      },
+      "cost": null,
+      "stop_reason": null,
+      "ended_at": "2026-10-05T10:02:45.269Z"
+    },
+    {
+      "id": "2d40769d-7ff2-4ecb-8186-5ab65ec0ff2f",
+      "task": "DOC-001",
+      "kind": "gate",
+      "command": "git diff --check",
+      "timeout": 120000,
+      "authorization": null,
+      "pid": 2388,
+      "child_pid": 2560,
+      "started_at": "2026-10-05T10:06:12.506Z",
+      "status": "passed",
+      "before_hash": "de27064a28aec55118daa1135cdd663a07427fd66cd6cbb8d0db9d70822b8372",
+      "config_hash": "21122881bbd2c0add52f9da99fe3dec24591075bb2e9c2f165e4eaadc03dcda1",
+      "environment": {
+        "node": "v18.20.8",
+        "platform": "darwin",
+        "arch": "arm64",
+        "verifier": "cbdddbf25e5ed5f3406b93881ae54f64d11a8c54f0bfe177d19d9d9946a6a971",
+        "variables": {}
+      },
+      "cost": null,
+      "stop_reason": null,
+      "ended_at": "2026-10-05T10:06:12.848Z"
+    },
+    {
+      "id": "3af04abf-a891-4440-81e6-d5600086e72d",
+      "task": "DOC-002",
+      "kind": "gate",
+      "command": "git diff --check",
+      "timeout": 120000,
+      "authorization": null,
+      "pid": 4902,
+      "child_pid": 5047,
+      "started_at": "2026-10-05T10:09:22.997Z",
+      "status": "passed",
+      "before_hash": "de27064a28aec55118daa1135cdd663a07427fd66cd6cbb8d0db9d70822b8372",
+      "config_hash": "020c025994107e25edf2efe1ec19ee53ddcd2a601ee4cf66c7e19d5a334403c6",
+      "environment": {
+        "node": "v18.20.8",
+        "platform": "darwin",
+        "arch": "arm64",
+        "verifier": "cbdddbf25e5ed5f3406b93881ae54f64d11a8c54f0bfe177d19d9d9946a6a971",
+        "variables": {}
+      },
+      "cost": null,
+      "stop_reason": null,
+      "ended_at": "2026-10-05T10:09:23.290Z"
     }
   ],
   "authorizations": [],
@@ -1036,14 +1429,14 @@
     }
   },
   "checkpoint": {
-    "at": "2026-10-05T09:36:12.823Z",
+    "at": "2026-10-05T10:09:23.725Z",
     "revision": {
-      "commit": "29a10ea469b96254dbeb006ba4dbe7ca1ac30b9d",
+      "commit": "b37e24741d8cdbae68a3e0ecc2b4643798fcab6c",
       "dirty": true,
       "source_hash": "de27064a28aec55118daa1135cdd663a07427fd66cd6cbb8d0db9d70822b8372"
     },
-    "active_task": "DOC-001",
-    "next_action": "Await human review and approval of the final documentation diff; do not commit or push."
+    "active_task": null,
+    "next_action": "Review completed work and choose the next bounded outcome."
   },
   "legacy": null
 }
