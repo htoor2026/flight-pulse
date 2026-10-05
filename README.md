@@ -36,10 +36,12 @@ clear communication—not prediction or unsupported root-cause claims.
 - 48 hourly YYZ weather observations stored
 - 72 of 72 flights matched to weather by scheduled YYZ UTC hour
 - reusable flight analytics implemented for status, airline, route, and time
+- current-sample median departure delay implemented and MySQL-validated at
+  21.00 minutes across 3 stored departure-delay observations
 - Streamlit dashboard implemented with eight portfolio sections
 - seven read-only analyst tools implemented
 - Gemini structured function-calling chat implemented
-- 58 automated tests passing
+- 63 automated tests passing
 
 These figures describe one short collection window and are not representative
 of long-term YYZ, airline, or route performance.
@@ -109,6 +111,7 @@ data flow, and safety controls.
 - signed departure and arrival delay calculation
 - duplicate-safe MySQL persistence
 - flight-status, airline, route, time, and data-quality analytics
+- average and median departure-delay metrics framed to the current sample
 - YYZ hourly weather context
 - disruption-news metadata ingestion and deterministic URL identity
 - professional Streamlit dashboard
@@ -244,7 +247,7 @@ Streamlit prints the local URL, normally `http://localhost:8501`.
 
 ## Dashboard sections
 
-- Overview
+- Overview, including current-sample average and median departure delay
 - Flight Status
 - Airline Analysis
 - Route Analysis
@@ -257,6 +260,7 @@ Streamlit prints the local URL, normally `http://localhost:8501`.
 
 - How many flights are in the current sample?
 - How many flights are delayed or cancelled?
+- How does the current sample's median departure delay compare with its average?
 - Which airlines have delayed flights in this sample?
 - Which routes contain delayed flights?
 - At which scheduled YYZ hours were delays observed?
@@ -289,7 +293,8 @@ Run the complete suite:
 python -m unittest discover -s tests -v
 ```
 
-Current result: **58 tests passing**.
+Current result: **63 tests passing**. The exact MySQL `OVERVIEW_SQL` query also
+passes against the local dataset, including the median departure-delay result.
 
 ## Screenshots
 
@@ -352,3 +357,4 @@ content in screenshots.
 - [Architecture](docs/ARCHITECTURE.md)
 - [Data-source decision](docs/DATA_SOURCES.md)
 - [Current status](docs/STATUS.md)
+- [Multi-agent engineering workflow](docs/FLIGHT_PULSE_MULTI_AGENT_GUIDE.txt)
