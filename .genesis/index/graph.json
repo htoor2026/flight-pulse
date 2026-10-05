@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "project": "flight-pulse",
-  "revision": "ebffc39c0ccbd92ceb8e35d65800052f8a815281",
-  "sourceHash": "7acb8ff649bfad0511825de446d2a0c391b4bc254b111c2470e02321521b35d4",
+  "revision": "cc55843ee4b7db0d880e7cfb43f23e7c9a42528a",
+  "sourceHash": "929d27759fb9c2d044535c1347de111881e3b7b77f571f7442bc59f4d9a961ad",
   "provenance": {
     "tool": "genesis-graphizer",
     "method": "static-analysis",
@@ -17,7 +17,7 @@
       "language": "python",
       "confidence": 1,
       "extractor": "filesystem",
-      "contentHash": "d88e0ab0a1a03442a5608df039ffb8785caeb79e9513452d1c6b7373fc5fb368"
+      "contentHash": "e56478782f26b961c4b1a2563479338211e28d3231a16b36661a322024f97807"
     },
     {
       "id": "file:flight_pulse/analysis/__init__.py",
@@ -37,7 +37,7 @@
       "language": "python",
       "confidence": 1,
       "extractor": "filesystem",
-      "contentHash": "3e4180c74dbbef42588e6198adce796ac8bed1119c971e77c16160af1be34e69"
+      "contentHash": "0d726c47aa021c45c7c188c95e9eb5c0e7a16d4db657b6f555e19288da090f02"
     },
     {
       "id": "file:flight_pulse/analyst/__init__.py",
@@ -87,7 +87,17 @@
       "language": "python",
       "confidence": 1,
       "extractor": "filesystem",
-      "contentHash": "c2870d56b9bf8083cb672ed329db1cd1d456be18ad2fc025fe460a1085f70123"
+      "contentHash": "fc4851990655a3b498d296a867a9fdec0b1876bdae07f23dfa3e885a2395bd73"
+    },
+    {
+      "id": "file:flight_pulse/demo.py",
+      "type": "file",
+      "label": "flight_pulse/demo.py",
+      "path": "flight_pulse/demo.py",
+      "language": "python",
+      "confidence": 1,
+      "extractor": "filesystem",
+      "contentHash": "6c6145e08913bc69be6261c3ef394b55610757e1057946a43c757c33e9d32e03"
     },
     {
       "id": "file:flight_pulse/ingestion/aerodatabox.py",
@@ -167,7 +177,7 @@
       "language": "python",
       "confidence": 1,
       "extractor": "filesystem",
-      "contentHash": "98ee30f58d716a557aeedcad4dc5707e0e7de7c818acccb54b99b5424adb309d"
+      "contentHash": "e63cf729c4625cd8d8ea80e9dec8647c9fc66329403ecbde29a6f761fcd57429"
     },
     {
       "id": "file:tests/test_analyst.py",
@@ -188,6 +198,16 @@
       "confidence": 1,
       "extractor": "filesystem",
       "contentHash": "192e42e8be8d1784ce14eeb52f39923e2da266fc2fe641ba1418851f229d5e41"
+    },
+    {
+      "id": "file:tests/test_demo_mode.py",
+      "type": "file",
+      "label": "tests/test_demo_mode.py",
+      "path": "tests/test_demo_mode.py",
+      "language": "python",
+      "confidence": 1,
+      "extractor": "filesystem",
+      "contentHash": "2b1bb69af39eda24d87eba74c28a20298a46048d5ddc86192be0ff9444c2f9b0"
     },
     {
       "id": "file:tests/test_news.py",
@@ -274,6 +294,15 @@
       "contentHash": "a327df6f02f94937a1af0d1576d5c92491644b055541e1cf8550e70630f2dac2"
     },
     {
+      "id": "package:pypi:streamlit.testing.v1",
+      "type": "package",
+      "label": "streamlit.testing.v1",
+      "ecosystem": "pypi",
+      "confidence": 0.85,
+      "extractor": "import",
+      "contentHash": "9d43f36397c8721fb95201b7a41c73f542ee9a5a95729e97a518633b1f64f496"
+    },
+    {
       "id": "runtime:python:__future__",
       "type": "runtime",
       "label": "__future__",
@@ -281,6 +310,15 @@
       "confidence": 0.85,
       "extractor": "standard-library",
       "contentHash": "72d67008c021530c3206aad5d8f2e0c138920d256ada03ce5ff156d790d85c74"
+    },
+    {
+      "id": "runtime:python:collections",
+      "type": "runtime",
+      "label": "collections",
+      "language": "python",
+      "confidence": 0.85,
+      "extractor": "standard-library",
+      "contentHash": "b38a759571a8eba4f4cef3b0de1fb63b0426a3b3d50b75ec77872e444d0f9f8d"
     },
     {
       "id": "runtime:python:collections.abc",
@@ -382,6 +420,15 @@
       "contentHash": "7e94b3e53ed926a0862ab420950da1727eead16cbd6a34908b9d475846791a02"
     },
     {
+      "id": "runtime:python:sqlite3",
+      "type": "runtime",
+      "label": "sqlite3",
+      "language": "python",
+      "confidence": 0.85,
+      "extractor": "standard-library",
+      "contentHash": "f6e23ec7339de058f541d44340d6972733f6db32bb2d1c41696df0e30af3c638"
+    },
+    {
       "id": "runtime:python:typing",
       "type": "runtime",
       "label": "typing",
@@ -433,7 +480,7 @@
       "name": "_frame",
       "label": "_frame",
       "path": "app.py",
-      "line": 50,
+      "line": 52,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "85918208fbb43c7fdca8e7b629b4072e318f87cf3a3a4851ef511556c7eadaa7"
@@ -445,7 +492,7 @@
       "name": "_metric",
       "label": "_metric",
       "path": "app.py",
-      "line": 57,
+      "line": 59,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "0a404eef81eef3fac8ffc1d3711cf9375815c37cf8dce61cc835f4f24d72a6b4"
@@ -457,7 +504,7 @@
       "name": "ask_flight_pulse",
       "label": "ask_flight_pulse",
       "path": "app.py",
-      "line": 77,
+      "line": 82,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "e20e52d7b74e1235d6b9406ef2c15fb7a908b1ae627a989cefa4908b2d33ac7a"
@@ -469,7 +516,7 @@
       "name": "load_dashboard_data",
       "label": "load_dashboard_data",
       "path": "app.py",
-      "line": 68,
+      "line": 70,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "9f4223ee0da7f4644ebdb0bc52e9d9ca649a26c39f67e567435a6db13fa540f8"
@@ -481,7 +528,7 @@
       "name": "render_business_overview",
       "label": "render_business_overview",
       "path": "app.py",
-      "line": 446,
+      "line": 481,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "3f2269b18667ace9b5f63fcd3c898f268bce79e11be02e29417178fe756c32b6"
@@ -493,7 +540,7 @@
       "name": "render_flight_analytics",
       "label": "render_flight_analytics",
       "path": "app.py",
-      "line": 93,
+      "line": 98,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "91877f1f6ea5760f8f2af5b07cc5ba328c7828109a4bf8e26049954455633e17"
@@ -505,7 +552,7 @@
       "name": "render_technical_overview",
       "label": "render_technical_overview",
       "path": "app.py",
-      "line": 517,
+      "line": 567,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "7285c5ac6f5f2d4fcb4af8cc81accb272a166b8f8e5b51a8a29f145534fd591c"
@@ -517,7 +564,7 @@
       "name": "FlightAnalysis",
       "label": "FlightAnalysis",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 217,
+      "line": 232,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "240cb94aa7b2ef0e8e809d84b6749a1ef631e4ddc91a01c38ab2ffac65d955e9"
@@ -529,7 +576,7 @@
       "name": "FlightAnalysis.__init__",
       "label": "FlightAnalysis.__init__",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 220,
+      "line": 235,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "8f62ed6c1b581b35edc8b4a3e7faa10632810f6b740834a64df3e172c8006646"
@@ -541,7 +588,7 @@
       "name": "FlightAnalysis._fetch_all",
       "label": "FlightAnalysis._fetch_all",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 223,
+      "line": 238,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "48d2ad21782b8028ef64af0776ebf6757ba0208e99d66e7681ce114395c7fce9"
@@ -553,7 +600,7 @@
       "name": "FlightAnalysis._fetch_one",
       "label": "FlightAnalysis._fetch_one",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 235,
+      "line": 250,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "e4645652d094b3542bc92e52406faf4b8082a3c0885f8ad151a36b4cd737553c"
@@ -565,7 +612,7 @@
       "name": "FlightAnalysis.data_quality",
       "label": "FlightAnalysis.data_quality",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 274,
+      "line": 289,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "403e56725952f67cc2af506b3ee829571552ebd0649d3616b7768803fdfd2695"
@@ -577,7 +624,7 @@
       "name": "FlightAnalysis.delays_by_airline",
       "label": "FlightAnalysis.delays_by_airline",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 253,
+      "line": 268,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "e71cb207e6564533fc2c68bc93f58d96f39e3f0be3d7bc34181e79570ce0ad4c"
@@ -589,7 +636,7 @@
       "name": "FlightAnalysis.delays_by_hour",
       "label": "FlightAnalysis.delays_by_hour",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 263,
+      "line": 278,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "13ded5357cdd1e25e891688e4eda0bd83fdce82e03ccb8ca51d17d6194b09c9f"
@@ -601,7 +648,7 @@
       "name": "FlightAnalysis.delays_by_route",
       "label": "FlightAnalysis.delays_by_route",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 258,
+      "line": 273,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "656ebb9530a87e7152fc8aed85474fd6805a7fd114f434fbc09d02b6560e27e0"
@@ -613,7 +660,7 @@
       "name": "FlightAnalysis.disrupted_flights",
       "label": "FlightAnalysis.disrupted_flights",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 277,
+      "line": 292,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "aa61cb09d0ff473c2f18b43c0a37e230239424a1e504b3e40f01ad861cd54251"
@@ -625,7 +672,7 @@
       "name": "FlightAnalysis.overview",
       "label": "FlightAnalysis.overview",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 247,
+      "line": 262,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "c7027e86bcc0907a04248d4d404357d150fcd7bde713bd62d71ca219e6ac440d"
@@ -637,7 +684,7 @@
       "name": "FlightAnalysis.report",
       "label": "FlightAnalysis.report",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 295,
+      "line": 310,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "7aa6e7b9e032af0fde21df83c2ea08d2739247b361f2608b13e6e16856d32c64"
@@ -649,7 +696,7 @@
       "name": "FlightAnalysis.status_counts",
       "label": "FlightAnalysis.status_counts",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 250,
+      "line": 265,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "848ae8144283450be436749629afd27dacbbade140cb82ac00419e2ee859555e"
@@ -661,7 +708,7 @@
       "name": "FlightAnalysis.top_delayed_flights",
       "label": "FlightAnalysis.top_delayed_flights",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 269,
+      "line": 284,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "c018030a3ac910f0a30bb197f4d4aafc36caa3ceada478f557c3930f39f7d2ba"
@@ -673,7 +720,7 @@
       "name": "FlightAnalysis.weather_context",
       "label": "FlightAnalysis.weather_context",
       "path": "flight_pulse/analysis/flights.py",
-      "line": 282,
+      "line": 297,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "7cba94fbcaeafbb9d7133fdc5b963f0b8b2131c114ad954e5dd6d13cba9b66f2"
@@ -1021,7 +1068,7 @@
       "name": "AeroDataBoxSettings",
       "label": "AeroDataBoxSettings",
       "path": "flight_pulse/config.py",
-      "line": 19,
+      "line": 41,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "8b1a5bea141dae238eca663ecfaff787717688e69cb56a1716260ad3780479aa"
@@ -1033,7 +1080,7 @@
       "name": "GeminiSettings",
       "label": "GeminiSettings",
       "path": "flight_pulse/config.py",
-      "line": 63,
+      "line": 85,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "d5e6c2edff3d61ef192a55e024c6d5ad25717e4488eeacc533e7a5c6c97bed2e"
@@ -1045,7 +1092,7 @@
       "name": "MySQLSettings",
       "label": "MySQLSettings",
       "path": "flight_pulse/config.py",
-      "line": 36,
+      "line": 58,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "93ef9e88f6b89bb48890ea63fa2564ebb05713b9fdf0e7e9c2402d215baefcec"
@@ -1057,7 +1104,7 @@
       "name": "_required",
       "label": "_required",
       "path": "flight_pulse/config.py",
-      "line": 11,
+      "line": 33,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "3f06e9c6a62e47a062f5142571f0ac7c608c4894ed49ae0eba75784105260874"
@@ -1069,10 +1116,22 @@
       "name": "AeroDataBoxSettings.from_env",
       "label": "AeroDataBoxSettings.from_env",
       "path": "flight_pulse/config.py",
-      "line": 24,
+      "line": 46,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "495adcfa68d938ce4710adf36aa223e2459ac7cbb36f08bd872858d21ffaf271"
+    },
+    {
+      "id": "symbol:flight_pulse/config.py#function:demo_mode_enabled",
+      "type": "symbol",
+      "kind": "function",
+      "name": "demo_mode_enabled",
+      "label": "demo_mode_enabled",
+      "path": "flight_pulse/config.py",
+      "line": 15,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "3200385192ffb2a1e1b5b27d026693a1fa53c9bd5d934c42e388e7f7c712c43b"
     },
     {
       "id": "symbol:flight_pulse/config.py#function:GeminiSettings.from_env",
@@ -1081,7 +1140,7 @@
       "name": "GeminiSettings.from_env",
       "label": "GeminiSettings.from_env",
       "path": "flight_pulse/config.py",
-      "line": 68,
+      "line": 90,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "e13ff862e8797fda4087222508b915edb12b139e21576469ce6fb26181a5398b"
@@ -1093,10 +1152,46 @@
       "name": "MySQLSettings.from_env",
       "label": "MySQLSettings.from_env",
       "path": "flight_pulse/config.py",
-      "line": 44,
+      "line": 66,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "47c7edbbb84051882f8a788559aab0e5bedfc0706f44b7bebbdda0ae5bbf220c"
+    },
+    {
+      "id": "symbol:flight_pulse/demo.py#function:_reject_forbidden_fields",
+      "type": "symbol",
+      "kind": "function",
+      "name": "_reject_forbidden_fields",
+      "label": "_reject_forbidden_fields",
+      "path": "flight_pulse/demo.py",
+      "line": 39,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "9e0234f14939cbb0ccbd9d3f994f60e97249a7bf281ba14a6f151e55e9c69457"
+    },
+    {
+      "id": "symbol:flight_pulse/demo.py#function:load_demo_report",
+      "type": "symbol",
+      "kind": "function",
+      "name": "load_demo_report",
+      "label": "load_demo_report",
+      "path": "flight_pulse/demo.py",
+      "line": 151,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "8de2681b664de5fe9fbe916d78ffe3b32066d76f11ddaf8b5db0beca407c6fbc"
+    },
+    {
+      "id": "symbol:flight_pulse/demo.py#function:validate_demo_report",
+      "type": "symbol",
+      "kind": "function",
+      "name": "validate_demo_report",
+      "label": "validate_demo_report",
+      "path": "flight_pulse/demo.py",
+      "line": 51,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "5289028948515f7a6dbf8ea1bbaf42a7cdf254cc178d543c7bcf4302ed7b1c5b"
     },
     {
       "id": "symbol:flight_pulse/ingestion/aerodatabox.py#class:AeroDataBoxClient",
@@ -2029,10 +2124,22 @@
       "name": "FlightAnalysisTests",
       "label": "FlightAnalysisTests",
       "path": "tests/test_analysis.py",
-      "line": 15,
+      "line": 16,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "393cf32d75a4ea6737d9e2b138c0749a08c2cc29ca6694f1f1a96b60e4d961b5"
+    },
+    {
+      "id": "symbol:tests/test_analysis.py#function:FlightAnalysisTests._execute_overview_semantics_in_sqlite",
+      "type": "symbol",
+      "kind": "function",
+      "name": "FlightAnalysisTests._execute_overview_semantics_in_sqlite",
+      "label": "FlightAnalysisTests._execute_overview_semantics_in_sqlite",
+      "path": "tests/test_analysis.py",
+      "line": 23,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "9cfeeac42e1b245714c93812bb220715d5e9649436537401466727929fa23ed8"
     },
     {
       "id": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.setUp",
@@ -2041,7 +2148,7 @@
       "name": "FlightAnalysisTests.setUp",
       "label": "FlightAnalysisTests.setUp",
       "path": "tests/test_analysis.py",
-      "line": 16,
+      "line": 17,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "b1da71629fe4428be455b88699cbae741ffebd6215d4ff7740a7f3d9318cba8c"
@@ -2053,7 +2160,7 @@
       "name": "FlightAnalysisTests.test_airline_minimum_is_parameterized",
       "label": "FlightAnalysisTests.test_airline_minimum_is_parameterized",
       "path": "tests/test_analysis.py",
-      "line": 40,
+      "line": 99,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "741420708cc38b874ff455a07cc884adde3fa0c5bae1f5e4b758be34664b7ddc"
@@ -2065,7 +2172,7 @@
       "name": "FlightAnalysisTests.test_disrupted_flights_limit_is_parameterized",
       "label": "FlightAnalysisTests.test_disrupted_flights_limit_is_parameterized",
       "path": "tests/test_analysis.py",
-      "line": 77,
+      "line": 136,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "211cef4848842a879692f6b2b792038d80c930240dff1d358204c30f4f0586c1"
@@ -2077,7 +2184,7 @@
       "name": "FlightAnalysisTests.test_hour_analysis_uses_parameterized_airport_context",
       "label": "FlightAnalysisTests.test_hour_analysis_uses_parameterized_airport_context",
       "path": "tests/test_analysis.py",
-      "line": 59,
+      "line": 118,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "952bc8ea90b9bd1901757120e744eeb912a0770434aac9152261f619db883b72"
@@ -2089,10 +2196,22 @@
       "name": "FlightAnalysisTests.test_overview_returns_database_aggregates_and_closes_cursor",
       "label": "FlightAnalysisTests.test_overview_returns_database_aggregates_and_closes_cursor",
       "path": "tests/test_analysis.py",
-      "line": 22,
+      "line": 49,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "b209ff3bb4c8773ed9775d2a7465de015b75b8072a09846266d92caeabedeb82"
+    },
+    {
+      "id": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_overview_sql_uses_non_reserved_delay_rank_alias",
+      "type": "symbol",
+      "kind": "function",
+      "name": "FlightAnalysisTests.test_overview_sql_uses_non_reserved_delay_rank_alias",
+      "label": "FlightAnalysisTests.test_overview_sql_uses_non_reserved_delay_rank_alias",
+      "path": "tests/test_analysis.py",
+      "line": 88,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "e49f228cee6fd2de0b4e0dbeb7867d6cca7d1d877ba27dff78378ebce4917c6e"
     },
     {
       "id": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_rejects_invalid_group_and_limit_values_without_querying",
@@ -2101,10 +2220,46 @@
       "name": "FlightAnalysisTests.test_rejects_invalid_group_and_limit_values_without_querying",
       "label": "FlightAnalysisTests.test_rejects_invalid_group_and_limit_values_without_querying",
       "path": "tests/test_analysis.py",
-      "line": 67,
+      "line": 126,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "17cb3b2fc9268bcfdff21367d4128c57b092ecc8910bc5c656f889d6aedc7265"
+    },
+    {
+      "id": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_sqlite_semantics_calculate_even_sample_median",
+      "type": "symbol",
+      "kind": "function",
+      "name": "FlightAnalysisTests.test_sqlite_semantics_calculate_even_sample_median",
+      "label": "FlightAnalysisTests.test_sqlite_semantics_calculate_even_sample_median",
+      "path": "tests/test_analysis.py",
+      "line": 76,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "b5be46e65827974f1c07364d5e856e528a8ede70ff414fb484de8057ca56f882"
+    },
+    {
+      "id": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_sqlite_semantics_calculate_odd_sample_median",
+      "type": "symbol",
+      "kind": "function",
+      "name": "FlightAnalysisTests.test_sqlite_semantics_calculate_odd_sample_median",
+      "label": "FlightAnalysisTests.test_sqlite_semantics_calculate_odd_sample_median",
+      "path": "tests/test_analysis.py",
+      "line": 70,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "e539d2091fdda13894da6dfaa4bc53286ae00530ca3db3e7b91ff4f3a179d477"
+    },
+    {
+      "id": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_sqlite_semantics_have_no_median_without_delay_observations",
+      "type": "symbol",
+      "kind": "function",
+      "name": "FlightAnalysisTests.test_sqlite_semantics_have_no_median_without_delay_observations",
+      "label": "FlightAnalysisTests.test_sqlite_semantics_have_no_median_without_delay_observations",
+      "path": "tests/test_analysis.py",
+      "line": 82,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "e982704e708e898d1646ceb9bbd5493ae7b80f3914b8a875af8e7a5114ebba27"
     },
     {
       "id": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_top_delayed_limit_is_parameterized",
@@ -2113,7 +2268,7 @@
       "name": "FlightAnalysisTests.test_top_delayed_limit_is_parameterized",
       "label": "FlightAnalysisTests.test_top_delayed_limit_is_parameterized",
       "path": "tests/test_analysis.py",
-      "line": 51,
+      "line": 110,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "0324ba1be4d774d5e21ca34b1295fbc765df6717e17d398dbee1be4ef1c64a75"
@@ -2125,7 +2280,7 @@
       "name": "FlightAnalysisTests.test_weather_context_uses_parameterized_airport",
       "label": "FlightAnalysisTests.test_weather_context_uses_parameterized_airport",
       "path": "tests/test_analysis.py",
-      "line": 87,
+      "line": 146,
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "72acde1d663640620bc78545f01688198233bd2d5778b04b6812f33cacf459f7"
@@ -2513,6 +2668,138 @@
       "confidence": 1,
       "extractor": "python-stdlib-ast",
       "contentHash": "c07003527003be4207b09eead2bba458d3f1d932c846b41b67408328a74f0ee2"
+    },
+    {
+      "id": "symbol:tests/test_demo_mode.py#class:DemoModeConfigurationTests",
+      "type": "symbol",
+      "kind": "class",
+      "name": "DemoModeConfigurationTests",
+      "label": "DemoModeConfigurationTests",
+      "path": "tests/test_demo_mode.py",
+      "line": 20,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "88ba35c29798bdde58f640bb74419104d3212752a5b33ff7c43ca06e9ca3b56d"
+    },
+    {
+      "id": "symbol:tests/test_demo_mode.py#class:DemoModeStreamlitTests",
+      "type": "symbol",
+      "kind": "class",
+      "name": "DemoModeStreamlitTests",
+      "label": "DemoModeStreamlitTests",
+      "path": "tests/test_demo_mode.py",
+      "line": 168,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "194c1ac0ecd0797cd21ac3c1a5f3456eff29713d03593fc612de620e1026a283"
+    },
+    {
+      "id": "symbol:tests/test_demo_mode.py#class:DemoReportTests",
+      "type": "symbol",
+      "kind": "class",
+      "name": "DemoReportTests",
+      "label": "DemoReportTests",
+      "path": "tests/test_demo_mode.py",
+      "line": 61,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "78cfa377f28a94990271e43b2ea914cf7db103ebed8cfc72bd192be13395884b"
+    },
+    {
+      "id": "symbol:tests/test_demo_mode.py#function:DemoModeConfigurationTests.test_accepts_explicit_true_and_false_values",
+      "type": "symbol",
+      "kind": "function",
+      "name": "DemoModeConfigurationTests.test_accepts_explicit_true_and_false_values",
+      "label": "DemoModeConfigurationTests.test_accepts_explicit_true_and_false_values",
+      "path": "tests/test_demo_mode.py",
+      "line": 27,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "a46394c054840fddbd6eb27c50573debb96c3f0c0b83b073ac35f24554f72769"
+    },
+    {
+      "id": "symbol:tests/test_demo_mode.py#function:DemoModeConfigurationTests.test_missing_value_defaults_to_mysql_mode",
+      "type": "symbol",
+      "kind": "function",
+      "name": "DemoModeConfigurationTests.test_missing_value_defaults_to_mysql_mode",
+      "label": "DemoModeConfigurationTests.test_missing_value_defaults_to_mysql_mode",
+      "path": "tests/test_demo_mode.py",
+      "line": 22,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "084a4d434c1751a7b206f0065684c661bf8a391646b88534ecfbd0b6fd00c2d9"
+    },
+    {
+      "id": "symbol:tests/test_demo_mode.py#function:DemoModeConfigurationTests.test_rejects_empty_and_invalid_values",
+      "type": "symbol",
+      "kind": "function",
+      "name": "DemoModeConfigurationTests.test_rejects_empty_and_invalid_values",
+      "label": "DemoModeConfigurationTests.test_rejects_empty_and_invalid_values",
+      "path": "tests/test_demo_mode.py",
+      "line": 50,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "f5d09277062e40f255a045e133b621585df6fcbae9f896043e101dc543892e66"
+    },
+    {
+      "id": "symbol:tests/test_demo_mode.py#function:DemoModeStreamlitTests.test_demo_mode_renders_offline_without_database_or_gemini",
+      "type": "symbol",
+      "kind": "function",
+      "name": "DemoModeStreamlitTests.test_demo_mode_renders_offline_without_database_or_gemini",
+      "label": "DemoModeStreamlitTests.test_demo_mode_renders_offline_without_database_or_gemini",
+      "path": "tests/test_demo_mode.py",
+      "line": 169,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "c1ada847e31a414fdda6c27717155149940b14d489d3cf60d98492f834903f8d"
+    },
+    {
+      "id": "symbol:tests/test_demo_mode.py#function:DemoModeStreamlitTests.test_false_mode_uses_existing_mysql_report_path",
+      "type": "symbol",
+      "kind": "function",
+      "name": "DemoModeStreamlitTests.test_false_mode_uses_existing_mysql_report_path",
+      "label": "DemoModeStreamlitTests.test_false_mode_uses_existing_mysql_report_path",
+      "path": "tests/test_demo_mode.py",
+      "line": 223,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "cb74806c26e075c28e675d88d6a6a004d33e587b71e7812722ed26188d8d0641"
+    },
+    {
+      "id": "symbol:tests/test_demo_mode.py#function:DemoReportTests.test_snapshot_contains_no_obvious_secrets_or_provider_fields",
+      "type": "symbol",
+      "kind": "function",
+      "name": "DemoReportTests.test_snapshot_contains_no_obvious_secrets_or_provider_fields",
+      "label": "DemoReportTests.test_snapshot_contains_no_obvious_secrets_or_provider_fields",
+      "path": "tests/test_demo_mode.py",
+      "line": 124,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "6752e6404e058768f5327e702a32c8b598f75d8c7573545148affb213394ad2e"
+    },
+    {
+      "id": "symbol:tests/test_demo_mode.py#function:DemoReportTests.test_snapshot_contains_no_obvious_secrets_or_provider_fields.inspect",
+      "type": "symbol",
+      "kind": "function",
+      "name": "DemoReportTests.test_snapshot_contains_no_obvious_secrets_or_provider_fields.inspect",
+      "label": "DemoReportTests.test_snapshot_contains_no_obvious_secrets_or_provider_fields.inspect",
+      "path": "tests/test_demo_mode.py",
+      "line": 146,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "96b53647b4c1e54fabdbce080388595b507d7723c8a02e478c65c12995f0c609"
+    },
+    {
+      "id": "symbol:tests/test_demo_mode.py#function:DemoReportTests.test_snapshot_matches_dashboard_contract_and_validated_metrics",
+      "type": "symbol",
+      "kind": "function",
+      "name": "DemoReportTests.test_snapshot_matches_dashboard_contract_and_validated_metrics",
+      "label": "DemoReportTests.test_snapshot_matches_dashboard_contract_and_validated_metrics",
+      "path": "tests/test_demo_mode.py",
+      "line": 62,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast",
+      "contentHash": "095dc85f74902d310a43d424b5f585a8a41bdd37d81ba93c5b9f6b9da6d09bea"
     },
     {
       "id": "symbol:tests/test_news.py#class:_MockResponse",
@@ -3084,6 +3371,15 @@
     {
       "type": "calls",
       "source": "symbol:app.py#function:load_dashboard_data",
+      "target": "symbol:flight_pulse/demo.py#function:load_demo_report",
+      "tier": "proven",
+      "resolved": true,
+      "confidence": 0.7,
+      "extractor": "python-stdlib-ast-calls"
+    },
+    {
+      "type": "calls",
+      "source": "symbol:app.py#function:load_dashboard_data",
       "target": "symbol:flight_pulse/repository.py#function:connect_mysql",
       "tier": "proven",
       "resolved": true,
@@ -3634,6 +3930,33 @@
       "type": "calls",
       "source": "symbol:flight_pulse/config.py#function:MySQLSettings.from_env",
       "target": "symbol:flight_pulse/config.py#function:_required",
+      "tier": "proven",
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast-calls"
+    },
+    {
+      "type": "calls",
+      "source": "symbol:flight_pulse/demo.py#function:_reject_forbidden_fields",
+      "target": "symbol:flight_pulse/demo.py#function:_reject_forbidden_fields",
+      "tier": "proven",
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast-calls"
+    },
+    {
+      "type": "calls",
+      "source": "symbol:flight_pulse/demo.py#function:load_demo_report",
+      "target": "symbol:flight_pulse/demo.py#function:validate_demo_report",
+      "tier": "proven",
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast-calls"
+    },
+    {
+      "type": "calls",
+      "source": "symbol:flight_pulse/demo.py#function:validate_demo_report",
+      "target": "symbol:flight_pulse/demo.py#function:_reject_forbidden_fields",
       "tier": "proven",
       "resolved": true,
       "confidence": 1,
@@ -4298,6 +4621,33 @@
     },
     {
       "type": "calls",
+      "source": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_sqlite_semantics_calculate_even_sample_median",
+      "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests._execute_overview_semantics_in_sqlite",
+      "tier": "proven",
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast-calls"
+    },
+    {
+      "type": "calls",
+      "source": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_sqlite_semantics_calculate_odd_sample_median",
+      "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests._execute_overview_semantics_in_sqlite",
+      "tier": "proven",
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast-calls"
+    },
+    {
+      "type": "calls",
+      "source": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_sqlite_semantics_have_no_median_without_delay_observations",
+      "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests._execute_overview_semantics_in_sqlite",
+      "tier": "proven",
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast-calls"
+    },
+    {
+      "type": "calls",
       "source": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_top_delayed_limit_is_parameterized",
       "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.top_delayed_flights",
       "tier": "ambiguous",
@@ -4687,6 +5037,69 @@
     },
     {
       "type": "calls",
+      "source": "symbol:tests/test_demo_mode.py#function:DemoModeConfigurationTests.test_accepts_explicit_true_and_false_values",
+      "target": "symbol:flight_pulse/config.py#function:demo_mode_enabled",
+      "tier": "proven",
+      "resolved": true,
+      "confidence": 0.7,
+      "extractor": "python-stdlib-ast-calls"
+    },
+    {
+      "type": "calls",
+      "source": "symbol:tests/test_demo_mode.py#function:DemoModeConfigurationTests.test_missing_value_defaults_to_mysql_mode",
+      "target": "symbol:flight_pulse/config.py#function:demo_mode_enabled",
+      "tier": "proven",
+      "resolved": true,
+      "confidence": 0.7,
+      "extractor": "python-stdlib-ast-calls"
+    },
+    {
+      "type": "calls",
+      "source": "symbol:tests/test_demo_mode.py#function:DemoModeConfigurationTests.test_rejects_empty_and_invalid_values",
+      "target": "symbol:flight_pulse/config.py#function:demo_mode_enabled",
+      "tier": "proven",
+      "resolved": true,
+      "confidence": 0.7,
+      "extractor": "python-stdlib-ast-calls"
+    },
+    {
+      "type": "calls",
+      "source": "symbol:tests/test_demo_mode.py#function:DemoModeStreamlitTests.test_false_mode_uses_existing_mysql_report_path",
+      "target": "symbol:flight_pulse/demo.py#function:load_demo_report",
+      "tier": "proven",
+      "resolved": true,
+      "confidence": 0.7,
+      "extractor": "python-stdlib-ast-calls"
+    },
+    {
+      "type": "calls",
+      "source": "symbol:tests/test_demo_mode.py#function:DemoReportTests.test_snapshot_contains_no_obvious_secrets_or_provider_fields",
+      "target": "symbol:tests/test_demo_mode.py#function:DemoReportTests.test_snapshot_contains_no_obvious_secrets_or_provider_fields.inspect",
+      "tier": "proven",
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast-calls"
+    },
+    {
+      "type": "calls",
+      "source": "symbol:tests/test_demo_mode.py#function:DemoReportTests.test_snapshot_contains_no_obvious_secrets_or_provider_fields.inspect",
+      "target": "symbol:tests/test_demo_mode.py#function:DemoReportTests.test_snapshot_contains_no_obvious_secrets_or_provider_fields.inspect",
+      "tier": "proven",
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast-calls"
+    },
+    {
+      "type": "calls",
+      "source": "symbol:tests/test_demo_mode.py#function:DemoReportTests.test_snapshot_matches_dashboard_contract_and_validated_metrics",
+      "target": "symbol:flight_pulse/demo.py#function:load_demo_report",
+      "tier": "proven",
+      "resolved": true,
+      "confidence": 0.7,
+      "extractor": "python-stdlib-ast-calls"
+    },
+    {
+      "type": "calls",
       "source": "symbol:tests/test_news.py#function:_article",
       "target": "symbol:flight_pulse/models.py#class:NormalizedNewsArticle",
       "tier": "proven",
@@ -5065,7 +5478,7 @@
       "type": "defines",
       "source": "file:app.py",
       "target": "symbol:app.py#function:_frame",
-      "line": 50,
+      "line": 52,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5074,7 +5487,7 @@
       "type": "defines",
       "source": "file:app.py",
       "target": "symbol:app.py#function:_metric",
-      "line": 57,
+      "line": 59,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5083,7 +5496,7 @@
       "type": "defines",
       "source": "file:app.py",
       "target": "symbol:app.py#function:ask_flight_pulse",
-      "line": 77,
+      "line": 82,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5092,7 +5505,7 @@
       "type": "defines",
       "source": "file:app.py",
       "target": "symbol:app.py#function:load_dashboard_data",
-      "line": 68,
+      "line": 70,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5101,7 +5514,7 @@
       "type": "defines",
       "source": "file:app.py",
       "target": "symbol:app.py#function:render_business_overview",
-      "line": 446,
+      "line": 481,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5110,7 +5523,7 @@
       "type": "defines",
       "source": "file:app.py",
       "target": "symbol:app.py#function:render_flight_analytics",
-      "line": 93,
+      "line": 98,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5119,7 +5532,7 @@
       "type": "defines",
       "source": "file:app.py",
       "target": "symbol:app.py#function:render_technical_overview",
-      "line": 517,
+      "line": 567,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5128,7 +5541,7 @@
       "type": "defines",
       "source": "file:flight_pulse/analysis/flights.py",
       "target": "symbol:flight_pulse/analysis/flights.py#class:FlightAnalysis",
-      "line": 217,
+      "line": 232,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5137,24 +5550,6 @@
       "type": "defines",
       "source": "file:flight_pulse/analysis/flights.py",
       "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.__init__",
-      "line": 220,
-      "resolved": true,
-      "confidence": 1,
-      "extractor": "python-stdlib-ast"
-    },
-    {
-      "type": "defines",
-      "source": "file:flight_pulse/analysis/flights.py",
-      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis._fetch_all",
-      "line": 223,
-      "resolved": true,
-      "confidence": 1,
-      "extractor": "python-stdlib-ast"
-    },
-    {
-      "type": "defines",
-      "source": "file:flight_pulse/analysis/flights.py",
-      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis._fetch_one",
       "line": 235,
       "resolved": true,
       "confidence": 1,
@@ -5163,8 +5558,8 @@
     {
       "type": "defines",
       "source": "file:flight_pulse/analysis/flights.py",
-      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.data_quality",
-      "line": 274,
+      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis._fetch_all",
+      "line": 238,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5172,61 +5567,7 @@
     {
       "type": "defines",
       "source": "file:flight_pulse/analysis/flights.py",
-      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.delays_by_airline",
-      "line": 253,
-      "resolved": true,
-      "confidence": 1,
-      "extractor": "python-stdlib-ast"
-    },
-    {
-      "type": "defines",
-      "source": "file:flight_pulse/analysis/flights.py",
-      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.delays_by_hour",
-      "line": 263,
-      "resolved": true,
-      "confidence": 1,
-      "extractor": "python-stdlib-ast"
-    },
-    {
-      "type": "defines",
-      "source": "file:flight_pulse/analysis/flights.py",
-      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.delays_by_route",
-      "line": 258,
-      "resolved": true,
-      "confidence": 1,
-      "extractor": "python-stdlib-ast"
-    },
-    {
-      "type": "defines",
-      "source": "file:flight_pulse/analysis/flights.py",
-      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.disrupted_flights",
-      "line": 277,
-      "resolved": true,
-      "confidence": 1,
-      "extractor": "python-stdlib-ast"
-    },
-    {
-      "type": "defines",
-      "source": "file:flight_pulse/analysis/flights.py",
-      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.overview",
-      "line": 247,
-      "resolved": true,
-      "confidence": 1,
-      "extractor": "python-stdlib-ast"
-    },
-    {
-      "type": "defines",
-      "source": "file:flight_pulse/analysis/flights.py",
-      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.report",
-      "line": 295,
-      "resolved": true,
-      "confidence": 1,
-      "extractor": "python-stdlib-ast"
-    },
-    {
-      "type": "defines",
-      "source": "file:flight_pulse/analysis/flights.py",
-      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.status_counts",
+      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis._fetch_one",
       "line": 250,
       "resolved": true,
       "confidence": 1,
@@ -5235,8 +5576,80 @@
     {
       "type": "defines",
       "source": "file:flight_pulse/analysis/flights.py",
+      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.data_quality",
+      "line": 289,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:flight_pulse/analysis/flights.py",
+      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.delays_by_airline",
+      "line": 268,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:flight_pulse/analysis/flights.py",
+      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.delays_by_hour",
+      "line": 278,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:flight_pulse/analysis/flights.py",
+      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.delays_by_route",
+      "line": 273,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:flight_pulse/analysis/flights.py",
+      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.disrupted_flights",
+      "line": 292,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:flight_pulse/analysis/flights.py",
+      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.overview",
+      "line": 262,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:flight_pulse/analysis/flights.py",
+      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.report",
+      "line": 310,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:flight_pulse/analysis/flights.py",
+      "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.status_counts",
+      "line": 265,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:flight_pulse/analysis/flights.py",
       "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.top_delayed_flights",
-      "line": 269,
+      "line": 284,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5245,7 +5658,7 @@
       "type": "defines",
       "source": "file:flight_pulse/analysis/flights.py",
       "target": "symbol:flight_pulse/analysis/flights.py#function:FlightAnalysis.weather_context",
-      "line": 282,
+      "line": 297,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5506,7 +5919,7 @@
       "type": "defines",
       "source": "file:flight_pulse/config.py",
       "target": "symbol:flight_pulse/config.py#class:AeroDataBoxSettings",
-      "line": 19,
+      "line": 41,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5515,7 +5928,7 @@
       "type": "defines",
       "source": "file:flight_pulse/config.py",
       "target": "symbol:flight_pulse/config.py#class:GeminiSettings",
-      "line": 63,
+      "line": 85,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5524,7 +5937,7 @@
       "type": "defines",
       "source": "file:flight_pulse/config.py",
       "target": "symbol:flight_pulse/config.py#class:MySQLSettings",
-      "line": 36,
+      "line": 58,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5533,7 +5946,7 @@
       "type": "defines",
       "source": "file:flight_pulse/config.py",
       "target": "symbol:flight_pulse/config.py#function:_required",
-      "line": 11,
+      "line": 33,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5542,7 +5955,16 @@
       "type": "defines",
       "source": "file:flight_pulse/config.py",
       "target": "symbol:flight_pulse/config.py#function:AeroDataBoxSettings.from_env",
-      "line": 24,
+      "line": 46,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:flight_pulse/config.py",
+      "target": "symbol:flight_pulse/config.py#function:demo_mode_enabled",
+      "line": 15,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5551,7 +5973,7 @@
       "type": "defines",
       "source": "file:flight_pulse/config.py",
       "target": "symbol:flight_pulse/config.py#function:GeminiSettings.from_env",
-      "line": 68,
+      "line": 90,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -5560,7 +5982,34 @@
       "type": "defines",
       "source": "file:flight_pulse/config.py",
       "target": "symbol:flight_pulse/config.py#function:MySQLSettings.from_env",
-      "line": 44,
+      "line": 66,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:flight_pulse/demo.py",
+      "target": "symbol:flight_pulse/demo.py#function:_reject_forbidden_fields",
+      "line": 39,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:flight_pulse/demo.py",
+      "target": "symbol:flight_pulse/demo.py#function:load_demo_report",
+      "line": 151,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:flight_pulse/demo.py",
+      "target": "symbol:flight_pulse/demo.py#function:validate_demo_report",
+      "line": 51,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -6262,15 +6711,6 @@
       "type": "defines",
       "source": "file:tests/test_analysis.py",
       "target": "symbol:tests/test_analysis.py#class:FlightAnalysisTests",
-      "line": 15,
-      "resolved": true,
-      "confidence": 1,
-      "extractor": "python-stdlib-ast"
-    },
-    {
-      "type": "defines",
-      "source": "file:tests/test_analysis.py",
-      "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.setUp",
       "line": 16,
       "resolved": true,
       "confidence": 1,
@@ -6279,8 +6719,26 @@
     {
       "type": "defines",
       "source": "file:tests/test_analysis.py",
+      "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests._execute_overview_semantics_in_sqlite",
+      "line": 23,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_analysis.py",
+      "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.setUp",
+      "line": 17,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_analysis.py",
       "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_airline_minimum_is_parameterized",
-      "line": 40,
+      "line": 99,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -6289,7 +6747,7 @@
       "type": "defines",
       "source": "file:tests/test_analysis.py",
       "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_disrupted_flights_limit_is_parameterized",
-      "line": 77,
+      "line": 136,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -6298,7 +6756,7 @@
       "type": "defines",
       "source": "file:tests/test_analysis.py",
       "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_hour_analysis_uses_parameterized_airport_context",
-      "line": 59,
+      "line": 118,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -6307,7 +6765,16 @@
       "type": "defines",
       "source": "file:tests/test_analysis.py",
       "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_overview_returns_database_aggregates_and_closes_cursor",
-      "line": 22,
+      "line": 49,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_analysis.py",
+      "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_overview_sql_uses_non_reserved_delay_rank_alias",
+      "line": 88,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -6316,7 +6783,34 @@
       "type": "defines",
       "source": "file:tests/test_analysis.py",
       "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_rejects_invalid_group_and_limit_values_without_querying",
-      "line": 67,
+      "line": 126,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_analysis.py",
+      "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_sqlite_semantics_calculate_even_sample_median",
+      "line": 76,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_analysis.py",
+      "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_sqlite_semantics_calculate_odd_sample_median",
+      "line": 70,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_analysis.py",
+      "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_sqlite_semantics_have_no_median_without_delay_observations",
+      "line": 82,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -6325,7 +6819,7 @@
       "type": "defines",
       "source": "file:tests/test_analysis.py",
       "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_top_delayed_limit_is_parameterized",
-      "line": 51,
+      "line": 110,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -6334,7 +6828,7 @@
       "type": "defines",
       "source": "file:tests/test_analysis.py",
       "target": "symbol:tests/test_analysis.py#function:FlightAnalysisTests.test_weather_context_uses_parameterized_airport",
-      "line": 87,
+      "line": 146,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -6623,6 +7117,105 @@
       "source": "file:tests/test_chat.py",
       "target": "symbol:tests/test_chat.py#function:ToolDispatchTests.test_rejects_unknown_tools_without_execution",
       "line": 74,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "symbol:tests/test_demo_mode.py#class:DemoModeConfigurationTests",
+      "line": 20,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "symbol:tests/test_demo_mode.py#class:DemoModeStreamlitTests",
+      "line": 168,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "symbol:tests/test_demo_mode.py#class:DemoReportTests",
+      "line": 61,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "symbol:tests/test_demo_mode.py#function:DemoModeConfigurationTests.test_accepts_explicit_true_and_false_values",
+      "line": 27,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "symbol:tests/test_demo_mode.py#function:DemoModeConfigurationTests.test_missing_value_defaults_to_mysql_mode",
+      "line": 22,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "symbol:tests/test_demo_mode.py#function:DemoModeConfigurationTests.test_rejects_empty_and_invalid_values",
+      "line": 50,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "symbol:tests/test_demo_mode.py#function:DemoModeStreamlitTests.test_demo_mode_renders_offline_without_database_or_gemini",
+      "line": 169,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "symbol:tests/test_demo_mode.py#function:DemoModeStreamlitTests.test_false_mode_uses_existing_mysql_report_path",
+      "line": 223,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "symbol:tests/test_demo_mode.py#function:DemoReportTests.test_snapshot_contains_no_obvious_secrets_or_provider_fields",
+      "line": 124,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "symbol:tests/test_demo_mode.py#function:DemoReportTests.test_snapshot_contains_no_obvious_secrets_or_provider_fields.inspect",
+      "line": 146,
+      "resolved": true,
+      "confidence": 1,
+      "extractor": "python-stdlib-ast"
+    },
+    {
+      "type": "defines",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "symbol:tests/test_demo_mode.py#function:DemoReportTests.test_snapshot_matches_dashboard_contract_and_validated_metrics",
+      "line": 62,
       "resolved": true,
       "confidence": 1,
       "extractor": "python-stdlib-ast"
@@ -7021,9 +7614,19 @@
     {
       "type": "imports",
       "source": "file:app.py",
+      "target": "file:flight_pulse/demo.py",
+      "specifier": "flight_pulse.demo",
+      "line": 15,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:app.py",
       "target": "file:flight_pulse/repository.py",
       "specifier": "flight_pulse.repository",
-      "line": 15,
+      "line": 16,
       "resolved": true,
       "confidence": 0.85,
       "extractor": "python-imports"
@@ -7314,6 +7917,66 @@
       "target": "runtime:python:os",
       "specifier": "os",
       "line": 5,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:flight_pulse/demo.py",
+      "target": "runtime:python:__future__",
+      "specifier": "__future__",
+      "line": 3,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:flight_pulse/demo.py",
+      "target": "runtime:python:collections",
+      "specifier": "collections",
+      "line": 6,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:flight_pulse/demo.py",
+      "target": "runtime:python:datetime",
+      "specifier": "datetime",
+      "line": 7,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:flight_pulse/demo.py",
+      "target": "runtime:python:json",
+      "specifier": "json",
+      "line": 5,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:flight_pulse/demo.py",
+      "target": "runtime:python:pathlib",
+      "specifier": "pathlib",
+      "line": 8,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:flight_pulse/demo.py",
+      "target": "runtime:python:typing",
+      "specifier": "typing",
+      "line": 9,
       "resolved": true,
       "confidence": 0.85,
       "extractor": "python-imports"
@@ -7863,7 +8526,7 @@
       "source": "file:tests/test_analysis.py",
       "target": "file:flight_pulse/analysis/flights.py",
       "specifier": "flight_pulse.analysis.flights",
-      "line": 6,
+      "line": 7,
       "resolved": true,
       "confidence": 0.85,
       "extractor": "python-imports"
@@ -7881,9 +8544,19 @@
     {
       "type": "imports",
       "source": "file:tests/test_analysis.py",
+      "target": "runtime:python:sqlite3",
+      "specifier": "sqlite3",
+      "line": 3,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:tests/test_analysis.py",
       "target": "runtime:python:unittest",
       "specifier": "unittest",
-      "line": 3,
+      "line": 4,
       "resolved": true,
       "confidence": 0.85,
       "extractor": "python-imports"
@@ -7893,7 +8566,7 @@
       "source": "file:tests/test_analysis.py",
       "target": "runtime:python:unittest.mock",
       "specifier": "unittest.mock",
-      "line": 4,
+      "line": 5,
       "resolved": true,
       "confidence": 0.85,
       "extractor": "python-imports"
@@ -8054,6 +8727,116 @@
       "target": "runtime:python:unittest.mock",
       "specifier": "unittest.mock",
       "line": 5,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "file:flight_pulse/config.py",
+      "specifier": "flight_pulse.config",
+      "line": 13,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "file:flight_pulse/demo.py",
+      "specifier": "flight_pulse.demo",
+      "line": 14,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "package:pypi:streamlit.testing.v1",
+      "specifier": "streamlit.testing.v1",
+      "line": 11,
+      "resolved": false,
+      "confidence": 0.5,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "runtime:python:__future__",
+      "specifier": "__future__",
+      "line": 1,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "runtime:python:collections",
+      "specifier": "collections",
+      "line": 6,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "runtime:python:datetime",
+      "specifier": "datetime",
+      "line": 7,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "runtime:python:json",
+      "specifier": "json",
+      "line": 3,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "runtime:python:os",
+      "specifier": "os",
+      "line": 4,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "runtime:python:pathlib",
+      "specifier": "pathlib",
+      "line": 8,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "runtime:python:unittest",
+      "specifier": "unittest",
+      "line": 5,
+      "resolved": true,
+      "confidence": 0.85,
+      "extractor": "python-imports"
+    },
+    {
+      "type": "imports",
+      "source": "file:tests/test_demo_mode.py",
+      "target": "runtime:python:unittest.mock",
+      "specifier": "unittest.mock",
+      "line": 9,
       "resolved": true,
       "confidence": 0.85,
       "extractor": "python-imports"
@@ -8381,6 +9164,6 @@
   ],
   "warnings": [],
   "stats": {
-    "unresolvedCalls": 579
+    "unresolvedCalls": 672
   }
 }

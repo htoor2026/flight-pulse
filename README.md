@@ -36,10 +36,12 @@ clear communication—not prediction or unsupported root-cause claims.
 - 48 hourly YYZ weather observations stored
 - 72 of 72 flights matched to weather by scheduled YYZ UTC hour
 - reusable flight analytics implemented for status, airline, route, and time
+- current-sample median departure delay implemented and MySQL-validated at
+  21.00 minutes across 3 stored departure-delay observations
 - Streamlit dashboard implemented with eight portfolio sections
 - seven read-only analyst tools implemented
 - Gemini structured function-calling chat implemented
-- 58 automated tests passing
+- 70 automated tests passing
 
 These figures describe one short collection window and are not representative
 of long-term YYZ, airline, or route performance.
@@ -109,6 +111,7 @@ data flow, and safety controls.
 - signed departure and arrival delay calculation
 - duplicate-safe MySQL persistence
 - flight-status, airline, route, time, and data-quality analytics
+- average and median departure-delay metrics framed to the current sample
 - YYZ hourly weather context
 - disruption-news metadata ingestion and deterministic URL identity
 - professional Streamlit dashboard
@@ -175,7 +178,12 @@ cp .env.example .env
 
 Populate `.env` locally. Never commit it.
 
-Required for the dashboard database connection:
+Runtime mode:
+
+- `DEMO_MODE` defaults to `false`; set it to `true` only for the bundled public
+  demo snapshot
+
+Required when `DEMO_MODE=false` for the dashboard database connection:
 
 - `MYSQL_HOST`
 - `MYSQL_PORT`
@@ -183,7 +191,7 @@ Required for the dashboard database connection:
 - `MYSQL_USER`
 - `MYSQL_PASSWORD`
 
-Required for AI chat:
+Required for local AI chat:
 
 - `GEMINI_API_KEY`
 
@@ -242,9 +250,29 @@ streamlit run app.py
 
 Streamlit prints the local URL, normally `http://localhost:8501`.
 
+## Public demo
+
+Flight Pulse supports two explicit runtime modes:
+
+- **Public Streamlit demo:** set `DEMO_MODE=true`. The dashboard loads a bundled,
+  explicitly synthetic snapshot modeled on the project's validated local
+  results. It does not connect to MySQL, construct the Gemini chat client, or
+  call AeroDataBox, Open-Meteo, GDELT, or other live services. AI chat is
+  disabled in this mode.
+- **Local full system:** keep the default `DEMO_MODE=false`, configure MySQL,
+  and optionally provide a Gemini key for chat. This preserves the existing
+  MySQL-backed analytics and seven read-only analyst tools.
+
+A Streamlit public deployment needs only `DEMO_MODE=true`; it does not need a
+cloud database, provider credentials, database credentials, or a Gemini key.
+The synthetic snapshot is presentation data, not a live or historical record
+of YYZ operations, and its airline, route, and flight details must not be
+generalized as real-world performance. This section documents the supported
+deployment mode; it does not claim that a public deployment is currently live.
+
 ## Dashboard sections
 
-- Overview
+- Overview, including current-sample average and median departure delay
 - Flight Status
 - Airline Analysis
 - Route Analysis
@@ -257,6 +285,7 @@ Streamlit prints the local URL, normally `http://localhost:8501`.
 
 - How many flights are in the current sample?
 - How many flights are delayed or cancelled?
+- How does the current sample's median departure delay compare with its average?
 - Which airlines have delayed flights in this sample?
 - Which routes contain delayed flights?
 - At which scheduled YYZ hours were delays observed?
@@ -289,7 +318,8 @@ Run the complete suite:
 python -m unittest discover -s tests -v
 ```
 
-Current result: **58 tests passing**.
+Current result: **70 tests passing**. The exact MySQL `OVERVIEW_SQL` query also
+passes against the local dataset, including the median departure-delay result.
 
 ## Screenshots
 
@@ -331,14 +361,16 @@ content in screenshots.
   retry.
 - Gemini free-tier prompts and tool results may be used by Google to improve its
   products.
-- No sanitized seed dataset or one-command ingestion CLI is included.
+- The public demo uses a synthetic static snapshot, so it does not demonstrate
+  live database access, provider ingestion, or AI chat.
 - Results must not be generalized to broader airline, route, airport, or
   historical performance.
 
 ## Future improvements
 
 - collect a longer, repeatable flight history within provider licensing limits;
-- add a sanitized demo dataset for zero-credential portfolio review;
+- keep the synthetic public demo snapshot synchronized with future validated
+  local results;
 - improve actual-time completeness and outlier investigation;
 - validate GDELT and Gemini again when separately authorized;
 - evaluate observed METAR weather as an alternative context source;
@@ -352,3 +384,4 @@ content in screenshots.
 - [Architecture](docs/ARCHITECTURE.md)
 - [Data-source decision](docs/DATA_SOURCES.md)
 - [Current status](docs/STATUS.md)
+- [Multi-agent engineering workflow](docs/FLIGHT_PULSE_MULTI_AGENT_GUIDE.txt)

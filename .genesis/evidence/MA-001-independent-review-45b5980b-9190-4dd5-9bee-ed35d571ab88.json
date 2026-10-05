@@ -1,0 +1,13 @@
+{
+  "task": "MA-001",
+  "gate": "independent-review",
+  "kind": "review",
+  "attempt": "45b5980b-9190-4dd5-9bee-ed35d571ab88",
+  "human": "Harkamal Toor",
+  "reason": "Re-reviewed the current MA-001 workflow after refreshing stale test and diff evidence.",
+  "observed_at": "2026-10-04T07:51:56.608Z",
+  "source_hash": "5b57e1ecfd103855e2465eb22ab59c0fc13667a37ce9269c6b460ec9ed3a0e4e",
+  "config_hash": "b6fa9e0f2b3ee4b9759c18c0dbdf0d485a7690aa8e77b67a700f3c531d9271db",
+  "reviewed_proofs": "afa1a51e46165bc5fc1ffa5a583d0ddb4aceceae22235fd2cc689eba88013036",
+  "hash": "4b522ec1ca0eb0d019b44eee4b3ce489ed9c4fcc337bf27bd1b980ba61c8ff58"
+}

@@ -1,4 +1,4 @@
-"""Flight Pulse dashboard backed by the local MySQL analytics layer."""
+"""Flight Pulse dashboard backed by MySQL or a synthetic public-demo report."""
 
 from __future__ import annotations
 
@@ -11,7 +11,8 @@ import streamlit as st
 from flight_pulse.analysis import FlightAnalysis
 from flight_pulse.analyst import FlightAnalyst
 from flight_pulse.chat import GeminiAnalystChat
-from flight_pulse.config import GeminiSettings, MySQLSettings
+from flight_pulse.config import GeminiSettings, MySQLSettings, demo_mode_enabled
+from flight_pulse.demo import load_demo_report
 from flight_pulse.repository import connect_mysql
 
 
@@ -30,6 +31,7 @@ NUMERIC_COLUMNS = {
     "flight_count",
     "delay_rate_percent",
     "average_departure_delay_minutes",
+    "median_departure_delay_minutes",
     "average_arrival_delay_minutes",
     "departure_delay_samples",
     "arrival_delay_samples",
@@ -65,8 +67,11 @@ def _metric(value: object, *, suffix: str = "", decimals: int = 0) -> str:
 
 
 @st.cache_data(ttl=300, show_spinner="Loading Flight Pulse data…")
-def load_dashboard_data() -> dict[str, Any]:
-    """Load one read-only dashboard snapshot, then close the connection."""
+def load_dashboard_data(demo_mode: bool = False) -> dict[str, Any]:
+    """Load a synthetic demo report or one read-only MySQL snapshot."""
+    if demo_mode:
+        return load_demo_report()
+
     connection = connect_mysql(MySQLSettings.from_env())
     try:
         return FlightAnalysis(connection).report(minimum_flights=1, top_limit=10)
@@ -90,30 +95,40 @@ def ask_flight_pulse(
         connection.close()
 
 
-def render_flight_analytics() -> None:
+def render_flight_analytics(demo_mode: bool = False) -> None:
     """Render the existing read-only analytics and AI assistant experience."""
     try:
-        report = load_dashboard_data()
+        report = load_dashboard_data(demo_mode)
     except Exception:
-        st.error(
-            "Flight Pulse could not read the local MySQL database. "
-            "Verify the database is running and the local environment variables "
-            "are set."
-        )
+        if demo_mode:
+            st.error("Flight Pulse could not load the bundled synthetic demo data.")
+        else:
+            st.error(
+                "Flight Pulse could not read the local MySQL database. "
+                "Verify the database is running and the local environment variables "
+                "are set."
+            )
         return
 
     overview = report["overview"]
     sample_size = int(overview.get("total_flights") or 0)
+    if demo_mode:
+        st.info(
+            "Public demo mode uses a synthetic snapshot modeled on the project's "
+            "validated local results. It does not query live flight, weather, news, "
+            "or database services."
+        )
     st.info(
         f"Current sample: {sample_size} YYZ flights from one short collection "
         "window. Results describe this dataset only."
     )
 
     with st.sidebar:
-        st.subheader("Data snapshot")
+        st.subheader("Synthetic demo snapshot" if demo_mode else "Data snapshot")
         st.write(f"{sample_size} flights")
         st.write("All displayed times are UTC")
-        if st.button("Refresh MySQL data", width="stretch"):
+        refresh_label = "Reload demo snapshot" if demo_mode else "Refresh MySQL data"
+        if st.button(refresh_label, width="stretch"):
             st.cache_data.clear()
             st.rerun()
 
@@ -127,7 +142,7 @@ def render_flight_analytics() -> None:
         "Cancelled flights",
         _metric(overview.get("cancelled_flights")),
     )
-    metric_columns = st.columns(3)
+    metric_columns = st.columns(4)
     metric_columns[0].metric(
         "Delay rate",
         _metric(overview.get("delay_rate_percent"), suffix="%", decimals=2),
@@ -145,6 +160,19 @@ def render_flight_analytics() -> None:
         ),
     )
     metric_columns[2].metric(
+        "Median departure delay (current sample)",
+        _metric(
+            overview.get("median_departure_delay_minutes"),
+            suffix=" min",
+            decimals=2,
+        ),
+        help=(
+            f"Typical stored departure delay across the current sample's "
+            f"{int(overview.get('departure_delay_samples') or 0)} flights "
+            "with known departure delays."
+        ),
+    )
+    metric_columns[3].metric(
         "Average arrival delay",
         _metric(
             overview.get("average_arrival_delay_minutes"),
@@ -398,6 +426,13 @@ def render_flight_analytics() -> None:
     )
 
     st.header("Ask Flight Pulse")
+    if demo_mode:
+        st.info(
+            "AI chat is disabled in the public demo. Run Flight Pulse locally with "
+            "MySQL and a Gemini API key to use the seven read-only analyst tools."
+        )
+        return
+
     st.caption(
         "Ask about the current flight sample, a flight number, airline, route, "
         "weather context, or a possible delay explanation. The assistant can use "
@@ -485,14 +520,29 @@ def render_business_overview() -> None:
         )
 
     st.subheader("Validated project results")
-    result_columns = st.columns(4)
+    result_columns = st.columns(5)
     result_columns[0].metric("YYZ flights", "72")
     result_columns[1].metric("Weather observations", "48")
     result_columns[2].metric("Flights matched to weather", "72 / 72")
-    result_columns[3].metric("Automated tests", "59")
+    result_columns[3].metric(
+        "Median departure delay",
+        "21.00 min",
+        help="Based on 3 flights with observed departure-delay values.",
+    )
+    result_columns[4].metric("Automated tests", "70")
     st.write(
         "The project also includes a reusable analytics layer, an interactive "
         "dashboard, seven read-only analyst tools, and Gemini function-calling chat."
+    )
+    st.caption(
+        "The 21.00-minute median uses the 3 flights with observed departure-delay "
+        "values in the current sample. Delivery quality is supported by automated "
+        "testing, CI validation, reviewed pull requests, and human-controlled merges."
+    )
+    st.caption(
+        "The full local system uses MySQL and optionally Gemini. The public portfolio "
+        "demo uses a clearly labeled synthetic static snapshot and makes no provider "
+        "or database calls."
     )
 
     value_column, limits_column = st.columns(2)
@@ -531,6 +581,14 @@ def render_technical_overview() -> None:
     st.caption(
         "External provider calls are separate ingestion operations. The dashboard "
         "and assistant read stored data and do not refresh providers."
+    )
+
+    st.subheader("Runtime modes")
+    st.markdown(
+        "- **Local full system:** MySQL-backed analytics, seven read-only analyst "
+        "tools, and optional Gemini function calling.\n"
+        "- **Public portfolio demo:** bundled synthetic static report, no provider or "
+        "database calls, and AI chat disabled."
     )
 
     architecture_left, architecture_right = st.columns(2)
@@ -594,7 +652,7 @@ def render_technical_overview() -> None:
 
     st.subheader("Testing, CI, and Git workflow")
     st.markdown(
-        "- **Testing:** 59 unit tests cover normalization, delay calculations, "
+        "- **Testing:** 70 unit tests cover normalization, delay calculations, "
         "repositories, analytics, enrichment, tool validation, and mocked Gemini "
         "routing without consuming provider quota.\n"
         "- **Application validation:** Streamlit is exercised offline to verify the "
@@ -602,6 +660,28 @@ def render_technical_overview() -> None:
         "- **CI:** GitHub Actions performs the repository's configured syntax checks.\n"
         "- **Git:** milestone work is developed on feature branches, validated, and "
         "merged into `main` after review."
+    )
+
+    st.subheader("Engineering workflow and governance")
+    st.markdown(
+        "**Human** → **Master / Orchestrator** → **Genesis task, scope, evidence, "
+        "gates, and checkpoints** → **specialist agents**\n\n"
+        "The Master coordinates bounded work and triages findings. Genesis stores "
+        "bounded task state, scope, evidence, gates, and checkpoints. The "
+        "Implementation Agent writes approved code; the Test Agent validates locally "
+        "without live provider calls; Code Review and Security are read-only "
+        "reviewers; the Documentation Agent is docs-focused; and the Shipping Agent "
+        "may stage, commit, push, and open an approved pull request, but cannot merge "
+        "`main`. Final merges and sensitive boundaries remain human-controlled."
+    )
+
+    st.subheader("Layered validation example")
+    st.write(
+        "FP-001 implemented the median departure-delay metric and passed semantic "
+        "tests. Exact local MySQL validation then exposed a production-dialect issue: "
+        "`row_number` conflicted with MySQL reserved terminology. FP-002 changed the "
+        "alias to `delay_rank`; exact MySQL validation succeeded, the final 63-test "
+        "suite and CI passed, and the merge remained human-controlled."
     )
 
     decisions_column, limitations_column = st.columns(2)
@@ -630,12 +710,18 @@ def render_technical_overview() -> None:
 st.title("Flight Pulse")
 st.caption("YYZ flight operations, delay patterns, and evidence-grounded context")
 
+try:
+    DEMO_MODE = demo_mode_enabled()
+except ValueError as error:
+    st.error(str(error))
+    st.stop()
+
 flight_analytics_tab, business_overview_tab, technical_overview_tab = st.tabs(
     ("Flight Analytics", "Business Overview", "Technical Overview")
 )
 
 with flight_analytics_tab:
-    render_flight_analytics()
+    render_flight_analytics(DEMO_MODE)
 
 with business_overview_tab:
     render_business_overview()

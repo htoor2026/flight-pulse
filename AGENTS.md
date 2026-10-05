@@ -255,6 +255,44 @@ Approved task
 Ask only for meaningful external, costly, destructive, security-sensitive,
 or major product decisions.
 
+---
+
+## Native Multi-Agent Workflow
+
+The root Codex agent is the Master / Orchestrator. It receives the objective,
+loads the active Genesis brief, delegates bounded work, synthesizes specialist
+reports, decides which findings require action, and records task evidence. It
+must not bypass Genesis gates or human approval boundaries.
+
+Native specialist roles are registered in `.codex/config.toml`, with role
+instructions under `.codex/agents/`:
+
+- `implementation`: primary application-code writer for explicitly assigned paths
+- `code_review`: read-only maintainability and architecture review
+- `security`: read-only security and boundary review
+- `test`: local validation; may edit tests only when explicitly delegated
+- `documentation`: documentation-only updates by default
+- `shipping`: approved Git and pull-request operations, never merge or force push
+
+Reviewer agents report findings and do not independently rewrite application
+code. The Master accepts or rejects each material finding and delegates accepted
+fixes to the Implementation Agent. Only one application-code writer should work
+at a time.
+
+The Master is the sole writer of Genesis task state, evidence, decisions,
+blockers, and checkpoints. Specialist agents may read Genesis context but return
+their evidence to the Master. This avoids conflicting concurrent state updates.
+
+The normal sequence is:
+
+Genesis brief → bounded implementation → tests → code/security review →
+Master triage and delegated fixes → executable Genesis gates → human approval
+gates → approved shipping.
+
+Human approval remains required for architecture changes, dependencies, live
+external API calls, billable services, credentials/authentication changes,
+destructive actions, deployment, and merging to `main`.
+
 <!-- genesis:start -->
 ## Genesis workflow
 

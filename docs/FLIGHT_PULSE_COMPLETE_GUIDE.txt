@@ -456,7 +456,8 @@ shows a controlled error and returns; presentation tabs can still render.
 
 The analytics sections are:
 - Overview: total, delayed, cancelled, delay rate, average departure/arrival
-  delay, with sample-count help text.
+  delay, and median departure delay for the current sample, with sample-count
+  help text.
 - Flight Status: status distribution and delayed/cancelled table.
 - Airline Analysis: total/delayed counts, rate, and averages. The UI hides an
   average when fewer than two values exist even though SQL returns the value.
@@ -727,7 +728,8 @@ status; it is not automatically delayed unless it also satisfies the predicate.
 OVERVIEW_SQL / overview
   Counts total, delayed, cancelled; calculates delayed percentage; averages only
   non-null departure/arrival delays; and reports the sample counts behind each
-  average.
+  average. Median departure delay is computed from non-null stored
+  departure_delay_minutes and is null when none are observed.
 
 STATUS_COUNTS_SQL / status_counts
   Groups by normalized status, ordering largest count then status.

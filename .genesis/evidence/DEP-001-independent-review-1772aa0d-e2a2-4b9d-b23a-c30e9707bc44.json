@@ -1,0 +1,13 @@
+{
+  "task": "DEP-001",
+  "gate": "independent-review",
+  "kind": "review",
+  "attempt": "1772aa0d-e2a2-4b9d-b23a-c30e9707bc44",
+  "human": "Harkamal Toor",
+  "reason": "Re-reviewed the unchanged DEP-001 implementation after refreshing executable gate evidence. The previously approved implementation remains acceptable for shipping.",
+  "observed_at": "2026-10-05T21:46:26.551Z",
+  "source_hash": "57cce96288066b7c34af73081cd04067656b1f4985449e096cdd44309b3bf063",
+  "config_hash": "b123a38fc6b079861a35e36d0a16a817f63cf0285b767407a2bdcf5bc8373f1f",
+  "reviewed_proofs": "8c699869d0fe7ecac306a08f00738f684d972b488415abf405306fa01243e858",
+  "hash": "c06abd12e46ef75f0cbd690763000c80ea3b3cb713bb2d949f78ad3f2deb5a21"
+}

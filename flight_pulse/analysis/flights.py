@@ -26,6 +26,21 @@ SELECT
         2
     ) AS delay_rate_percent,
     ROUND(AVG(departure_delay_minutes), 2) AS average_departure_delay_minutes,
+    (
+        SELECT ROUND(AVG(ranked.departure_delay_minutes), 2)
+        FROM (
+            SELECT
+                departure_delay_minutes,
+                ROW_NUMBER() OVER (ORDER BY departure_delay_minutes) AS delay_rank,
+                COUNT(*) OVER () AS sample_count
+            FROM flights
+            WHERE departure_delay_minutes IS NOT NULL
+        ) AS ranked
+        WHERE ranked.delay_rank IN (
+            (ranked.sample_count + 1) DIV 2,
+            (ranked.sample_count + 2) DIV 2
+        )
+    ) AS median_departure_delay_minutes,
     ROUND(AVG(arrival_delay_minutes), 2) AS average_arrival_delay_minutes,
     COUNT(departure_delay_minutes) AS departure_delay_samples,
     COUNT(arrival_delay_minutes) AS arrival_delay_samples
