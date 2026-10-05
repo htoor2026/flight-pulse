@@ -1,6 +1,6 @@
 # Flight Pulse — Project Status
 
-Last updated: 2026-10-02
+Last updated: 2026-10-05
 
 ---
 
@@ -19,7 +19,10 @@ upserted into MySQL.
 Milestone 2 — Flight Analysis is complete. A reusable read-only analysis layer
 now reports flight volume, status and delay metrics, airline/route/hour
 breakdowns, top delayed flights, and basic data-quality indicators from the
-existing 72-row MySQL dataset.
+existing 72-row MySQL dataset. FP-001 added a current-sample median departure-
+delay metric, and FP-002 corrected its MySQL reserved-alias compatibility. The
+exact local MySQL overview query now succeeds and reports a 21.00-minute median
+from 3 stored departure-delay observations.
 
 Milestone 3 — Weather Integration is complete. The keyless Open-Meteo forecast
 endpoint returned 48 hourly YYZ weather records, which were normalized to UTC,
@@ -52,20 +55,27 @@ README, an implementation-accurate architecture document, reproducible local
 setup instructions, documented results and limitations, and a verified
 dependency and secrets posture.
 
+The Genesis-backed native multi-agent engineering workflow is implemented.
+MA-001 registered the bounded Implementation, Code Review, Security, Test,
+Documentation, and Shipping roles under a root Master / Orchestrator. FP-001
+and FP-002 exercised that workflow with specialist reviews, executable gate
+evidence, and human-controlled completion gates.
+
 No additional AeroDataBox or RapidAPI request is authorized.
 
 ---
 
 # Current Phase
 
-Final Portfolio Polish
+Portfolio Complete / Genesis-Governed Maintenance
 
 Status:
 
 COMPLETE
 
-The existing MVP is documented and locally validated. Live GDELT and Gemini
-provider validation remain documented external blockers.
+The existing MVP is documented and locally validated. The median departure-
+delay enhancement and its MySQL compatibility fix are complete. Live GDELT and
+Gemini provider validation remain documented external blockers.
 
 ---
 
@@ -190,6 +200,20 @@ provider validation remain documented external blockers.
 - [x] verified `.env.example` contains no credentials
 - [x] scanned tracked files for common project secret patterns
 
+## Genesis / Native Multi-Agent Engineering
+
+- [x] adopted Genesis as the shared task, evidence, gate, blocker, and
+  checkpoint layer without replacing existing project documentation
+- [x] registered six bounded native specialist roles under the root Master /
+  Orchestrator
+- [x] kept reviewer agents report-only and the Master as sole Genesis-state
+  writer
+- [x] completed FP-001 median departure-delay implementation and specialist
+  review
+- [x] completed FP-002 MySQL reserved-alias correction and exact local MySQL
+  validation
+- [x] recorded fresh Genesis gate and review evidence for FP-001 and FP-002
+
 ## Project Planning
 
 - [x] Flight Pulse concept defined
@@ -230,6 +254,10 @@ Conda environment:
 - [x] hooks approval rules defined
 - [x] subagent approval rules defined
 - [x] destructive-operation restrictions defined
+- [x] Genesis task/evidence/checkpoint workflow adopted
+- [x] native Implementation, Code Review, Security, Test, Documentation, and
+  Shipping agent roles registered
+- [x] Master / Orchestrator established as sole Genesis-state writer
 
 External, costly, destructive, credential, major architectural, merge, and
 deployment actions continue to require explicit approval.
@@ -394,26 +422,24 @@ No external reviewer approval is required because this is currently a solo proje
 
 # Current Git State
 
-Branch:
-
-`docs/final-polish`
-
-The branch contains final portfolio documentation and repository cleanup on top
-of the merged Milestone 7 implementation.
+Changes are developed through short-lived feature/documentation branches and
+merged through pull requests.
 
 ---
 
 # Current Work
 
-Final portfolio documentation and cleanup are complete. Local validation passes;
-the prior GDELT HTTP 429 and Gemini HTTP 503 results remain external blockers.
+DOC-001 is synchronizing final portfolio documentation with the completed
+Genesis workflow and median-delay changes. Application behavior is unchanged by
+this documentation task.
 
 ---
 
 # Next Proposed Action
 
-Capture the documented dashboard screenshots manually, review the final-polish
-branch, and open a pull request. Provider retries require separate approval.
+Human review and approval of the DOC-001 documentation changes is next. Commit,
+push, and pull-request preparation may proceed only after that approval.
+Provider retries, deployment, and merging remain separate approval decisions.
 
 ---
 
@@ -456,7 +482,7 @@ branch, and open a pull request. Provider retries require separate approval.
 - Conda environment: PASS
 - Python 3.11 requirement: PASS
 - approved dependency installation: PASS
-- unit tests: PASS (58 tests)
+- unit tests: PASS (63 tests)
 - `git diff --check`: PASS
 - local MySQL connection: PASS
 - provisional schema execution: PASS
@@ -472,7 +498,9 @@ branch, and open a pull request. Provider retries require separate approval.
 - analysis delayed flights: 8 (11.11%)
 - analysis cancelled flights: 1
 - analysis average departure delay: 366.33 minutes (3 populated rows)
+- analysis median departure delay: 21.00 minutes (3 populated rows)
 - analysis average arrival delay: -26.50 minutes (2 populated rows)
+- exact local MySQL `OVERVIEW_SQL`: PASS after FP-002 reserved-alias fix
 - analysis duplicate provider identifiers: 0
 - Open-Meteo live request: PASS
 - Open-Meteo hourly records returned: 48
@@ -510,7 +538,7 @@ branch, and open a pull request. Provider retries require separate approval.
 - `.env.example` placeholders/defaults only: PASS
 - direct dependency consistency: PASS
 - `pip check`: PASS
-- final portfolio test suite: PASS (58 tests)
+- final complete test suite: PASS (63 tests)
 - final Streamlit import/start validation: PASS (0 exceptions)
 - external provider requests during portfolio polish: 0
 - credentials committed: NO

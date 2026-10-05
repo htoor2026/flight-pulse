@@ -9,7 +9,7 @@
     "non_goals": [],
     "trust_boundary": "local repository",
     "created_at": "2026-10-04T06:50:21.313Z",
-    "updated_at": "2026-10-04T09:02:06.858Z"
+    "updated_at": "2026-10-05T09:36:12.850Z"
   },
   "policy": {
     "ponytail": "full",
@@ -23,11 +23,11 @@
     }
   },
   "lifecycle": {
-    "phase": "verify",
-    "status": "ready",
-    "active_task": null,
+    "phase": "build",
+    "status": "active",
+    "active_task": "DOC-001",
     "blocker": null,
-    "next_action": "Review completed work and choose the next bounded outcome."
+    "next_action": "Await human review and approval of the final documentation diff; do not commit or push."
   },
   "commands": {},
   "workflow": null,
@@ -135,6 +135,33 @@
       "source": "FP-002 local MySQL validation, specialist reviews, and Genesis gates",
       "tags": [],
       "recorded_at": "2026-10-04T08:59:07.462Z",
+      "paths": []
+    },
+    {
+      "id": "KNOWLEDGE-225fdc79",
+      "title": "DOC-001 documentation synchronization",
+      "text": "README.md now reflects 63 passing tests, the MySQL-validated current-sample median departure delay of 21.00 minutes from 3 observations, and the median feature. docs/STATUS.md records completed FP-001/FP-002 work and Genesis-governed maintenance state. docs/FLIGHT_PULSE_MULTI_AGENT_GUIDE.txt documents only the seven-role engineering workflow, Genesis ownership, approval boundaries, configuration paths, task flow, FP-001/FP-002 example, and role-selection guidance. No runtime, test, SQL, dependency, configuration, or application file changed. DOC-001 diff-check passed.",
+      "source": "DOC-001 Documentation Agent and Genesis gate",
+      "tags": [],
+      "recorded_at": "2026-10-04T09:34:05.711Z",
+      "paths": []
+    },
+    {
+      "id": "KNOWLEDGE-6a22d955",
+      "title": "DOC-001 recruiter documentation validation",
+      "text": "Documentation Agent updated README.md, docs/STATUS.md, docs/FLIGHT_PULSE_MULTI_AGENT_GUIDE.txt, and root .gitattributes only. The complete local mock-based suite passed 63 tests with python -m unittest discover -s tests -v in the documented flight-pulse Conda environment. git diff --check passed. No application code, SQL, tests, dependencies, environment configuration, database schema, credentials, or external APIs were changed or used.",
+      "source": "DOC-001 Documentation Agent and local validation",
+      "tags": [],
+      "recorded_at": "2026-10-05T09:24:54.580Z",
+      "paths": []
+    },
+    {
+      "id": "KNOWLEDGE-c47e080a",
+      "title": "DOC-001 final durable branch wording and validation",
+      "text": "docs/STATUS.md no longer identifies a transient current branch. It keeps main as the primary branch and states that changes use short-lived feature/documentation branches merged through pull requests. Final local validation passed 63 tests, git diff --check passed, and the DOC-001 executable Genesis gate passed. No application changes or external API calls occurred.",
+      "source": "DOC-001 final human-requested correction and local validation",
+      "tags": [],
+      "recorded_at": "2026-10-05T09:36:12.415Z",
       "paths": []
     }
   ],
@@ -505,6 +532,101 @@
         "tests/test_repository.py": "6d56d8e4af96569776fb8883f00da8c54587cc93b86036072a4ad7214c715d51",
         "tests/test_weather.py": "42edbf18b497fa128bc1bbfda3833c4c869075beb298f9afc1ce7854b15060b9"
       }
+    },
+    {
+      "id": "DOC-001",
+      "outcome": "Synchronize final Flight Pulse portfolio documentation and add a dedicated multi-agent engineering guide without changing application behavior.",
+      "state": "active",
+      "risk": "low",
+      "owner": "master",
+      "scope": [
+        ".genesis",
+        "README.md",
+        "docs"
+      ],
+      "dependencies": [],
+      "requirements": [],
+      "inputs": [],
+      "environment": [],
+      "scenarios": [],
+      "gates": [
+        {
+          "id": "diff-check",
+          "kind": "command",
+          "command": "git diff --check",
+          "mandatory": true,
+          "status": "pass",
+          "evidence": {
+            "path": ".genesis/evidence/DOC-001-diff-check-23bba91e-f918-4d46-ad86-af8511b6ef44.json",
+            "hash": "b819b300430f7b1d711abd2caf40f9194100f52b15c98cf5fc04c9ac16d8fe99",
+            "source_hash": "de27064a28aec55118daa1135cdd663a07427fd66cd6cbb8d0db9d70822b8372",
+            "config_hash": "21122881bbd2c0add52f9da99fe3dec24591075bb2e9c2f165e4eaadc03dcda1",
+            "observed_at": "2026-10-05T09:36:12.184Z"
+          }
+        }
+      ],
+      "next_action": "Await human review and approval of the final documentation diff; do not commit or push.",
+      "blocker": null,
+      "notes": [
+        "Documentation Agent completed the three authorized documentation paths. Genesis diff-check passed. No application code, tests, SQL, dependencies, configuration, external calls, commit, push, PR, or merge."
+      ],
+      "failures": [],
+      "limitations": [],
+      "created_at": "2026-10-04T09:30:20.550Z",
+      "updated_at": "2026-10-05T09:36:12.617Z",
+      "base_manifest": {
+        ".codex/agents/code_review.toml": "442011b7f82de05c7f276945368b6f5477571636bc2de2ffce3ed894b9f6d13e",
+        ".codex/agents/documentation.toml": "b282f396d0d1b3015778ae2eda2030294d6041106545d16aa518f70b88a45baf",
+        ".codex/agents/implementation.toml": "07cf9ff0c78de15af4889fc8ecab455fe5bda04c764d09b40a01f618c3118f12",
+        ".codex/agents/security.toml": "992d7f764186730f76cbffaec14aa58c0fcab4a7c9b13db88c138bde6dbc3d00",
+        ".codex/agents/shipping.toml": "93e85486b53300791312e461141d1ca599e2d2b11f594d0914006f542f112653",
+        ".codex/agents/test.toml": "3864ba7ac431f33bc80df40a3c481cae32b877f475ae4bd650e10572473d4154",
+        ".codex/config.toml": "06ecf4599a8f3db5f5714202485241287b588c81d7cae2988a4661d21dd71b97",
+        ".env.example": "f7236e9197d65ae9300d42997a2932fe9a55107e6949d8b0398dbc2d2eb6791f",
+        ".github/ISSUE_TEMPLATE/feature_request.md": "a1399a9d3376d8af39dc258eb6365466c4ca41f43c20c35bc0d0409aedcb2b7b",
+        ".github/pull_request_template.md": "fab01488def22a92ca24e5ebdb96a1b5154eaef21cb294ad296be2ac4b6424ff",
+        ".github/workflows/ci.yml": "a30a469441e07c5f2fecb5b529d32c59a0d5b5e812733580a48628851465d212",
+        ".gitignore": "826b8bd49913b281414f426167e356f8527a0eaf864a8b09793b4b9d14756429",
+        "AGENTS.md": "8d38f9d48f7c7324d2b37d01929f27ac90fce7c10cc1c2250da2be08f1a64250",
+        "README.md": "1e2bd4987d0f1d14242aea0d262d99420a36b260fd0a1cf227b6ee4acee8c371",
+        "app.py": "23b017e141516a681291b5b8b7104b5434b449ba10c9c628bad7f5d6d855c083",
+        "docs/ARCHITECTURE.md": "120f73b03b85f8d7c9209fe031f12e8cca7f546491b740adae14b810cecfc612",
+        "docs/DATA_SOURCES.md": "d0a74825f1a8266be234a0a75044a237afa8fcac19684ad29f1436acc6599315",
+        "docs/DEVELOPMENT_LIFECYCLE.md": "1ea0973ad96e373c751294c5b2f4e3e576e2e6b084f1b85a1880493d140e7d9c",
+        "docs/FLIGHT_PULSE_COMPLETE_GUIDE.txt": "13619213beb1ec05ff404739c976d87722449f7b5ca888b6c9c5127a47a6cc75",
+        "docs/PLAN.md": "f242b0169edb045467ebdf8949678208ce6280f3b27d65c70cddec495623bc12",
+        "docs/SPEC.md": "93063fab2af07d4c7d829044f656a93f5c3777426b2748f7bfc0ec143481cb57",
+        "docs/STATUS.md": "225f13ae5e1dc6d9c890eb2e234051fee6dbabf9d0284634ec76adaef59f02cc",
+        "flight_pulse/analysis/__init__.py": "e19d9533dddaa9f48956ef3656ac4d1960dcb714815b69c2c0591e305d959061",
+        "flight_pulse/analysis/flights.py": "4be628f7a7571808cd2a3f8af1f6546fd7ed59a5b800b2f30732e801945b719a",
+        "flight_pulse/analyst/__init__.py": "0a7e052de059356999674f29c8ab8ad4ff5d47b5d0321d5d53b45d2a9949564e",
+        "flight_pulse/analyst/tools.py": "58e0954d0decf0945acf610f3b1a1457eb5519fec24a05017a61806be69631b8",
+        "flight_pulse/chat/__init__.py": "e8e0b97ccf3829eb992aba3617e7dbf1a6f608535f11ac8b8d41968a6aea41b3",
+        "flight_pulse/chat/gemini.py": "34369dbca577956e7c63f0ed0937f496cab8573beca42742fc23c0d973fa3cf6",
+        "flight_pulse/config.py": "422d9a84c5fa80c8797f3cc48c95b4993ed52f141ae7cdb66c67ff69596ad10f",
+        "flight_pulse/ingestion/aerodatabox.py": "3263551cb93ff9ccbe65f856e69e7c283d8f894c7f3b0150a289ff03a27196af",
+        "flight_pulse/ingestion/gdelt.py": "5fd13f4b952f09ac57072d0cd173b7809b4376f7e911b9993e098a9dc8777ed3",
+        "flight_pulse/ingestion/open_meteo.py": "80428d03fb820634cdb7443623bc34f4a63b02c04456fbce4609bf45e9dfe6b7",
+        "flight_pulse/models.py": "b1836f5964db2316e92144d5aec6f217d98ff9245e7525a66d736b7295f4b880",
+        "flight_pulse/pipeline.py": "d260225c7714bd05b366c3caa579437840c839732c81e539ead142d758053870",
+        "flight_pulse/repository.py": "6ffbe72dc3266b7376fbe05a1f58c62a3213f287dc4b76eee0f9c38533e09cb4",
+        "hooks/hooks.json": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "requirements.txt": "6302bd6e31184d18326014d15ec00b9bf4084b2e12d2c5fd43e04991de516233",
+        "skills/data-quality/SKILL.md": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "skills/delay-investigation/SKILL.md": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "skills/flight-data-analysis/SKILL.md": "78fb5f112b9e331e6d45cc7ba20c364344137c40dce44296fbdbe7854ba5bea2",
+        "sql/schema.sql": "37169d61676cbd7829429b420cfda001f7f6b2c38cd4762d33eb1b246b8c3da2",
+        "tests/fixtures/aerodatabox_airport.json": "35057fe21253ad880710bc250e08a7e26128eb0f8c38f24782bca2e2001676ac",
+        "tests/fixtures/gdelt_articles.json": "801e5c47ddb855cbb2bfc5446513918030918d8a58262f8ead276f822af33947",
+        "tests/fixtures/open_meteo_hourly.json": "e167b9550cc0991eb7c010f6dbed0e5fe51e33d0ea094f1837bf78f8059deeb2",
+        "tests/test_aerodatabox.py": "bc965ba92a33fc5d15dc421c424cae077794f56da1b5bb34f3806d6b71030190",
+        "tests/test_analysis.py": "9924a21d887a94c15ccea4e74cec68bd1b8985c6b8879149caa3ba206a88b302",
+        "tests/test_analyst.py": "4cd03b9ee2af96e8c0e4b7e8d567308c7ee4841dc06cf536c90d5f72bb8e7f0f",
+        "tests/test_chat.py": "f5732d721df98cd34a5b1dfcd8a56e55489faabc7e70086330dc5dafdf759dec",
+        "tests/test_news.py": "fe363301ee28019d1a31b9d05b5751b1d4acd4d41e7483f1188ac436f97ab770",
+        "tests/test_repository.py": "6d56d8e4af96569776fb8883f00da8c54587cc93b86036072a4ad7214c715d51",
+        "tests/test_weather.py": "42edbf18b497fa128bc1bbfda3833c4c869075beb298f9afc1ce7854b15060b9"
+      }
     }
   ],
   "learning_proposals": [],
@@ -787,6 +909,102 @@
       "cost": null,
       "stop_reason": null,
       "ended_at": "2026-10-04T08:57:39.442Z"
+    },
+    {
+      "id": "fc09bfdf-f6bb-4ea8-a2eb-7c54b131d96c",
+      "task": "DOC-001",
+      "kind": "gate",
+      "command": "git diff --check",
+      "timeout": 120000,
+      "authorization": null,
+      "pid": 53245,
+      "child_pid": 53324,
+      "started_at": "2026-10-04T09:33:56.009Z",
+      "status": "passed",
+      "before_hash": "e945adb99d242543691040c625d3114a3bc13c2bf847d1f1f32b37d034a5ce16",
+      "config_hash": "21122881bbd2c0add52f9da99fe3dec24591075bb2e9c2f165e4eaadc03dcda1",
+      "environment": {
+        "node": "v18.20.8",
+        "platform": "darwin",
+        "arch": "arm64",
+        "verifier": "cbdddbf25e5ed5f3406b93881ae54f64d11a8c54f0bfe177d19d9d9946a6a971",
+        "variables": {}
+      },
+      "cost": null,
+      "stop_reason": null,
+      "ended_at": "2026-10-04T09:33:56.265Z"
+    },
+    {
+      "id": "d1cb5ef1-3cb4-445b-bd4d-5bb5611ea901",
+      "task": "DOC-001",
+      "kind": "gate",
+      "command": "git diff --check",
+      "timeout": 120000,
+      "authorization": null,
+      "pid": 88622,
+      "child_pid": 88725,
+      "started_at": "2026-10-05T09:24:54.063Z",
+      "status": "passed",
+      "before_hash": "640c24329f1721babd17730e0678bb826ea66cc0650a2315d0e9a8f7fc79d367",
+      "config_hash": "21122881bbd2c0add52f9da99fe3dec24591075bb2e9c2f165e4eaadc03dcda1",
+      "environment": {
+        "node": "v18.20.8",
+        "platform": "darwin",
+        "arch": "arm64",
+        "verifier": "cbdddbf25e5ed5f3406b93881ae54f64d11a8c54f0bfe177d19d9d9946a6a971",
+        "variables": {}
+      },
+      "cost": null,
+      "stop_reason": null,
+      "ended_at": "2026-10-05T09:24:54.377Z"
+    },
+    {
+      "id": "11c87d1b-101b-4a5d-9cde-56dc85e4f96b",
+      "task": "DOC-001",
+      "kind": "gate",
+      "command": "git diff --check",
+      "timeout": 120000,
+      "authorization": null,
+      "pid": 89546,
+      "child_pid": 89649,
+      "started_at": "2026-10-05T09:27:55.485Z",
+      "status": "passed",
+      "before_hash": "3e403d41f6faa758598e98cbcc040aac412dc44ef082ab45cb59dbb6bd018514",
+      "config_hash": "21122881bbd2c0add52f9da99fe3dec24591075bb2e9c2f165e4eaadc03dcda1",
+      "environment": {
+        "node": "v18.20.8",
+        "platform": "darwin",
+        "arch": "arm64",
+        "verifier": "cbdddbf25e5ed5f3406b93881ae54f64d11a8c54f0bfe177d19d9d9946a6a971",
+        "variables": {}
+      },
+      "cost": null,
+      "stop_reason": null,
+      "ended_at": "2026-10-05T09:27:55.785Z"
+    },
+    {
+      "id": "23bba91e-f918-4d46-ad86-af8511b6ef44",
+      "task": "DOC-001",
+      "kind": "gate",
+      "command": "git diff --check",
+      "timeout": 120000,
+      "authorization": null,
+      "pid": 90829,
+      "child_pid": 90932,
+      "started_at": "2026-10-05T09:36:11.840Z",
+      "status": "passed",
+      "before_hash": "de27064a28aec55118daa1135cdd663a07427fd66cd6cbb8d0db9d70822b8372",
+      "config_hash": "21122881bbd2c0add52f9da99fe3dec24591075bb2e9c2f165e4eaadc03dcda1",
+      "environment": {
+        "node": "v18.20.8",
+        "platform": "darwin",
+        "arch": "arm64",
+        "verifier": "cbdddbf25e5ed5f3406b93881ae54f64d11a8c54f0bfe177d19d9d9946a6a971",
+        "variables": {}
+      },
+      "cost": null,
+      "stop_reason": null,
+      "ended_at": "2026-10-05T09:36:12.183Z"
     }
   ],
   "authorizations": [],
@@ -818,14 +1036,14 @@
     }
   },
   "checkpoint": {
-    "at": "2026-10-04T09:02:06.830Z",
+    "at": "2026-10-05T09:36:12.823Z",
     "revision": {
-      "commit": "e7aed14b79b6dd104f469735118828fbe5c37584",
+      "commit": "29a10ea469b96254dbeb006ba4dbe7ca1ac30b9d",
       "dirty": true,
-      "source_hash": "3a6b4acec34a92e324ac0a966f5c6ddbc40183964929719ee8d203cc8f20ffff"
+      "source_hash": "de27064a28aec55118daa1135cdd663a07427fd66cd6cbb8d0db9d70822b8372"
     },
-    "active_task": null,
-    "next_action": "Review completed work and choose the next bounded outcome."
+    "active_task": "DOC-001",
+    "next_action": "Await human review and approval of the final documentation diff; do not commit or push."
   },
   "legacy": null
 }

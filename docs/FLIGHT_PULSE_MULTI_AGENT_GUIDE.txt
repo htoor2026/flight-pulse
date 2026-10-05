@@ -1,0 +1,408 @@
+FLIGHT PULSE MULTI-AGENT ENGINEERING GUIDE
+=========================================
+
+PURPOSE
+-------
+
+This guide explains the repository's engineering-agent system. It does not
+describe the Flight Pulse product, data pipeline, dashboard, or AI analyst in
+detail; those topics belong in README.md and the general project guide.
+
+Flight Pulse uses Codex's native multi-agent support with Genesis as the shared
+repository-native task, evidence, governance, gate, blocker, and checkpoint
+layer. The goal is bounded collaboration: one orchestrator coordinates focused
+specialists while preserving the project's existing approval and security
+rules.
+
+
+CONFIGURATION LOCATIONS
+-----------------------
+
+AGENTS.md
+  Defines repository-wide operating rules, approval boundaries, the native
+  multi-agent workflow, and Genesis usage requirements.
+
+.codex/config.toml
+  Registers the six specialist roles, points each role to its instruction file,
+  limits concurrent agent threads, and limits delegation depth.
+
+.codex/agents/implementation.toml
+  Instructions for the Implementation Agent.
+
+.codex/agents/code_review.toml
+  Read-only instructions for the Code Review Agent.
+
+.codex/agents/security.toml
+  Read-only instructions for the Security Agent.
+
+.codex/agents/test.toml
+  Instructions for the Test Agent.
+
+.codex/agents/documentation.toml
+  Instructions for the Documentation Agent.
+
+.codex/agents/shipping.toml
+  Instructions for the Shipping Agent.
+
+.genesis/KICKOFF.md
+  Generated handoff for the active Genesis task. It summarizes the current
+  objective, phase, blocker, next action, gates, and context fingerprint. It is
+  a projection of Genesis state and is not edited manually.
+
+.genesis/project.json
+  Canonical repository-local Genesis state. Agents should use the Genesis CLI,
+  not direct manual edits, to maintain it.
+
+
+MASTER / ORCHESTRATOR
+---------------------
+
+The root Codex agent is the Master / Orchestrator. It is not a separate
+specialist entry in .codex/config.toml.
+
+Responsibilities:
+
+- receive the human's engineering objective;
+- load AGENTS.md, .genesis/KICKOFF.md, the active Genesis brief, and applicable
+  skills;
+- confirm task scope, phase, risks, gates, and approval boundaries;
+- delegate bounded work to the appropriate specialist;
+- keep one application-code writer active at a time;
+- synthesize specialist reports;
+- accept or reject reviewer findings;
+- delegate accepted code fixes to the Implementation Agent;
+- run or coordinate required validation;
+- record durable task evidence, decisions, blockers, and checkpoints in
+  Genesis; and
+- stop at human-controlled gates.
+
+The Master is the sole writer of Genesis task state. Specialists may read the
+active brief, but they return evidence to the Master instead of modifying
+Genesis independently. This prevents concurrent agents from producing
+conflicting task state.
+
+The Master may not bypass a Genesis gate or a human approval boundary merely
+because a specialist reports success.
+
+
+IMPLEMENTATION AGENT
+--------------------
+
+The Implementation Agent is the primary application-code writer.
+
+Use it when a bounded task requires changes to Python, SQL, Streamlit, or other
+runtime files. The Master assigns explicit paths and an observable outcome.
+
+The agent must:
+
+- modify only assigned paths;
+- preserve existing architecture and behavior outside the approved task;
+- use the smallest implementation that satisfies the objective;
+- avoid dependency, external-service, credential, destructive, and publishing
+  changes unless the required human approval exists;
+- return changed files, validation, risks, and blockers to the Master; and
+- implement reviewer fixes only after the Master accepts and delegates them.
+
+It must not independently accept a review finding or mutate Genesis state.
+
+
+CODE REVIEW AGENT
+-----------------
+
+The Code Review Agent is read-only by default and is configured with a
+read-only sandbox and no approval escalation.
+
+It reviews:
+
+- readability;
+- naming;
+- duplication;
+- modularity;
+- architecture consistency;
+- design; and
+- maintainability.
+
+It reports actionable findings by severity with file and line references. It
+distinguishes defects from optional improvements and explicitly reports when no
+findings remain.
+
+It does not rewrite application code. The Master decides whether a finding is
+accepted, and the Implementation Agent makes any accepted fix.
+
+
+SECURITY AGENT
+--------------
+
+The Security Agent is read-only by default and is configured with a read-only
+sandbox and no approval escalation.
+
+It reviews:
+
+- secrets and credential exposure;
+- SQL safety;
+- input validation;
+- external API boundaries;
+- LLM and tool boundaries;
+- dependency risk;
+- unsafe filesystem or network behavior;
+- privacy;
+- billing exposure; and
+- deployment exposure.
+
+Findings include severity, location, impact, and the smallest safe remediation.
+The agent does not rewrite code, access external services, print credentials,
+perform Git writes, or mutate Genesis state.
+
+
+TEST AGENT
+----------
+
+The Test Agent validates only the scope delegated by the Master.
+
+It may:
+
+- run existing local tests;
+- identify regressions;
+- identify meaningful missing edge cases; and
+- edit explicitly named test paths when the Master delegates test writing.
+
+It must not modify application code, dependencies, Genesis state, or Git state.
+It must never make live AeroDataBox, Open-Meteo, GDELT, Gemini, or other
+external API calls. Flight Pulse tests use mocks, fixtures, or local synthetic
+data so validation does not consume provider quota.
+
+The Test Agent returns exact commands, results, gaps, and blockers to the
+Master.
+
+
+DOCUMENTATION AGENT
+-------------------
+
+The Documentation Agent keeps repository documentation consistent with the
+approved task and actual implementation.
+
+Its default write scope is documentation-oriented content such as README.md,
+docs/**, and approved GitHub Markdown templates. A task may narrow that scope
+further, as DOC-001 does.
+
+The agent must not invent metrics, validation results, capabilities, provider
+outcomes, or credentials. It does not change application code, tests,
+dependencies, runtime configuration, or Genesis state unless the human
+explicitly expands its authorization.
+
+Use it after behavior changes that make setup instructions, architecture,
+status, limitations, or portfolio descriptions stale.
+
+
+SHIPPING AGENT
+--------------
+
+The Shipping Agent handles only explicitly delegated Git and pull-request
+operations after the applicable approvals and validation gates are satisfied.
+
+It may:
+
+- inspect Git status and diffs;
+- create an approved feature branch;
+- stage the approved file set;
+- commit;
+- push a non-main branch; and
+- prepare or open a pull request.
+
+Before staging or publishing, it verifies the approved paths, validation
+evidence, and absence of secrets or local-only artifacts.
+
+The Shipping Agent never:
+
+- merges to main;
+- force-pushes;
+- deletes branches;
+- rewrites history;
+- exposes credentials;
+- broadens the approved change set;
+- edits application or documentation content to resolve a finding; or
+- mutates Genesis state.
+
+A blocked shipment returns to the Master for triage and delegation.
+
+
+GENESIS RESPONSIBILITIES
+------------------------
+
+Genesis supplements the existing Flight Pulse specification, architecture,
+plan, status, and lifecycle documents; it does not replace them.
+
+For each active task, Genesis provides:
+
+- a bounded objective and file scope;
+- task phase and state;
+- risk classification;
+- requirements and scenarios when present;
+- executable and human-controlled gates;
+- proof tied to the current source state;
+- durable decisions and known facts;
+- blockers and recovery information; and
+- checkpoint/resume context for a later session.
+
+The normal entry sequence is:
+
+1. Read AGENTS.md and .genesis/KICKOFF.md.
+2. Load the Genesis and Ponytail skills.
+3. Run genesis brief . to obtain the canonical active-task contract.
+4. Query the Genesis index before broad code reading and inspect impact before
+   editing shared code.
+5. Work only within the active task's declared scope.
+
+The normal exit sequence is:
+
+1. Run the task's executable gates against the current source state.
+2. Collect specialist review evidence required by task risk.
+3. Leave human-controlled gates for a real human to approve.
+4. Have the Master record evidence and decisions through the Genesis CLI.
+5. Checkpoint the repository before handoff.
+
+Specialist chat claims alone are not completion proof. The Master binds relevant
+commands, results, and review outcomes to the active Genesis task.
+
+
+HUMAN APPROVAL BOUNDARIES
+-------------------------
+
+Agents may perform normal local and reversible work inside an approved task,
+but human approval remains required before:
+
+- live external API calls that consume quota;
+- unapproved web research or external-service connections;
+- paid APIs, overages, purchases, cloud resources, or paid deployment;
+- adding, removing, or upgrading dependencies;
+- changing Python version;
+- creating or changing credentials or authentication;
+- exposing or transmitting secrets;
+- destructive database, filesystem, migration, or Git actions;
+- major architecture, specification, database, or provider decisions;
+- public deployment; and
+- merging to main.
+
+No agent may turn a provider's free tier into permission to spend money. No
+agent may include credentials in source, logs, documentation, evidence, commits,
+or prompts.
+
+
+STANDARD TASK FLOW
+------------------
+
+1. Human objective
+   The human approves a bounded engineering objective and any protected action
+   it requires.
+
+2. Master intake
+   The Master loads repository rules and the Genesis brief, confirms scope and
+   gates, and identifies the smallest set of specialists needed.
+
+3. Bounded implementation
+   The Master delegates exact paths and outcomes to the Implementation Agent.
+   Only one application-code writer works at a time.
+
+4. Focused validation
+   The Test Agent runs existing tests and checks meaningful edge cases without
+   live provider calls. It edits tests only when explicitly assigned.
+
+5. Independent review
+   Code Review and Security inspect the resulting diff and report findings.
+   Documentation reviews user-facing consistency when behavior changed.
+
+6. Master triage
+   The Master accepts or rejects each material finding. Accepted source fixes go
+   back to the Implementation Agent; accepted test or documentation work goes
+   to the appropriate specialist.
+
+7. Genesis gates
+   Executable gates run against the final source state. Human-controlled gates
+   remain pending until a human reviews and approves them.
+
+8. Shipping
+   Only after the required approvals, the Shipping Agent handles the exact
+   delegated branch, commit, push, and pull-request work. It never merges main.
+
+9. Checkpoint
+   The Master records the final state and creates a Genesis checkpoint for
+   reliable resume or handoff.
+
+
+FP-001 AND FP-002 WORKFLOW EXAMPLE
+----------------------------------
+
+FP-001 requested a median departure-delay metric so dashboard users could
+compare a typical observed delay with the average for the current sample.
+
+The Master bounded the work to the existing analytics, dashboard, tests, and
+documentation paths. The Implementation Agent added the metric to the existing
+overview path instead of creating a second analytics abstraction. The SQL
+calculates the median only from non-null stored departure_delay_minutes values,
+and the dashboard labels it as a current-sample metric. The Test Agent verified
+odd, even, and empty observation sets without calling external providers.
+
+Code Review, Security, Test, and Documentation specialists then reported their
+findings. The Master synthesized those reports and preserved the review and gate
+evidence in Genesis.
+
+Exact local MySQL validation exposed a compatibility issue: ROW_NUMBER is a
+reserved MySQL keyword when used as an unquoted derived-column alias. That
+finding became the bounded FP-002 correction rather than being hidden inside an
+unrelated refactor.
+
+FP-002 retained the ROW_NUMBER() window function but renamed the alias to
+delay_rank. Focused tests protected the non-reserved alias, and the exact
+FlightAnalysis.overview() query then succeeded against the local flight_pulse
+database. The verified current stored result was a median departure delay of
+21.00 minutes from 3 non-null departure-delay observations. The complete local
+suite passed 63 tests. No AeroDataBox, Open-Meteo, GDELT, or Gemini request was
+made for either task.
+
+This example demonstrates the intended loop:
+
+bounded task -> implementation -> focused tests -> specialist review ->
+real-environment finding -> separate bounded fix -> fresh gates -> evidence.
+
+
+PRACTICAL WHEN-TO-USE GUIDANCE
+------------------------------
+
+Use only the Master for a very small read-only inspection or task that does not
+benefit from isolated specialist context.
+
+Use the Implementation Agent when runtime behavior or application source must
+change. Give it explicit paths and a concrete outcome.
+
+Use the Code Review Agent after non-trivial source changes, shared-code edits,
+or architecture-sensitive work.
+
+Use the Security Agent whenever a task touches SQL, external inputs, secrets,
+authentication, dependencies, filesystem/network behavior, billing, deployment,
+or LLM/tool boundaries.
+
+Use the Test Agent when validation must be run, when regressions need isolation,
+or when meaningful edge-case tests are explicitly required.
+
+Use the Documentation Agent when implementation changes make public setup,
+architecture, status, limitations, or portfolio claims stale.
+
+Use the Shipping Agent only after implementation, validation, review, and the
+applicable approvals are complete. Do not use it to fix content.
+
+Avoid spawning every specialist for trivial work. The Master should choose the
+smallest set of roles that provides the required evidence and independence.
+
+
+NON-NEGOTIABLE RULES
+--------------------
+
+- Reviewer agents report findings; they do not independently rewrite
+  application code.
+- The Master decides which reviewer findings require action.
+- Accepted application fixes return to the Implementation Agent.
+- The Master is the sole Genesis-state writer.
+- Tests never consume live external API quota.
+- Secrets never appear in source, documentation, evidence, or logs.
+- Protected actions always remain subject to human approval.
+- The Shipping Agent never merges, force-pushes, or deletes branches.

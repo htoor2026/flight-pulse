@@ -1,0 +1,30 @@
+{
+  "task": "DOC-001",
+  "gate": "diff-check",
+  "kind": "command",
+  "attempt": "11c87d1b-101b-4a5d-9cde-56dc85e4f96b",
+  "command": "git diff --check",
+  "started_at": "2026-10-05T09:27:55.485Z",
+  "observed_at": "2026-10-05T09:27:55.785Z",
+  "exit_code": 0,
+  "signal": null,
+  "stdout": "",
+  "stderr": "",
+  "failure": null,
+  "receipt": null,
+  "revision": {
+    "commit": "29a10ea469b96254dbeb006ba4dbe7ca1ac30b9d",
+    "dirty": true
+  },
+  "source_hash": "3e403d41f6faa758598e98cbcc040aac412dc44ef082ab45cb59dbb6bd018514",
+  "before_hash": "3e403d41f6faa758598e98cbcc040aac412dc44ef082ab45cb59dbb6bd018514",
+  "config_hash": "21122881bbd2c0add52f9da99fe3dec24591075bb2e9c2f165e4eaadc03dcda1",
+  "environment": {
+    "node": "v18.20.8",
+    "platform": "darwin",
+    "arch": "arm64",
+    "verifier": "cbdddbf25e5ed5f3406b93881ae54f64d11a8c54f0bfe177d19d9d9946a6a971",
+    "variables": {}
+  },
+  "hash": "a6bad3d8d129bfa1417893ff20d9e93ef820538a835e72daafbea862dc593e6b"
+}
